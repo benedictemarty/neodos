@@ -5,6 +5,10 @@ Changelog, versions SemVer). Auteur : bmarty.
 
 ## [0.8.0] — 2026-09-19
 
+Publié sur le serveur Prophet (`https://prophet.3617.fr`, catégorie
+« en développement », paquet `neodos` : `neodos.neo`, `AUTOEXEC.BAT`,
+`HELLO.NEO`, jaquette) le 2026-09-19.
+
 Sprint 8 : Trinity et commandes externes.
 
 ### Ajouté

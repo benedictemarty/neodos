@@ -29,6 +29,13 @@ Hello from a NeoDOS program!
 A:\>
 ```
 
+## Téléchargement
+
+Version bêta publiée sur le serveur Prophet (catégorie « en développement ») :
+`https://prophet.3617.fr/app/neodos` — depuis le Neo6502 avec un modem,
+`prophet.neo`/ProphetGui téléchargent `neodos.neo`, `AUTOEXEC.BAT` et
+`HELLO.NEO`.
+
 ## Démarrage rapide
 
 Prérequis : `64tass`, `python3`, `make` ; pour les tests et le lancement :
