@@ -117,7 +117,6 @@ _open           #setparam 0, dirbuf
                 clc
                 adc     #'A'
                 jsr     putc
-                #print  " is "
                 jsr     print_volname
                 jsr     dir_newline
                 #print  " Directory of "
@@ -340,16 +339,22 @@ _done           stz     arg2
                 rts
 
 
-print_volname   #api    3,26                    ; Parameter:0 = volume courant
+; (« has no label » quand le firmware n'a pas 3,24, comme Trinity)
+print_volname   lda     caps
+                and     #CAP_VOLUMES
+                beq     _unk
+                stz     DParams
+                #api    3,26                    ; Parameter:0 = volume courant
                 lda     #32
                 sta     namebuf
                 #setparam 1, namebuf
                 #api    3,24
                 lda     DError
                 bne     _unk
+                #print  " is "
                 jsr     ptr_namebuf
                 jmp     putpstr
-_unk            #print  "?"
+_unk            #print  " has no label"
                 rts
 
 ; ---------------------------------------------------------------------------
@@ -1022,7 +1027,6 @@ cmd_vol         #print  " Volume in drive "
                 clc
                 adc     #'A'
                 jsr     putc
-                #print  " is "
                 jsr     print_volname
                 jmp     newline
 
@@ -1337,7 +1341,10 @@ _wait           #api    2,1
 ; ---------------------------------------------------------------------------
 ; DATE [aaaa-mm-jj] / TIME [hh:mm[:ss]]
 ; ---------------------------------------------------------------------------
-cmd_date        lda     arg1
+cmd_date        jsr     need_datetime
+                bcc     +
+                rts
++               lda     arg1
                 bne     _set
                 #print  "Current date is "
                 #api    1,20
@@ -1379,9 +1386,23 @@ _set            #api    1,20                    ; lit l'heure courante
                 rts
 _bad            jsr     errlvl1
                 #println "Invalid date"
+_none           rts
+
+; need_datetime : C=1 (et message) si le firmware n'a pas 1,20/1,21
+need_datetime   lda     caps
+                and     #CAP_DATETIME
+                bne     _ok
+                jsr     errlvl1
+                #println "Date/time not supported by this firmware"
+                sec
+                rts
+_ok             clc
                 rts
 
-cmd_time        lda     arg1
+cmd_time        jsr     need_datetime
+                bcc     +
+                rts
++               lda     arg1
                 bne     _set
                 #print  "Current time is "
                 #api    1,20
@@ -1420,7 +1441,7 @@ _set            #api    1,20
                 rts
 _bad            jsr     errlvl1
                 #println "Invalid time"
-                rts
+_none           rts
 
 ; parse_num : lit un entier décimal dans la pstring (ptr) à partir de Y ;
 ; s'arrête sur un caractère non numérique (Y pointe dessus). Résultat dans
@@ -1527,6 +1548,12 @@ cmd_drive       lda     cmdbuf+1
                 sbc     #'A'
                 cmp     #4
                 bcs     _bad
+                ldx     caps                    ; sans 3,25 : seul A: existe
+                bne     +
+                cmp     #0
+                beq     _ok
+                bra     _bad
++
                 sta     DParams
                 #api    3,25
                 lda     DError

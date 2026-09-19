@@ -1,6 +1,16 @@
-A:\>echo after cls
-after cls
-A:\>
+NeoDOS version 0.8.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>cd GAMES
+A:\GAMES>args one two
+Command line: args one two
+A:\GAMES>\BIN\ARGS.NEO x
+Command line: \BIN\ARGS.NEO x
+A:\GAMES>path ;
+A:\GAMES>args
+Bad command or file name
+A:\GAMES>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT

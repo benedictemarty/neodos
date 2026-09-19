@@ -64,6 +64,7 @@ attr_clr        = $B2
 lpos            = $B3           ; éditeur de ligne : curseur
 llen            = $B4           ; éditeur de ligne : longueur
 hcur            = $B5           ; historique : entrée en cours de rappel
+caps            = $B6           ; fonctions du firmware : bit 0 volumes (3,24-26), bit 1 date/heure (1,20-21)
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
 ERR_OK          = 0
@@ -92,8 +93,11 @@ SCREEN_COLS     = 53
 CH_IO           = 0             ; TYPE, COPY manuel
 CH_BAT          = 7             ; lecture d'un fichier batch
 CH_OUT          = 1             ; redirection de la sortie (>, >>)
+CMDLINE         = $0200         ; ligne de commande transmise aux programmes .NEO (pstring)
+CAP_VOLUMES     = 1
+CAP_DATETIME    = 2
 
-BATBUF_SIZE     = 1024          ; taille maximale d'un fichier .BAT
+BATBUF_SIZE     = 768           ; taille maximale d'un fichier .BAT
 LISTBUF_SIZE    = 1024          ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
 BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)

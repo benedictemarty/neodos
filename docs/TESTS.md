@@ -64,6 +64,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `22_attrib` | affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
 | `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
+| `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

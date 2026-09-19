@@ -4,8 +4,13 @@
 
 - **Émulateur** : `make run` (Phosphoneo, fenêtre SDL, stockage `storage/`)
   ou `make run-neo` (émulateur officiel).
-- **Carte** : copier `build/neodos.neo` sur la clé USB (et, si souhaité, le
-  contenu de `storage/`), puis dans NeoBASIC : `run "neodos.neo"`.
+- **Carte (Trinity)** : `make dist`, copier le contenu de `build/dist/` à la
+  racine de la clé (`boot/neodos.neo`, `boot/auto.txt`, `AUTOEXEC.BAT`,
+  `BIN/`) : NeoDOS démarre automatiquement (Échap au démarrage = menu du
+  firmware). Autre firmware : dans NeoBASIC, `run "neodos.neo"`.
+
+Sur Trinity, le lecteur est toujours `A:` et `DATE`/`TIME` répondent « not
+supported by this firmware » (fonctions du fork non reprises).
 
 Au démarrage, NeoDOS affiche sa bannière, exécute `AUTOEXEC.BAT` s'il existe
 dans le répertoire courant, puis affiche l'invite `A:\>`.
@@ -68,7 +73,11 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS).
+Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS). Il
+trouve sa ligne de commande complète en `$0200` (octet de longueur puis les
+caractères) : c'est le contrat des **commandes externes** (`BIN\ARGS.NEO`
+l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
+de partout.
 
 `PATH BIN;GAMES` : un nom qui n'est ni une commande interne ni un fichier du
 répertoire courant est ensuite cherché dans `BIN` puis `GAMES` (avec et sans
@@ -176,7 +185,7 @@ retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 | `Label not found` | `GOTO` vers un `:label` absent (fin du script) |
 | `Too many nested CALLs` | plus de 3 niveaux de `CALL` |
 | `Invalid drive specification` | lettre de lecteur sans volume monté |
-| `Batch file too large (max 1024 bytes)` | script trop long |
+| `Batch file too large (max 768 bytes)` | script trop long |
 | `Error nn` | autre code d'erreur de l'API fichiers |
 
 ## Limites connues (v0.1)

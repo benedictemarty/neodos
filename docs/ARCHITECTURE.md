@@ -62,7 +62,8 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 5. `run_program` → `try_run` : nom tel que tapé puis en majuscules ; avec
    extension `.NEO`/`.BAT` ou en essayant `.NEO` puis `.BAT` (File Stat 3,16).
    Sans succès, chaque entrée de `PATH` (`path_next`, séparateur `;`) est
-   essayée avec `build_path`.
+   essayée avec `build_path`. Avant `JSR $FF08`, `linebuf` est recopié en
+   `$0200` (contrat des commandes externes).
    `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
    File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.
    Au retour : pile réinitialisée, reprise du batch en cours ou invite.
@@ -96,10 +97,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$B5` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`) |
-| `$C000-$E730` | code (≈ 10 Ko ; `codeend`) |
-| `$E731-$FBAE` | tampons : `promptbuf`, `cwdbuf`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 024), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
-| `$FBAF-$FBFF` | libre (≈ 80 octets de marge ; `.cerror` si `dataend > $FC00`) |
+| `$80-$B5` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`), `caps` |
+| `$C000-$E83F` | code (≈ 10,3 Ko ; `codeend`) |
+| `$E840-$FB3D` | tampons : `promptbuf`, `cwdbuf`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 024), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
+| `$FB3E-$FBFF` | libre (≈ 190 octets de marge ; `batbuf` ramené à 768 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
@@ -124,6 +125,15 @@ de `:label`. `IF` (`cmd_if`, dans `commands.asm`) évalue `NOT`, `EXIST`,
 est remis à 0 au début de chaque `execute_line`, à 1 par `errlvl1` dans les
 chemins d'erreur) ou `a==b`, puis recopie le reste de la ligne dans `linebuf`
 et appelle `execute_line`.
+
+## Fonctions du firmware absentes
+
+`detect_caps` (démarrage) précharge un paramètre puis appelle 3,26 et 1,20 :
+sur carte une fonction inconnue laisse les paramètres intacts (`WARN_GROUP`
+vide en `PICO`), ce qui révèle son absence. `caps` (bit 0 volumes, bit 1
+date/heure) est consulté par `print_volname`, `cmd_drive`, `DATE`/`TIME`
+(`need_datetime`) et `$d`/`$t` de l'invite ; `build_cwdpath` précharge P0 = 0
+avant 3,26 (lettre `A` par défaut).
 
 ## Redirection
 

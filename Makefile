@@ -36,9 +36,6 @@ $(BIN): $(SRC) | $(BUILD)
 $(NEO): $(BIN) tools/mkneo.py
 	python3 tools/mkneo.py $(BIN) $(NEO) C000 C000 "NeoDOS"
 
-dist: $(NEO) examples
-	cp $(NEO) storage/NEODOS.NEO
-
 run: $(NEO)
 	$(PHOSPHONEO) --sdl --scale 3 --storage storage $(NEO)
 
@@ -51,8 +48,8 @@ test: $(NEO)
 clean:
 	rm -rf $(BUILD)
 
-# Exemples : programme HELLO.NEO et scripts .BAT copiés dans storage/
-EXAMPLES = storage/HELLO.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
+# Exemples : programmes HELLO.NEO, BIN/ARGS.NEO et scripts .BAT copiés dans storage/
+EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
 
 examples: $(EXAMPLES)
 
@@ -60,5 +57,22 @@ storage/HELLO.NEO: examples/hello.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/hello.bin examples/hello.asm
 	python3 tools/mkneo.py $(BUILD)/hello.bin $@ 0800 0800 "Hello"
 
+storage/BIN/ARGS.NEO: examples/args.asm tools/mkneo.py | $(BUILD)
+	mkdir -p storage/BIN
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/args.bin examples/args.asm
+	python3 tools/mkneo.py $(BUILD)/args.bin $@ 0800 0800 "Args"
+
 storage/%.BAT: examples/%.BAT
 	cp $< $@
+
+# Image de clé USB pour Trinity (firmware de référence) : boot/neodos.neo lancé
+# automatiquement (boot/auto.txt), AUTOEXEC.BAT, BIN/ (commandes externes)
+DIST = $(BUILD)/dist
+dist: $(NEO) examples
+	rm -rf $(DIST)
+	mkdir -p $(DIST)/boot $(DIST)/BIN
+	cp $(NEO) $(DIST)/boot/neodos.neo
+	echo neodos.neo > $(DIST)/boot/auto.txt
+	cp storage/AUTOEXEC.BAT storage/DEMO.BAT storage/HELLO.NEO $(DIST)/
+	cp storage/BIN/ARGS.NEO $(DIST)/BIN/
+	@echo "Image prête : $(DIST)/ (copier son contenu à la racine de la clé USB)"

@@ -82,7 +82,7 @@ batch_load      ldx     batname
                 lda     blen
                 beq     _load
 _big            jsr     errlvl1
-                #println "Batch file too large (max 1024 bytes)"
+                #println "Batch file too large (max 768 bytes)"
                 sec
                 rts
 _load           jsr     p0_namebuf

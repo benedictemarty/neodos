@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.7.0
+NeoDOS version 0.8.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -41,8 +41,12 @@ make run        # NeoDOS dans Phosphoneo (SDL), stockage = storage/
 make test       # suite de tests sur cible (Phosphoneo headless, ~5 s)
 ```
 
-Sur la carte : copier `build/neodos.neo` (et, au choix, `storage/*`) sur la
-clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
+Sur la carte avec **Trinity** (firmware de référence) : `make dist` puis copier
+le contenu de `build/dist/` à la racine de la clé USB — `boot/neodos.neo` et
+`boot/auto.txt` font démarrer NeoDOS à la place de NeoBASIC (`EXIT` y
+revient). Avec un firmware sans menu `boot/` : depuis NeoBASIC,
+`run "neodos.neo"`. Trinity n'ayant pas (encore) les fonctions volumes et
+date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 
 ## Commandes
 
@@ -68,7 +72,7 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 | `EXIT`, `BASIC` | retour à NeoBASIC |
-| `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script |
+| `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script (ligne de commande transmise en `$0200`) |
 
 Les chemins acceptent `\` ou `/` ; les jokers `*` et `?` s'appliquent à
 `DIR`, `DEL`, `COPY`, `REN` (insensibles à la casse). Le nom d'un programme est cherché tel que

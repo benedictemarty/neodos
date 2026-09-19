@@ -3,6 +3,33 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.8.0] — 2026-09-19
+
+Sprint 8 : Trinity et commandes externes.
+
+### Ajouté
+- Détection des fonctions du firmware au démarrage (`detect_caps` : 3,26 et
+  1,20 sondées avec des paramètres préchargés, car sur carte une fonction
+  inconnue ne touche ni les paramètres ni `$FF02`). Sur Trinity (firmware de
+  référence, sans les fonctions du fork) : lecteur `A:` seul, `VOL`/`DIR`
+  « has no label », `DATE`/`TIME` → « Date/time not supported by this
+  firmware », `$d`/`$t` ignorés.
+- Contrat des commandes externes : la ligne de commande est recopiée en
+  `$0200` (pstring) avant le lancement d'un `.NEO` ; exemple `BIN/ARGS.NEO`
+  (`examples/args.asm`) ; test `25_external_args`.
+- `make dist` : image de clé USB pour Trinity (`boot/neodos.neo`,
+  `boot/auto.txt`, `AUTOEXEC.BAT` avec `PATH \BIN`, `BIN/`).
+- Mémo au projet firmware (branche `trinity`, `docs/MEMO-NEODOS-2026-09-19.md`,
+  story T-10).
+
+### Corrigé
+- Un chemin absolu tapé comme commande (`\BIN\ARGS.NEO x`) était ignoré
+  (mot de commande vide).
+
+### Modifié
+- `batbuf` 1 024 → 768 octets (scripts de 768 octets max) pour loger la
+  détection ; marge ≈ 190 octets.
+
 ## [0.7.0] — 2026-09-19
 
 Sprint 7 : Ctrl+Alt+Suppr, commandes externes (ADR-003).

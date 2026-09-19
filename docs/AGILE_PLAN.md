@@ -91,7 +91,17 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S33 Ctrl+Alt+Suppr à l'invite : redémarrage à chaud (fichiers fermés, son coupé, racine, écran effacé, NeoDOS relancé) | fait |
 | S34 ADR-003 : résident gelé à `$C000`, extensions en commandes externes `.NEO` via `PATH` | fait |
 | S35 Phosphoneo : `\z` = Ctrl+Alt+Suppr dans `--type-keys` ; test `24_ctrl_alt_del` | fait |
-| S36 Ligne de commande transmise aux `.NEO` en `$0200` (contrat des commandes externes) | à faire (sprint 8) |
+| S36 Ligne de commande transmise aux `.NEO` en `$0200` (contrat des commandes externes) | fait (sprint 8) |
+
+## Sprint 8 — Trinity et commandes externes (2026-09-19) — livré, v0.8.0
+
+| Story | État |
+|---|---|
+| S37 Trinity (firmware de référence, sans 3,24-26 ni 1,20-21) : sonde des fonctions au démarrage, dégradation propre (`A:` seul, « has no label », `DATE`/`TIME` refusés, `$d $t` ignorés) | fait — à valider sur carte |
+| S38 `make dist` : image de clé pour Trinity (`boot/neodos.neo` + `boot/auto.txt`, `AUTOEXEC.BAT` avec `PATH \BIN`, `BIN/`) | fait |
+| S39 Première commande externe `BIN/ARGS.NEO` (contrat `$0200`), chemin absolu comme commande (`\BIN\ARGS.NEO`) | fait |
+| S40 Mémo au projet firmware (`docs/MEMO-NEODOS-2026-09-19.md` sur `trinity`, story T-10) | fait |
+| S41 Validation sur carte Trinity (B9) | à faire — dépend de bmarty |
 
 ## Backlog (priorisé)
 
@@ -109,6 +119,9 @@ NeoBASIC (qui reste accessible par `EXIT`).
 
 - Les émulateurs (`neo`, Phosphoneo) ne normalisent pas `..` dans le
   répertoire courant (`A:\GAMES\..`) et sont sensibles à la casse des noms ;
-  la carte (FatFs) n'a pas ces limites. À traiter côté émulateurs.
+  la carte (FatFs) n'a pas ces limites. Demandé au projet firmware (T-10).
+- **Firmware de référence = Trinity** (depuis le 2026-09-19) : pas de volumes
+  ni de date/heure tant que T-09/T-10 ne sont pas repris ; NeoDOS se dégrade
+  proprement mais `B:`, `DATE`, `TIME` restent inertes sur carte.
 - Un programme `.NEO` qui écrit au-dessus de `$C000` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

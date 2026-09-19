@@ -16,6 +16,7 @@ start           cld
                 stz     pathbuf
                 stz     hcount
                 stz     hused
+                jsr     detect_caps
                 ldx     #4                      ; PROMPT $p$g
 -               lda     default_prompt,x
                 sta     promptfmt,x
@@ -70,7 +71,8 @@ show_prompt     jsr     build_prompt
                 rts
 
 ; build_cwdpath : cwdpath = « A:\chemin » (pstring)
-build_cwdpath   #api    3,26                    ; volume courant
+build_cwdpath   stz     DParams                 ; volume courant (0 = A si le
+                #api    3,26                    ; firmware ignore 3,26)
                 lda     DParams
                 clc
                 adc     #'A'
@@ -175,7 +177,10 @@ _path           ldx     #1
                 inc     promptskip
                 inx
                 bra     -
-_date           phy
+_date           lda     caps
+                and     #CAP_DATETIME
+                beq     _jloop
+                phy
                 #api    1,20
                 lda     DParams+1               ; année : 19xx ou 20xx
                 cmp     #>2000
@@ -213,7 +218,11 @@ _yy             jsr     pr_2dig
                 sta     promptskip
                 ply
                 bra     _jloop
-_time           phy
+_time           lda     caps
+                and     #CAP_DATETIME
+                bne     +
+                jmp     _loop
++               phy
                 #api    1,20
                 lda     DParams+4
                 jsr     pr_2dig
@@ -340,9 +349,9 @@ _word           jsr     at_end
                 cmp     #' '
                 beq     _wend
                 cmp     #'\'
-                beq     _wend
+                beq     _dot                    ; « \X », « /X » : chemin
                 cmp     #'/'
-                beq     _wend
+                beq     _dot
                 cmp     #'.'
                 beq     _dot
                 cmp     #':'
@@ -353,7 +362,7 @@ _word           jsr     at_end
                 sta     cmdbuf,x
                 iny
                 bra     _wend
-_dot            cpx     #0                      ; un mot ne peut commencer par «.»
+_dot            cpx     #0                      ; un mot ne peut commencer par « . » ni « \ »
                 beq     _store
                 bra     _wend
 _store          jsr     upper
@@ -565,6 +574,11 @@ _run            jsr     redir_close             ; la sortie du programme va à
                 #api    3,2
                 lda     DError
                 bne     _loaderr
+                ldx     linebuf                 ; ligne de commande -> $0200
+-               lda     linebuf,x               ; (contrat des commandes externes)
+                sta     CMDLINE,x
+                dex
+                bpl     -
                 jsr     DExec                   ; JMP exec (ou RTS)
                 bra     _back
 _loaderr        jsr     err_api
@@ -894,3 +908,25 @@ ptr_namebuf     lda     #<namebuf
                 lda     #>namebuf
                 sta     ptr+1
                 rts
+
+; detect_caps : sonde les fonctions absentes de l'amont (Trinity) : sur carte
+; une fonction inconnue ne touche ni les paramètres ni l'erreur.
+detect_caps     stz     caps
+                lda     #$ff
+                sta     DParams
+                #api    3,26                    ; volume courant : 0-3 si géré
+                lda     DParams
+                cmp     #4
+                bcs     +
+                lda     #CAP_VOLUMES
+                sta     caps
++               lda     #$ff
+                sta     DParams+7
+                #api    1,20                    ; source de l'heure : 0-2 si géré
+                lda     DParams+7
+                cmp     #3
+                bcs     +
+                lda     caps
+                ora     #CAP_DATETIME
+                sta     caps
++               rts

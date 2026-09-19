@@ -1,4 +1,4 @@
-AUTOEXEC.BAT           135
+AUTOEXEC.BAT           151
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
@@ -12,7 +12,7 @@ CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
 LOOP.BAT               102
-       11 file(s)        924 bytes
+       11 file(s)        940 bytes
         3 dir(s)
 This line is not echoed
 A:\>HELLO
@@ -31,6 +31,7 @@ A:\>
 ARGS.BAT
 AUTOEXEC.BAT
 BIN/
+BIN/ARGS.NEO
 BIN/HI.NEO
 BIN/TOOL.BAT
 CALLER.BAT

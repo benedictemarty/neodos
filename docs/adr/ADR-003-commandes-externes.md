@@ -31,10 +31,9 @@ par `RTS` ; `%ERRORLEVEL` non transmis (limite connue).
 ## Conséquences
 
 - Les commandes externes n'ont pas accès aux routines internes de NeoDOS
-  (analyse de ligne, jokers) : elles reçoivent leur ligne de commande via
-  le tampon `linebuf` de NeoDOS ? Non — l'adresse n'est pas stable. Contrat
-  retenu : la ligne de commande est recopiée en `$0200` (pstring, 200
-  caractères max) avant le lancement d'un `.NEO` (à faire, sprint suivant).
+  (analyse de ligne, jokers). Contrat (v0.8.0) : la ligne de commande
+  complète est recopiée en `$0200` (pstring, 200 caractères max) avant le
+  lancement d'un `.NEO` ; exemple `examples/args.asm` → `BIN/ARGS.NEO`.
 - `AUTOEXEC.BAT` devra positionner `PATH` (par exemple `PATH \BIN`).
 - Les descentes de base restent possibles mais exigent une décision
   explicite (ADR-002).
