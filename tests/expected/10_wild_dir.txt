@@ -1,5 +1,5 @@
-LONG.TXT              1820
-        3 file(s)       1860 bytes
+FRUITS.TXT              41
+        4 file(s)       1901 bytes
         0 dir(s)
 A:\>dir GAMES\*.TXT
  Volume in drive A is HOST0
@@ -30,8 +30,10 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
+BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
 BIN/XCOPY.NEO
@@ -39,6 +41,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+FRUITS.TXT
 GAMES/
 GAMES/A.TXT
 GAMES/SUB/

@@ -1,0 +1,6 @@
+find "e p" FRUITS.TXT > F.TXT
+type F.TXT
+sort FRUITS.TXT > S.TXT
+type S.TXT
+tree GAMES >> S.TXT
+type S.TXT

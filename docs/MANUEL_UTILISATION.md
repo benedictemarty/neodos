@@ -80,7 +80,8 @@ la clé), avec `AUTOEXEC.BAT` rejoué ; s'il est intact, l'invite (ou le
 script en cours) reprend directement. Un
 programme trouve sa ligne de commande complète via l'en-tête de NeoDOS :
 `$C003` = `NEODOS`, `$C009` = version, `$C00C` = adresse de la ligne (octet de
-longueur puis les caractères) : c'est le contrat des **commandes externes**
+longueur puis les caractères), `$C00E` = adresse de la routine d'affichage
+d'un caractère (respecte `>`) : c'est le contrat des **commandes externes**
 (`BIN\ARGS.NEO` l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
 de partout.
 
@@ -169,6 +170,10 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 | `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
 | `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |
 | `DELTREE répertoire` | supprime un répertoire et tout son contenu (confirmation `Y/N`) |
+| `FIND [/I] [/N] [/C] [/V] "texte" fichier` | lignes contenant le texte (`/I` casse ignorée, `/N` numéros, `/C` compte, `/V` lignes sans le texte) |
+| `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 40 Ko, 2 048 lignes max) |
+
+La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |
 
 Écrire la sienne : `examples/ext/NOM.asm` avec `.include "neoext.inc"`

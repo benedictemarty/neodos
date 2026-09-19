@@ -15,6 +15,7 @@ DError          = $FF02
 DParams         = $FF04
 NEODOS_SIG      = $C003
 NEODOS_CMDLINE  = $C00C
+NEODOS_PUTC     = $C00E
 CR              = 13
 
 api             .macro
@@ -38,8 +39,19 @@ setparam        .macro
                 sta     DParams+\1+1
                 .endm
 
-; putc : écrit A (préservé) et attend
+; putc : écrit A (préservé) — par NeoDOS s'il est là (redirection « > »
+; honorée), sinon directement par le noyau
 putc            pha
+                lda     NEODOS_SIG
+                cmp     #'N'
+                bne     _direct
+                lda     NEODOS_SIG+1
+                cmp     #'E'
+                bne     _direct
+                pla
+                jmp     (NEODOS_PUTC)
+_direct         pla
+                pha
                 jsr     WriteCharacter
                 jsr     WaitMessage
                 pla

@@ -3,6 +3,24 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.11.0] — 2026-09-20
+
+Sprint 11 : `FIND`, `SORT`, redirection des commandes externes.
+
+### Ajouté
+- En-tête NeoDOS : **`$C00E` = vecteur `putc`** (sortie console du résident,
+  redirection `>` comprise). `neoext.inc` l'utilise quand NeoDOS est présent :
+  la sortie d'une commande externe va dans le fichier de `> f` / `>> f`. La
+  redirection n'est plus fermée avant le lancement d'un programme (seuls les
+  canaux 0 et 7 et le répertoire le sont).
+- **`FIND [/I] [/N] [/C] [/V] "texte" fichier`** (`BIN/FIND.NEO`) : lignes
+  contenant le texte (guillemets facultatifs, espaces permis) ; `/I` casse
+  ignorée, `/N` numéros, `/C` compte seul, `/V` lignes sans le texte.
+- **`SORT [/R] fichier`** (`BIN/SORT.NEO`) : tri des lignes (ASCII, casse
+  confondue ; `/R` décroissant), fichier chargé en `$2000` (40 Ko max,
+  2 048 lignes), tri de Shell sur une table de pointeurs.
+- Tests `32_ext_sort`, `33_ext_find`, `34_ext_redirect` (fixture `FRUITS.TXT`).
+
 ## [0.10.0] — 2026-09-20
 
 Sprint 10 : `XCOPY /S` et `DELTREE` en commandes externes.

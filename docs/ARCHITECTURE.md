@@ -65,7 +65,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    Sans succès, chaque entrée de `PATH` (`path_next`, séparateur `;`) est
    essayée avec `build_path`. La ligne reste dans `linebuf`, dont l'adresse
    est publiée dans l'en-tête `$C000` (`jmp start`, `NEODOS`, version,
-   pointeur en `$C00C`) : contrat des commandes externes — rien n'est écrit
+   pointeur en `$C00C`, vecteur `putc` en `$C00E`) : contrat des commandes externes — rien n'est écrit
    dans la zone programme (un programme peut se charger dès `$0200`).
    `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
    File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.

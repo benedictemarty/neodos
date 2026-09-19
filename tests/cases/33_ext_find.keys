@@ -1,0 +1,6 @@
+find "apple" FRUITS.TXT
+find /i /n apple FRUITS.TXT
+find /c /i "a" FRUITS.TXT
+find /v /i a FRUITS.TXT
+find
+find x NOPE

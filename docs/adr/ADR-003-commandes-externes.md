@@ -34,7 +34,8 @@ par `RTS` ; `%ERRORLEVEL` non transmis (limite connue).
   (analyse de ligne, jokers). Contrat (v0.8.1 ; la copie en `$0200` de la
   0.8.0 écrasait les programmes llvm-mos chargés à cette adresse) : en-tête
   en `$C000` — `$C003` signature `NEODOS`, `$C009` version (3 octets),
-  `$C00C` pointeur vers la ligne de commande (pstring, 200 max) ; exemple
+  `$C00C` pointeur vers la ligne de commande (pstring, 200 max), `$C00E`
+  (v0.11.0) vecteur `putc` du résident pour que la sortie suive `>` ; exemple
   `examples/args.asm` → `BIN/ARGS.NEO`.
 - `AUTOEXEC.BAT` devra positionner `PATH` (par exemple `PATH \BIN`).
 - Les descentes de base restent possibles mais exigent une décision

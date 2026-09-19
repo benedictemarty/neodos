@@ -15,9 +15,10 @@ CALLER.BAT             187
 README.TXT              31
 LONG.TXT              1820
 CHAIN.BAT               25
+FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
-       13 file(s)       2844 bytes
+       14 file(s)       2885 bytes
         6 dir(s)
 A:\>rd SUB
 A:\>rd NOPE
@@ -33,8 +34,10 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
+BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
 BIN/XCOPY.NEO
@@ -42,6 +45,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+FRUITS.TXT
 GAMES/
 GAMES/A.TXT
 GAMES/SUB/

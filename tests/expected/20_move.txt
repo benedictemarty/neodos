@@ -1,4 +1,3 @@
-A.TXT                    3
 SUB                  <DIR>
         2 file(s)         34 bytes
         1 dir(s)
@@ -10,16 +9,17 @@ A:\>dir *.TXT
 R2.TXT                  31
 CTRL.TXT                 9
 LONG.TXT              1820
-        3 file(s)       1860 bytes
+FRUITS.TXT              41
+        4 file(s)       1901 bytes
         0 dir(s)
 A:\>move *.TXT GAMES
-        3 file(s) moved
+        4 file(s) moved
 A:\>dir GAMES /w
  Volume in drive A is HOST0
  Directory of A:\GAMES
-LONG.TXT     CTRL.TXT     R2.TXT       A.TXT
-[SUB]
-        4 file(s)       1863 bytes
+FRUITS.TXT   LONG.TXT     CTRL.TXT     R2.TXT
+A.TXT        [SUB]
+        5 file(s)       1904 bytes
         1 dir(s)
 A:\>move *.BAT X.TXT
 Destination must be a directory
@@ -32,8 +32,10 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
+BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
 BIN/XCOPY.NEO
@@ -43,6 +45,7 @@ DEMO.BAT
 GAMES/
 GAMES/A.TXT
 GAMES/CTRL.TXT
+GAMES/FRUITS.TXT
 GAMES/LONG.TXT
 GAMES/R2.TXT
 GAMES/SUB/

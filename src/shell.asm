@@ -566,9 +566,11 @@ try_run         jsr     ptr_namebuf
                 rts
 _neo            jsr     stat_namebuf
                 bne     _none
-_run            jsr     redir_close             ; la sortie du programme va à
-                lda     #$ff                    ; l'écran ; fermer fichiers et
-                sta     DParams                 ; répertoire
+_run            jsr     redir_flush             ; la redirection reste ouverte
+                stz     DParams                 ; (un programme écrivant via
+                #api    3,5                     ; $C00E y participe) ; canaux
+                lda     #CH_BAT                 ; 0 et 7 et répertoire fermés
+                sta     DParams
                 #api    3,5
                 #api    3,19
                 jsr     p0_namebuf

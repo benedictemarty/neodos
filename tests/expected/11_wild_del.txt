@@ -1,6 +1,6 @@
 A.TXT                    3
 SUB                  <DIR>
-        4 file(s)       1863 bytes
+        5 file(s)       1904 bytes
         1 dir(s)
 A:\>del GAMES\*.*
 All files in directory will be deleted!
@@ -8,9 +8,9 @@ Are you sure (Y/N)?N
 A:\>dir GAMES /w
  Volume in drive A is HOST0
  Directory of A:\GAMES
-LONG.TXT     README.TXT   CTRL.TXT     A.TXT
-[SUB]
-        4 file(s)       1863 bytes
+FRUITS.TXT   LONG.TXT     README.TXT   CTRL.TXT
+A.TXT        [SUB]
+        5 file(s)       1904 bytes
         1 dir(s)
 A:\>del GAMES\*.*
 All files in directory will be deleted!
@@ -32,8 +32,10 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
+BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
 BIN/XCOPY.NEO
@@ -41,6 +43,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+FRUITS.TXT
 GAMES/
 GAMES/SUB/
 GAMES/SUB/DEEP/
