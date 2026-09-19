@@ -12,6 +12,13 @@ start           cld
                 stz     batdepth
                 stz     errorlevel
                 stz     linebuf                 ; %0-%9 vides pour AUTOEXEC.BAT
+                stz     redir
+                stz     pathbuf
+                ldx     #4                      ; PROMPT $p$g
+-               lda     default_prompt,x
+                sta     promptfmt,x
+                dex
+                bpl     -
                 lda     #$ff                    ; ferme tout ce qui traîne
                 sta     DParams
                 #api    3,5
@@ -28,6 +35,7 @@ start           cld
 mainloop        ldx     #$ff                    ; pile propre après un programme
                 txs
                 cli
+                jsr     redir_close
                 stz     bat_active
                 jsr     show_prompt
                 jsr     read_command            ; ligne -> linebuf (sans l'invite)
@@ -42,14 +50,14 @@ show_prompt     jsr     build_prompt
                 jsr     putpstr
                 rts
 
-; build_prompt : construit promptbuf (chaîne à préfixe de longueur)
-build_prompt    #api    3,26                    ; volume courant
+; build_cwdpath : cwdpath = « A:\chemin » (pstring)
+build_cwdpath   #api    3,26                    ; volume courant
                 lda     DParams
                 clc
                 adc     #'A'
-                sta     promptbuf+1
+                sta     cwdpath+1
                 lda     #':'
-                sta     promptbuf+2
+                sta     cwdpath+2
                 lda     #80
                 sta     cwdbuf                  ; longueur maximale du tampon
                 #setparam 0, cwdbuf
@@ -65,19 +73,174 @@ _copy           cpy     cwdbuf
                 cmp     #'/'
                 bne     +
                 lda     #'\'
-+               sta     promptbuf,x
++               sta     cwdpath,x
                 inx
                 iny
                 bra     _copy
 _end            lda     cwdbuf                  ; cwd vide -> « \ »
                 bne     +
                 lda     #'\'
-                sta     promptbuf,x
+                sta     cwdpath,x
                 inx
-+               lda     #'>'
-                sta     promptbuf,x
-                stx     promptbuf               ; longueur
++               dex
+                stx     cwdpath                 ; longueur
                 rts
+
+; build_prompt : promptbuf = promptfmt interprété ($p chemin, $g >, $l <,
+; $n lettre du lecteur, $d date, $t heure, $_ retour à la ligne, $$, $b |,
+; $q =) ; promptskip = longueur de la dernière ligne de l'invite (ce que
+; read_command doit sauter sur la ligne d'écran).
+build_prompt    jsr     build_cwdpath
+                stz     oidx
+                stz     promptskip
+                ldy     #1
+_loop           cpy     promptfmt
+                beq     +
+                bcs     _jdone
++               lda     promptfmt,y
+                iny
+                cmp     #'$'
+                bne     _char
+                cpy     promptfmt
+                beq     +
+                bcs     _jdone
++               lda     promptfmt,y
+                iny
+                jsr     upper
+                cmp     #'P'
+                beq     _path
+                cmp     #'G'
+                bne     +
+                lda     #'>'
+                bra     _char
++               cmp     #'L'
+                bne     +
+                lda     #'<'
+                bra     _char
++               cmp     #'N'
+                bne     +
+                lda     cwdpath+1
+                bra     _char
++               cmp     #'B'
+                bne     +
+                lda     #'|'
+                bra     _char
++               cmp     #'Q'
+                bne     +
+                lda     #'='
+                bra     _char
++               cmp     #'$'
+                beq     _char
+                cmp     #'_'
+                bne     +
+                lda     #CR
+                jsr     pr_char
+                stz     promptskip              ; nouvelle ligne d'écran
+                bra     _loop
++               cmp     #'D'
+                beq     _date
+                cmp     #'T'
+                bne     _loop                   ; code inconnu : ignoré
+                jmp     _time
+_jdone          jmp     _done
+_char           jsr     pr_char
+                inc     promptskip
+                bra     _loop
+_jloop          jmp     _loop
+_path           ldx     #1
+-               cpx     cwdpath
+                beq     +
+                bcs     _loop
++               lda     cwdpath,x
+                jsr     pr_char
+                inc     promptskip
+                inx
+                bra     -
+_date           phy
+                #api    1,20
+                lda     DParams+1               ; année : 19xx ou 20xx
+                cmp     #>2000
+                bne     +
+                lda     DParams
+                cmp     #<2000
++               bcc     _19
+                lda     #'2'
+                jsr     pr_char
+                lda     #'0'
+                jsr     pr_char
+                lda     DParams
+                sec
+                sbc     #<2000
+                bra     _yy
+_19             lda     #'1'
+                jsr     pr_char
+                lda     #'9'
+                jsr     pr_char
+                lda     DParams
+                sec
+                sbc     #<1900
+_yy             jsr     pr_2dig
+                lda     #'-'
+                jsr     pr_char
+                lda     DParams+2
+                jsr     pr_2dig
+                lda     #'-'
+                jsr     pr_char
+                lda     DParams+3
+                jsr     pr_2dig
+                lda     promptskip
+                clc
+                adc     #10
+                sta     promptskip
+                ply
+                bra     _jloop
+_time           phy
+                #api    1,20
+                lda     DParams+4
+                jsr     pr_2dig
+                lda     #':'
+                jsr     pr_char
+                lda     DParams+5
+                jsr     pr_2dig
+                lda     #':'
+                jsr     pr_char
+                lda     DParams+6
+                jsr     pr_2dig
+                lda     promptskip
+                clc
+                adc     #8
+                sta     promptskip
+                ply
+                jmp     _loop
+_done           lda     oidx
+                sta     promptbuf
+                rts
+
+; pr_char : ajoute A à promptbuf (index oidx, 90 caractères max)
+pr_char         phx
+                ldx     oidx
+                cpx     #90
+                bcs     +
+                inx
+                sta     promptbuf,x
+                stx     oidx
++               plx
+                rts
+
+; pr_2dig : ajoute A (0-99) sur deux chiffres
+pr_2dig         ldx     #0
+-               cmp     #10
+                bcc     +
+                sbc     #10
+                inx
+                bra     -
++               pha
+                txa
+                ora     #'0'
+                jsr     pr_char
+                pla
+                ora     #'0'
+                jmp     pr_char
 
 ; ---------------------------------------------------------------------------
 ; read_command : lit la ligne d'écran (elle contient l'invite), la recopie
@@ -89,13 +252,13 @@ read_command    ldx     #<screenline
                 ; la ligne d'écran commence par l'invite : on la saute
                 lda     screenline
                 sec
-                sbc     promptbuf
+                sbc     promptskip
                 bcc     _empty
                 sta     linebuf
                 beq     _done
                 sta     cnt
                 ldy     #1
-                ldx     promptbuf
+                ldx     promptskip
                 inx
 _copy           lda     screenline,x
                 sta     linebuf,y
@@ -110,7 +273,11 @@ _empty          stz     linebuf
 ; ---------------------------------------------------------------------------
 ; execute_line : analyse linebuf et exécute la commande
 ; ---------------------------------------------------------------------------
-execute_line    lda     errorlevel              ; IF ERRORLEVEL lit la commande
+execute_line    jsr     redir_setup             ; « > fichier » en fin de ligne
+                jsr     execute_line1
+                jmp     redir_close
+
+execute_line1   lda     errorlevel              ; IF ERRORLEVEL lit la commande
                 sta     preverr                 ; précédente
                 stz     errorlevel
                 jsr     parse_line
@@ -295,6 +462,11 @@ _done           rts
 ; s'il porte déjà l'extension). Sinon « Bad command or file name ».
 ; ---------------------------------------------------------------------------
 run_program     jsr     first_word_raw          ; nom tel que tapé
+                ldx     namebuf                 ; runword = copie
+-               lda     namebuf,x
+                sta     runword,x
+                dex
+                bpl     -
                 jsr     try_run                 ; ne revient que si absent
                 jsr     first_word_raw          ; puis en majuscules (DOS)
                 ldx     namebuf
@@ -305,7 +477,58 @@ run_program     jsr     first_word_raw          ; nom tel que tapé
                 dex
                 bne     -
                 jsr     try_run
+                ; puis dans chaque répertoire de PATH
+                ldy     #0
+_path           jsr     path_next               ; dirbuf = entrée suivante
+                bcs     _bad
+                sty     by
+                #setptr ptr2, runword
+                #setptr ptr, namebuf
+                jsr     build_path
+                jsr     try_run
+                ldx     runword                 ; en majuscules
+                beq     _bad
+-               lda     runword,x
+                jsr     upper
+                sta     newname,x
+                dex
+                bpl     -
+                #setptr ptr2, newname
+                #setptr ptr, namebuf
+                jsr     build_path
+                jsr     try_run
+                ldy     by
+                bra     _path
 _bad            jmp     err_badcmd
+
+; path_next : entrée suivante de PATH (à partir de Y) -> dirbuf ; C=1 si
+; plus d'entrée. Les entrées sont séparées par « ; ».
+path_next       ldx     #0
+_skip           cpy     pathbuf
+                bcs     _end
+                lda     pathbuf+1,y
+                iny
+                cmp     #';'
+                beq     _skip
+                cmp     #' '
+                beq     _skip
+                bra     _store
+_copy           cpy     pathbuf
+                bcs     _fin
+                lda     pathbuf+1,y
+                iny
+                cmp     #';'
+                beq     _fin
+_store          inx
+                sta     dirbuf,x
+                cpx     #100
+                bcc     _copy
+_fin            stx     dirbuf
+                clc
+                rts
+_end            stx     dirbuf
+                sec
+                rts
 
 ; try_run : namebuf = nom ; lance NOM(.NEO|.BAT) s'il existe (sans retour),
 ; sinon revient.
@@ -332,8 +555,9 @@ try_run         #setptr ptr, namebuf
                 rts
 _neo            jsr     stat_namebuf
                 bne     _none
-_run            lda     #$ff                    ; fermer fichiers et répertoire
-                sta     DParams
+_run            jsr     redir_close             ; la sortie du programme va à
+                lda     #$ff                    ; l'écran ; fermer fichiers et
+                sta     DParams                 ; répertoire
                 #api    3,5
                 #api    3,19
                 #setparam 0, namebuf
@@ -484,3 +708,161 @@ _drive          #println "Invalid drive specification"
                 rts
 _exist          #println "File already exists"
                 rts
+
+default_prompt  .ptext  "$p$g"
+
+; ---------------------------------------------------------------------------
+; Redirection de la sortie : « commande > fichier » ou « >> fichier »
+; ---------------------------------------------------------------------------
+; redir_setup : cherche « > » dans linebuf ; ouvre le fichier sur CH_OUT et
+; retire « > fichier » de la ligne. Sans « > » : rien.
+redir_setup     ldy     #1
+_find           cpy     linebuf
+                beq     +
+                bcs     _none
++               lda     linebuf,y
+                cmp     #'>'
+                beq     _found
+                iny
+                bra     _find
+_none           rts
+_found          dey                             ; la ligne s'arrête avant « > »
+                sty     tmp
+                iny
+                iny
+                lda     #3                      ; mode : créer/tronquer
+                sta     flag
+                cpy     linebuf
+                beq     +
+                bcs     _name
++               lda     linebuf,y
+                cmp     #'>'
+                bne     _name
+                iny
+                lda     #2                      ; « >> » : lecture/écriture
+                sta     flag
+_name           ldx     #0
+_sp             cpy     linebuf
+                beq     +
+                bcs     _open
++               lda     linebuf,y
+                cmp     #' '
+                bne     _cp
+                iny
+                bra     _sp
+_cp             cpy     linebuf
+                beq     +
+                bcs     _open
++               lda     linebuf,y
+                cmp     #' '
+                beq     _open
+                inx
+                sta     newname,x
+                iny
+                bra     _cp
+_open           stx     newname
+                lda     tmp
+                sta     linebuf                 ; ligne tronquée
+                txa
+                bne     +
+                jmp     _syntax
++
+                #setptr ptr, newname
+                jsr     to_apipath
+                lda     #CH_OUT
+                sta     DParams
+                #setparam 1, newname
+                lda     flag
+                sta     DParams+3
+                #api    3,4
+                lda     DError
+                beq     +
+                cmp     #ERR_NO_FILE            ; « >> » sur un fichier absent
+                bne     _err
+                lda     flag
+                cmp     #2
+                bne     _err
+                lda     #CH_OUT
+                sta     DParams
+                #setparam 1, newname
+                lda     #3
+                sta     DParams+3
+                #api    3,4
+                lda     DError
+                bne     _err
++               lda     flag
+                cmp     #2
+                bne     _ok
+                lda     #CH_OUT                 ; « >> » : se placer à la fin
+                sta     DParams
+                #api    3,10
+                lda     #CH_OUT
+                sta     DParams
+                #api    3,6
+_ok             stz     outlen
+                lda     #$80                    ; bit 7 : testé par BIT dans putc
+                sta     redir
+                rts
+_err            jmp     err_api
+_syntax         stz     linebuf                 ; « > » sans nom : rien n'est exécuté
+                jmp     err_syntax
+
+; redir_close : vide le tampon et ferme le fichier de redirection
+redir_close     lda     redir
+                beq     _done
+                jsr     redir_flush
+                stz     redir
+                lda     #CH_OUT
+                sta     DParams
+                #api    3,5
+_done           rts
+
+; redir_put : A -> outbuf (CR devient CR LF) ; préserve A, X, Y
+redir_put       pha
+                cmp     #CR
+                bne     +
+                jsr     _one
+                lda     #10
++               jsr     _one
+                pla
+                rts
+_one            phx
+                ldx     outlen
+                sta     outbuf,x
+                inx
+                stx     outlen
+                cpx     #OUTBUF_SIZE
+                bne     +
+                jsr     redir_flush
++               plx
+                rts
+
+; redir_flush : écrit outbuf sur CH_OUT en préservant les paramètres API
+; (un affichage peut survenir entre un appel API et la lecture de son résultat)
+redir_flush     lda     outlen
+                beq     _done
+                phy
+                ldy     #8
+-               lda     DParams-1,y
+                sta     dpsave-1,y
+                dey
+                bne     -
+                lda     DError
+                sta     dpsave+8
+                lda     #CH_OUT
+                sta     DParams
+                #setparam 1, outbuf
+                lda     outlen
+                sta     DParams+3
+                stz     DParams+4
+                #api    3,9
+                ldy     #8
+-               lda     dpsave-1,y
+                sta     DParams-1,y
+                dey
+                bne     -
+                lda     dpsave+8
+                sta     DError
+                stz     outlen
+                ply
+_done           rts

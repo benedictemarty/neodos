@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.3.0
+NeoDOS version 0.4.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -60,6 +60,8 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 | `DATE [aaaa-mm-jj]`, `TIME [hh:mm[:ss]]` | affiche / règle l'horloge (fonctions 1,20 / 1,21) |
 | `ECHO [ON\|OFF\|texte\|.]`, `PAUSE`, `REM` | commandes de script |
 | `IF [NOT] EXIST f \| a==b \| ERRORLEVEL n cmd`, `GOTO label`, `CALL script` | scripts : conditions, sauts, imbrication ; paramètres `%0`-`%9` |
+| `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
+| `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
 | `EXIT`, `BASIC` | retour à NeoBASIC |
 | `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script |
@@ -84,9 +86,9 @@ docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, adr/
 
 | Zone | Usage |
 |---|---|
-| `$0000-$00FF` | page zéro (NeoDOS : `$80-$AE`) |
-| `$0800-$C7FF` | programmes lancés depuis l'invite (49 152 octets) |
-| `$C800-$FBFF` | NeoDOS (code ≈ 7,9 Ko + tampons ≈ 5 Ko) |
+| `$0000-$00FF` | page zéro (NeoDOS : `$80-$AF`) |
+| `$0800-$BFFF` | programmes lancés depuis l'invite (47 104 octets) |
+| `$C000-$FBFF` | NeoDOS (code ≈ 9 Ko + tampons ≈ 5,6 Ko) |
 | `$FC00-$FFFF` | noyau 6502 du firmware, API `$FF00` |
 
 ## Licence

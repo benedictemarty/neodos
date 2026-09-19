@@ -4,7 +4,7 @@
 ; ligne par ligne. Les paramètres %0-%9 sont remplacés par les mots de la
 ; ligne de commande qui a lancé le script (batargs). Un programme .NEO lancé
 ; depuis un batch rend la main au batch s'il se termine par RTS (et s'il n'a
-; pas écrasé $C800-$FBFF) ; un .BAT lancé sans CALL remplace le script
+; pas écrasé $C000-$FBFF) ; un .BAT lancé sans CALL remplace le script
 ; courant (comme MS-DOS) ; CALL empile le script courant (BAT_DEPTH niveaux)
 ; et le recharge à la fin de l'appelé. Les lignes « :label » sont des cibles
 ; de GOTO.

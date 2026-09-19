@@ -53,7 +53,12 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$C800` et `$FBFF` (zone NeoDOS).
+Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS).
+
+`PATH BIN;GAMES` : un nom qui n'est ni une commande interne ni un fichier du
+répertoire courant est ensuite cherché dans `BIN` puis `GAMES` (avec et sans
+extension `.NEO`/`.BAT`, tel que tapé puis en majuscules). `PATH` affiche la
+liste, `PATH ;` l'efface. `PATH` est typiquement placé dans `AUTOEXEC.BAT`.
 
 ## Scripts .BAT
 
@@ -106,6 +111,25 @@ ECHO %1 not found
 - `CALL script [args]` exécute un autre `.BAT` puis reprend à la ligne
   suivante (3 niveaux d'imbrication, chaque niveau garde ses `%n`).
 
+## Redirection
+
+`commande > fichier` écrit la sortie de la commande dans le fichier (créé ou
+tronqué) ; `>> fichier` l'ajoute à la fin (le fichier est créé au besoin).
+Les messages d'erreur y vont aussi ; les lignes se terminent par CR/LF.
+
+```
+DIR > LISTE.TXT
+ECHO Sauvegarde du %d >> JOURNAL.TXT
+TYPE A.TXT >> TOUT.TXT
+```
+
+## Invite
+
+`PROMPT texte` change l'invite ; codes : `$p` chemin courant (`A:\GAMES`),
+`$g` `>`, `$l` `<`, `$n` lettre du lecteur, `$d` date, `$t` heure, `$_`
+retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
+`$p$g`. Exemple : `PROMPT $d $t$_$p$g`.
+
 ## Système
 
 | Commande | Rôle |
@@ -116,6 +140,8 @@ ECHO %1 not found
 | `MEM` | mémoire disponible pour les programmes |
 | `DATE [aaaa-mm-jj]` | affiche ou règle la date |
 | `TIME [hh:mm[:ss]]` | affiche ou règle l'heure |
+| `PATH [rép;rép]` | répertoires de recherche des programmes |
+| `PROMPT [texte]` | format de l'invite |
 | `HELP` | liste des commandes |
 | `EXIT` ou `BASIC` | retour à NeoBASIC |
 
@@ -139,7 +165,7 @@ ECHO %1 not found
 
 ## Limites connues (v0.1)
 
-- Pas de `FOR`, `SHIFT`, `%VAR%` dans les scripts, pas de `PATH`, pas de
-  dates de fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
+- Pas de `FOR`, `SHIFT`, `%VAR%` dans les scripts, pas de `<` ni `|`, pas
+  de dates de fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`
   laisse `..` dans le chemin affiché ; la carte (FAT) n'a pas ces limites.

@@ -23,4 +23,12 @@ batname         .fill   BAT_NAME_SIZE   ; chemin du batch courant
 batargs         .fill   BAT_ARGS_SIZE   ; ligne de commande du batch courant
 batdepth        .fill   1               ; niveaux CALL empilés
 batstack        .fill   BAT_LEVEL_SIZE*BAT_DEPTH ; niveaux sauvegardés (nom, args, bptr)
+outbuf          .fill   OUTBUF_SIZE     ; redirection : caractères en attente
+outlen          .fill   1               ; nombre de caractères dans outbuf
+pathbuf         .fill   PATH_SIZE+1     ; PATH
+promptfmt       .fill   PROMPT_SIZE+1   ; format de l'invite
+cwdpath         .fill   96              ; « A:\chemin » (DIR, CD)
+runword         .fill   129             ; run_program : nom tel que tapé
+promptskip      .fill   1               ; longueur de la dernière ligne de l'invite
+dpsave          .fill   9               ; sauvegarde DParams/DError pendant redir_flush
 dataend

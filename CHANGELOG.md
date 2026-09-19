@@ -3,6 +3,29 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.4.0] — 2026-09-19
+
+Sprint 4 : PATH, PROMPT, redirection.
+
+### Ajouté
+- `PATH [rép;rép…]` : les programmes `.NEO` et scripts `.BAT` sont cherchés
+  dans le répertoire courant puis dans chaque répertoire de `PATH` (nom tel
+  que tapé puis en majuscules) ; `PATH` affiche `PATH=…` ou `No Path`,
+  `PATH ;` efface.
+- `PROMPT [texte]` : `$p` chemin, `$g` `>`, `$l` `<`, `$n` lettre du lecteur,
+  `$d` date, `$t` heure, `$_` retour à la ligne, `$$`, `$b` `|`, `$q` `=` ;
+  défaut `$p$g`. La lecture de ligne saute la dernière ligne de l'invite.
+- Redirection `commande > fichier` (création) et `>> fichier` (ajout, fichier
+  créé s'il n'existe pas) pour toute commande, messages compris ; fins de
+  ligne CR/LF ; tampon de 128 octets vidé en préservant les paramètres API.
+- Tests `17_path`, `18_prompt`, `19_redirect`, `19b_redirect_dir` (fixture
+  `BIN/HI.NEO`, `BIN/TOOL.BAT`).
+
+### Modifié
+- NeoDOS chargé en `$C000` ; programmes en `$0800-$BFFF` (47 104 octets).
+  ADR-002 amendé.
+- `build_cwdpath` (« A:\chemin ») séparé de l'invite pour `DIR` et `CD`.
+
 ## [0.3.0] — 2026-09-19
 
 Sprint 3 : scripts .BAT avancés.

@@ -1,30 +1,22 @@
-README.BAK              31
-CTRL.BAK                 9
-        2 file(s)         40 bytes
-        0 dir(s)
-A:\>ren C?RL.BAK X?RL.OLD
-A:\>dir *.OLD
- Volume in drive A is HOST0
- Directory of A:\
-XTRL.OLD                 9
-        1 file(s)          9 bytes
-        0 dir(s)
-A:\>copy README.BAK GAMES
-        1 file(s) copied
-A:\>dir GAMES
+NeoDOS version 0.4.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>dir GAMES > D.TXT
+A:\>type D.TXT
  Volume in drive A is HOST0
  Directory of A:\GAMES
-README.BAK              31
 A.TXT                    3
-        2 file(s)         34 bytes
+        1 file(s)          3 bytes
         0 dir(s)
-A:\>copy *.BAK X.TXT
-Cannot copy several files to one file
-A:\>copy NOPE* GAMES
+A:\>dir *.NOPE > F.TXT
+A:\>type F.TXT
+ Volume in drive A is HOST0
+ Directory of A:\
 File not found
-A:\>ren *.OLD README.BAK
-XTRL.OLD -> README.BAK: Duplicate file name or file n
-ot found
+A:\>copy README.TXT GAMES > G.TXT
+A:\>type G.TXT
+        1 file(s) copied
 A:\>
 --- files ---
 ARGS.BAT
@@ -34,10 +26,14 @@ BIN/HI.NEO
 BIN/TOOL.BAT
 CALLER.BAT
 CHAIN.BAT
+CTRL.TXT
+D.TXT
 DEMO.BAT
+F.TXT
+G.TXT
 GAMES/
 GAMES/A.TXT
-GAMES/README.BAK
+GAMES/README.TXT
 HELLO.NEO
 LOOP.BAT
 MANY/
@@ -76,7 +72,6 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
-README.BAK
+README.TXT
 SUB.BAT
 SUB2.BAT
-XTRL.OLD

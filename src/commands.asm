@@ -53,6 +53,10 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_time
                 .ptext  "MEM"
                 .word   cmd_mem
+                .ptext  "PATH"
+                .word   cmd_path
+                .ptext  "PROMPT"
+                .word   cmd_prompt
                 .ptext  "HELP"
                 .word   cmd_help
                 .ptext  "EXIT"
@@ -111,29 +115,28 @@ _open           #setparam 0, dirbuf
                 jsr     print_volname
                 jsr     dir_newline
                 #print  " Directory of "
-                jsr     build_prompt            ; « A:\chemin> »
-                dec     promptbuf               ; sans le « > »
+                jsr     build_cwdpath           ; « A:\chemin »
                 lda     dirbuf                  ; répertoire demandé (sauf « . »)
                 cmp     #1
                 bne     _withdir
                 lda     dirbuf+1
                 cmp     #'.'
                 bne     _withdir
-                #setptr ptr, promptbuf
+                #setptr ptr, cwdpath
                 jsr     putpstr
                 bra     _hdr
 _withdir        lda     dirbuf+1                ; chemin absolu : « A: » + chemin
                 cmp     #'/'
                 bne     _relative
                 lda     #2
-                sta     promptbuf
-                #setptr ptr, promptbuf
+                sta     cwdpath
+                #setptr ptr, cwdpath
                 jsr     putpstr
                 bra     _showdir
-_relative       #setptr ptr, promptbuf
+_relative       #setptr ptr, cwdpath
                 jsr     putpstr
-                ldx     promptbuf               ; racine : pas de second « \ »
-                lda     promptbuf,x
+                ldx     cwdpath                 ; racine : pas de second « \ »
+                lda     cwdpath,x
                 cmp     #'\'
                 beq     _showdir
                 lda     #'\'
@@ -348,9 +351,8 @@ _unk            #print  "?"
 ; ---------------------------------------------------------------------------
 cmd_cd          lda     arg1
                 bne     _chdir
-                jsr     build_prompt
-                dec     promptbuf
-                #setptr ptr, promptbuf
+                jsr     build_cwdpath
+                #setptr ptr, cwdpath
                 jsr     putpstr
                 jmp     newline
 _chdir          #setptr ptr, arg1
@@ -847,6 +849,60 @@ _print          #setptr ptr, argrest
 cmd_rem         rts
 
 ; ---------------------------------------------------------------------------
+; PATH [rép;rép…] : affiche ou fixe les répertoires de recherche ; « PATH ; »
+; efface
+; ---------------------------------------------------------------------------
+cmd_path        lda     argrest
+                bne     _set
+                lda     pathbuf
+                bne     +
+                #println "No Path"
+                rts
++               #print  "PATH="
+                #setptr ptr, pathbuf
+                jsr     putpstr_dos
+                jmp     newline
+_set            cmp     #1
+                bne     +
+                lda     argrest+1
+                cmp     #';'
+                bne     +
+                stz     pathbuf
+                rts
++               ldx     argrest
+                cpx     #PATH_SIZE
+                bcc     +
+                ldx     #PATH_SIZE
++               stx     pathbuf
+-               lda     argrest,x
+                sta     pathbuf,x
+                dex
+                bne     -
+                #setptr ptr, pathbuf
+                jmp     to_apipath
+
+; ---------------------------------------------------------------------------
+; PROMPT [texte] : format de l'invite ($p$g par défaut)
+; ---------------------------------------------------------------------------
+cmd_prompt      ldx     argrest
+                bne     +
+                ldx     #4
+-               lda     default_prompt,x
+                sta     promptfmt,x
+                dex
+                bpl     -
+                rts
++               cpx     #PROMPT_SIZE
+                bcc     +
+                ldx     #PROMPT_SIZE
++               stx     promptfmt
+-               lda     argrest,x
+                sta     promptfmt,x
+                dex
+                bne     -
+                rts
+
+; ---------------------------------------------------------------------------
 ; IF [NOT] EXIST fichier | a==b | ERRORLEVEL n  commande
 ; ---------------------------------------------------------------------------
 cmd_if          stz     negate
@@ -1193,12 +1249,12 @@ cmd_mem         jsr     newline
                 ldy     #>(PROG_TOP-PROG_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes free for programs ($0800-$C7FF)"
+                #println " bytes free for programs ($0800-$BFFF)"
                 lda     #<(NEODOS_TOP-NEODOS_BASE)
                 ldy     #>(NEODOS_TOP-NEODOS_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes reserved for NeoDOS ($C800-$FBFF)"
+                #println " bytes reserved for NeoDOS ($C000-$FBFF)"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
@@ -1214,6 +1270,8 @@ cmd_help        jsr     newline
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"
+                #println "PATH PROMPT       Search path, prompt ($p$g)"
+                #println "cmd > file        Redirect output (>> appends)"
                 #println "DATE TIME         Show/set date and time"
                 #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"
                 #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"

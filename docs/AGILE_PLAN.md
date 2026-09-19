@@ -57,14 +57,21 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S19 `CALL script [args]` : batch imbriqué (3 niveaux), retour à l'appelant | fait |
 | S20 Base en `$C800`, tests, docs | fait |
 
+## Sprint 4 — PATH, PROMPT, redirection (2026-09-19) — livré, v0.4.0
+
+| Story | État |
+|---|---|
+| S21 `PATH [dir;dir]` : recherche des `.NEO`/`.BAT` dans les répertoires listés | fait |
+| S22 `PROMPT [texte]` : `$p $g $n $d $t $_ $$`, défaut `$p$g` | fait |
+| S23 Redirection `commande > fichier` et `>> fichier` (CR/LF), messages inclus | fait |
+| S24 Base en `$C000`, tests, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
-| B4 | `PROMPT`, `PATH` (recherche des programmes dans plusieurs répertoires) | |
 | B6 | `COPY` avec concaténation, `MOVE`, `XCOPY` de répertoires | |
-| B7 | Redirection `>` vers fichier pour `DIR`, `TYPE`, `ECHO` | |
 | B8 | Historique de commandes (flèche haut) | ReadLine du noyau ne le fait pas |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT` : éditeur de texte plein écran | gros chantier |
@@ -75,5 +82,5 @@ NeoBASIC (qui reste accessible par `EXIT`).
 - Les émulateurs (`neo`, Phosphoneo) ne normalisent pas `..` dans le
   répertoire courant (`A:\GAMES\..`) et sont sensibles à la casse des noms ;
   la carte (FatFs) n'a pas ces limites. À traiter côté émulateurs.
-- Un programme `.NEO` qui écrit au-dessus de `$C800` détruit NeoDOS ; le
+- Un programme `.NEO` qui écrit au-dessus de `$C000` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

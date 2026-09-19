@@ -34,7 +34,7 @@ $(BIN): $(SRC) | $(BUILD)
 	$(AS) $(AFLAGS) --list $(LST) --labels $(LBL) -o $@ src/neodos.asm
 
 $(NEO): $(BIN) tools/mkneo.py
-	python3 tools/mkneo.py $(BIN) $(NEO) C800 C800 "NeoDOS"
+	python3 tools/mkneo.py $(BIN) $(NEO) C000 C000 "NeoDOS"
 
 dist: $(NEO) examples
 	cp $(NEO) storage/NEODOS.NEO
@@ -43,7 +43,7 @@ run: $(NEO)
 	$(PHOSPHONEO) --sdl --scale 3 --storage storage $(NEO)
 
 run-neo: $(NEO)
-	cd storage && $(NEO_EMU) ../$(NEO)@C800 run@C800
+	cd storage && $(NEO_EMU) ../$(NEO)@C000 run@C000
 
 test: $(NEO)
 	tests/run.sh

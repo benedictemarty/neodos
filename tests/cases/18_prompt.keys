@@ -1,0 +1,8 @@
+prompt $n$g
+cd GAMES
+prompt [$p] $$
+cd ..
+prompt $d$_$p$g
+cd GAMES
+prompt
+echo done

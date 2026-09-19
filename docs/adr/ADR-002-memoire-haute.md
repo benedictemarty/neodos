@@ -1,6 +1,6 @@
 # ADR-002 — NeoDOS résident en haut de la RAM (`$D000-$FBFF`)
 
-Date : 2026-09-19. État : accepté ; amendé le 2026-09-19 (v0.2.0 : base `$D000` ; v0.3.0 : base `$C800`).
+Date : 2026-09-19. État : accepté ; amendé le 2026-09-19 (v0.2.0 : `$D000` ; v0.3.0 : `$C800` ; v0.4.0 : `$C000`).
 
 ## Contexte
 
@@ -17,17 +17,20 @@ reprendre la main (retour à l'invite, suite d'un `.BAT`).
 
 ## Décision
 
-Option 2. v0.1.0 : base `$D800` (9 Ko). v0.2.0 : base `$D000` (11 Ko).
-v0.3.0 : base **`$C800`** (13 Ko : ≈ 7,9 Ko de code, 5 Ko de tampons dont
-`listbuf` 1,25 Ko pour les jokers et `batstack` 582 octets pour `CALL`,
-≈ 330 octets de marge). Les programmes disposent de `$0800-$C7FF`
-(49 152 octets) ; page zéro NeoDOS `$80-$AE`, hors des zones du noyau
-(`$E0-$EF`, `$FC-$FF`).
+Option 2. v0.1.0 : base `$D800` (9 Ko). v0.2.0 : `$D000` (11 Ko). v0.3.0 :
+`$C800` (13 Ko). v0.4.0 : base **`$C000`** (15 Ko : ≈ 9 Ko de code, 5,6 Ko de
+tampons dont `listbuf` 1,25 Ko pour les jokers, `batstack` 582 octets pour
+`CALL`, `outbuf` 128 pour la redirection ; ≈ 650 octets de marge). Les
+programmes disposent de `$0800-$BFFF` (47 104 octets) ; page zéro NeoDOS
+`$80-$AF`, hors des zones du noyau (`$E0-$EF`, `$FC-$FF`).
+
+Limite retenue : ne pas descendre sous `$C000` sans décision explicite —
+NeoBASIC lui-même occupe `$0800-$4B8A`, et 47 Ko restent confortables pour les
+programmes, mais chaque sprint a coûté 2 Ko.
 
 ## Conséquences
 
-- Un programme qui écrit au-dessus de `$C800` détruit NeoDOS (documenté).
-- La marge est faible : un prochain sprint volumineux déplacera la base
-  (`NEODOS_BASE` dans `src/const.inc`, `C800` dans le Makefile).
+- Un programme qui écrit au-dessus de `$C000` détruit NeoDOS (documenté).
+- Base : `NEODOS_BASE` dans `src/const.inc` et `C000` dans le Makefile.
 - `MEM` affiche ces deux zones ; `.cerror` à l'assemblage si l'image
   dépasse `$FC00`.

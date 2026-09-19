@@ -5,9 +5,12 @@
 ; appel API n'est en cours quand l'appelant prépare des paramètres).
 ; Préserve A, X, Y.
 ; ---------------------------------------------------------------------------
-putc            jsr     WriteCharacter
+putc            bit     redir
+                bmi     +
+                jsr     WriteCharacter
                 jsr     WaitMessage
                 rts
++               jmp     redir_put
 
 newline         pha
                 lda     #CR

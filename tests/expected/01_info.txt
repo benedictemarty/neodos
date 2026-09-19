@@ -1,4 +1,3 @@
-NeoDOS version 0.3.0
 Neo6502 firmware 1.0.0
 A:\>help
 DIR [path] [/P /W] List directory (wildcards)
@@ -10,6 +9,8 @@ COPY src dst      Copy files (COPY *.TXT DIR)
 TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory
+PATH PROMPT       Search path, prompt ($p$g)
+cmd > file        Redirect output (>> appends)
 DATE TIME         Show/set date and time
 ECHO PAUSE REM    Batch commands (.BAT, %1-%9)
 IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :labe
@@ -17,14 +18,17 @@ l
 EXIT              Return to NeoBASIC
 name[.NEO]        Run a program
 A:\>mem
-   49152 bytes free for programs ($0800-$C7FF)
-   13312 bytes reserved for NeoDOS ($C800-$FBFF)
+   47104 bytes free for programs ($0800-$BFFF)
+   15360 bytes reserved for NeoDOS ($C000-$FBFF)
 A:\>vol
  Volume in drive A is HOST0
 A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
+BIN/
+BIN/HI.NEO
+BIN/TOOL.BAT
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT

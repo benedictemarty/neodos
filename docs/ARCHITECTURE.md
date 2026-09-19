@@ -8,7 +8,7 @@
                                              ▲
                                              │ SendMessage/WaitMessage ($FFF7/$FFF4)
                                     ┌────────┴─────────┐
-                                    │ NeoDOS ($C800)   │
+                                    │ NeoDOS ($C000)   │
                                     │ shell ─ commands │
                                     │   │   wildcard   │
                                     │   │      batch   │
@@ -16,7 +16,7 @@
                                     └──────────────────┘
                                              │ Load File (3,2) + JSR $FF08
                                              ▼
-                                    programme .NEO ($0800-$C7FF)
+                                    programme .NEO ($0800-$BFFF)
 ```
 
 NeoDOS ne touche pas au matériel : tout passe par le bloc de contrôle de
@@ -30,7 +30,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/neodos.asm` | point d'entrée, `VERSION`, ordre des `.include`, contrôle de taille |
 | `src/const.inc` | adresses (noyau, API, page zéro), codes d'erreur, attributs |
 | `src/macros.inc` | `#api g,f`, `#print`, `#println`, `#setparam`, `#setptr` |
-| `src/shell.asm` | démarrage, boucle, invite, lecture de ligne, analyse, table de dispatch, lancement `.NEO`, messages d'erreur |
+| `src/shell.asm` | démarrage, boucle, invite (`PROMPT`), lecture de ligne, analyse, dispatch, lancement `.NEO` (+ `PATH`), redirection `>`, messages d'erreur |
 | `src/commands.asm` | table des commandes et leurs implémentations |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
 | `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf`, `%n`, `GOTO`, `CALL`, pile des niveaux |
@@ -39,10 +39,13 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 
 ## Flux d'une commande
 
-1. `show_prompt` : volume courant (3,26) → lettre ; répertoire courant (3,23)
-   avec `/` → `\` ; `promptbuf` = `A:\CHEMIN>`.
+1. `show_prompt` : `build_cwdpath` (volume 3,26 → lettre, répertoire 3,23
+   avec `/` → `\` ; `cwdpath` = `A:\CHEMIN`) puis `build_prompt` interprète
+   `promptfmt` (`$p`, `$g`, `$d`… ; `promptskip` = longueur de la dernière
+   ligne de l'invite).
 2. `read_command` : `ReadLine` du noyau renvoie **toute la ligne d'écran**
-   (invite comprise) ; on saute `len(promptbuf)` caractères → `linebuf`.
+   (invite comprise) ; on saute `promptskip` caractères → `linebuf`.
+   `execute_line` appelle d'abord `redir_setup` (voir Redirection).
 3. `parse_line` : `cmdbuf` = premier mot en majuscules (arrêt sur espace,
    `\`, `/`, `.` après la 1re lettre, `:` sauf pour `X:`) ; `argrest` = reste
    brut ; `arg1`/`arg2` = deux premiers mots du reste.
@@ -50,7 +53,9 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    (pstring + adresse) ; sinon `run_program`.
 5. `run_program` → `try_run` : nom tel que tapé puis en majuscules ; avec
    extension `.NEO`/`.BAT` ou en essayant `.NEO` puis `.BAT` (File Stat 3,16).
-   `.NEO` : fermeture des canaux (3,5 `$FF`) et du répertoire (3,19), Load
+   Sans succès, chaque entrée de `PATH` (`path_next`, séparateur `;`) est
+   essayée avec `build_path`.
+   `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
    File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.
    Au retour : pile réinitialisée, reprise du batch en cours ou invite.
 
@@ -83,10 +88,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$AE` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`) |
-| `$C800-$E6C3` | code (≈ 7,9 Ko ; `codeend`) |
-| `$E6C4-$FAAE` | tampons : `promptbuf`, `cwdbuf`, `screenline`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest`, `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 280), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582) |
-| `$FAAF-$FBFF` | libre (≈ 330 octets de marge ; `.cerror` si `dataend > $FC00`) |
+| `$80-$AF` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir` |
+| `$C000-$E36B` | code (≈ 9 Ko ; `codeend`) |
+| `$E36C-$F974` | tampons : `promptbuf`, `cwdbuf`, `screenline`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest`, `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 280), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave` |
+| `$F975-$FBFF` | libre (≈ 650 octets de marge ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
@@ -112,8 +117,20 @@ est remis à 0 au début de chaque `execute_line`, à 1 par `errlvl1` dans les
 chemins d'erreur) ou `a==b`, puis recopie le reste de la ligne dans `linebuf`
 et appelle `execute_line`.
 
+## Redirection
+
+`redir_setup` cherche le premier `>` de `linebuf`, lit `>>` éventuel et le
+nom qui suit, tronque la ligne, ouvre le fichier sur `CH_OUT` (mode 3, ou 2
+puis Seek à la taille pour `>>` ; création si absent) et arme `redir` (bit 7).
+`putc` teste `redir` par `BIT` et envoie alors dans `outbuf` (`redir_put`,
+CR → CR LF) ; `redir_flush` écrit le tampon (3,9) en sauvegardant et
+restaurant `DParams`/`DError`, car un affichage peut survenir entre un appel
+API et la lecture de son résultat (`DIR`). `redir_close` (fin de
+`execute_line`, `mainloop`, `batch_next`, lancement d'un `.NEO`) vide et
+ferme.
+
 ## Format `.neo`
 
 `tools/mkneo.py` : en-tête `03 'N' 'E' 'O'`, version, adresse d'exécution,
 puis blocs (contrôle, adresse de chargement, taille, commentaire ASCIIZ,
-données). NeoDOS = un bloc en `$C800`, exec `$C800`.
+données). NeoDOS = un bloc en `$C000`, exec `$C000`.

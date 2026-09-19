@@ -1,4 +1,3 @@
-A:\>dir
  Volume in drive A is HOST0
  Directory of A:\
 C.TXT                   31
@@ -6,6 +5,7 @@ AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+BIN                  <DIR>
 SUB2.BAT                33
 ARGS.BAT               201
 MANY                 <DIR>
@@ -16,7 +16,7 @@ README.TXT              31
 CHAIN.BAT               25
 LOOP.BAT               102
        12 file(s)        955 bytes
-        2 dir(s)
+        3 dir(s)
 A:\>del C.TXT
 A:\>del NOPE
 File not found
@@ -30,6 +30,9 @@ A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
+BIN/
+BIN/HI.NEO
+BIN/TOOL.BAT
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT

@@ -25,8 +25,8 @@ Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
   des fichiers du stockage après le test.
 - `tests/fixtures/` : fichiers présents au démarrage (`README.TXT`,
   `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`, `MANY/F01..F35.DAT`, scripts
-  `ARGS.BAT`, `LOOP.BAT`, `SUB.BAT`, `SUB2.BAT`, `CALLER.BAT`) ; `storage/`
-  (exemples) est ajouté.
+  `ARGS.BAT`, `LOOP.BAT`, `SUB.BAT`, `SUB2.BAT`, `CALLER.BAT`, `BIN/HI.NEO`,
+  `BIN/TOOL.BAT`) ; `storage/` (exemples) est ajouté.
 
 Le budget de cycles est calculé d'après le nombre de touches (≈ 700 000
 cycles par touche, 6 trames) ; un test dure environ 0,5 s.
@@ -51,6 +51,10 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `13_dir_p` | `DIR MANY /P` : pause après 28 lignes, reprise sur une touche |
 | `14_bat_args_if` | `%0`-`%3`, `%` littéral, `IF "%1"=="A"`, `IF NOT`, `IF EXIST`, `IF a == b` |
 | `15_bat_goto` | `GOTO label`, `GOTO :label`, `Label not found`, `GOTO` hors script, `IF` sans argument / faux / vrai |
+| `17_path` | `PATH` vide / fixé / effacé, programme et script trouvés via `PATH`, avec extension, absent |
+| `18_prompt` | `PROMPT $n$g`, `[$p] $$`, `$d$_$p$g` (invite sur deux lignes), retour au défaut |
+| `19_redirect` | `ECHO > f`, `>> f` (existant et absent), message d'erreur redirigé, `>` sans nom |
+| `19b_redirect_dir` | `DIR > f` (résultats API préservés pendant l'écriture), `DIR` vide, `COPY > f` |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

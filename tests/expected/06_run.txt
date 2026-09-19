@@ -1,8 +1,8 @@
- Directory of A:\
 AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+BIN                  <DIR>
 SUB2.BAT                33
 ARGS.BAT               201
 MANY                 <DIR>
@@ -13,7 +13,7 @@ README.TXT              31
 CHAIN.BAT               25
 LOOP.BAT               102
        11 file(s)        924 bytes
-        2 dir(s)
+        3 dir(s)
 This line is not echoed
 A:\>HELLO
 Hello from a NeoDOS program!
@@ -30,6 +30,9 @@ A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
+BIN/
+BIN/HI.NEO
+BIN/TOOL.BAT
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
