@@ -1,12 +1,12 @@
-NeoDOS version 0.1.0
+NeoDOS version 0.2.0
 Neo6502 firmware 1.0.0
 A:\>help
-DIR [path]        List directory
+DIR [path] [/P /W] List directory (wildcards)
 CD [path]         Change/show directory
 MD RD path        Make/remove directory
-DEL file          Delete a file
-REN old new       Rename a file
-COPY src dst      Copy a file
+DEL file|*.*      Delete files
+REN old new       Rename files (REN *.TXT *.BAK)
+COPY src dst      Copy files (COPY *.TXT DIR)
 TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory
@@ -15,8 +15,8 @@ ECHO PAUSE REM    Batch commands (.BAT)
 EXIT              Return to NeoBASIC
 name[.NEO]        Run a program
 A:\>mem
-   53248 bytes free for programs ($0800-$D7FF)
-    9216 bytes reserved for NeoDOS ($D800-$FBFF)
+   51200 bytes free for programs ($0800-$CFFF)
+   11264 bytes reserved for NeoDOS ($D000-$FBFF)
 A:\>vol
  Volume in drive A is HOST0
 A:\>
@@ -28,4 +28,40 @@ DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+MANY/
+MANY/F01.DAT
+MANY/F02.DAT
+MANY/F03.DAT
+MANY/F04.DAT
+MANY/F05.DAT
+MANY/F06.DAT
+MANY/F07.DAT
+MANY/F08.DAT
+MANY/F09.DAT
+MANY/F10.DAT
+MANY/F11.DAT
+MANY/F12.DAT
+MANY/F13.DAT
+MANY/F14.DAT
+MANY/F15.DAT
+MANY/F16.DAT
+MANY/F17.DAT
+MANY/F18.DAT
+MANY/F19.DAT
+MANY/F20.DAT
+MANY/F21.DAT
+MANY/F22.DAT
+MANY/F23.DAT
+MANY/F24.DAT
+MANY/F25.DAT
+MANY/F26.DAT
+MANY/F27.DAT
+MANY/F28.DAT
+MANY/F29.DAT
+MANY/F30.DAT
+MANY/F31.DAT
+MANY/F32.DAT
+MANY/F33.DAT
+MANY/F34.DAT
+MANY/F35.DAT
 README.TXT

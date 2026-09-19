@@ -56,22 +56,46 @@ cmdtable        .ptext  "DIR"
                 .byte   0
 
 ; ---------------------------------------------------------------------------
-; DIR [chemin] : liste un répertoire au format DOS
+; DIR [chemin][motif] [/P] [/W] : liste un répertoire au format DOS
 ; ---------------------------------------------------------------------------
-cmd_dir         #setptr ptr, arg1
+cmd_dir         jsr     dir_parse_args          ; arg1 = chemin, dirflags
+                #setptr ptr, arg1
                 jsr     to_apipath
                 lda     arg1
-                bne     +
-                lda     #1                      ; sans argument : « . »
-                sta     arg1
+                bne     _witharg
+                lda     #1                      ; sans argument : « . », « * »
+                sta     dirbuf
                 lda     #'.'
-                sta     arg1+1
-+               #setparam 0, arg1
+                sta     dirbuf+1
+                bra     _all
+_witharg        jsr     has_wild
+                bcs     _split
+                #setparam 0, arg1               ; un répertoire existant ?
+                #api    3,16
+                lda     DError
+                bne     _split
+                lda     DParams+4
+                and     #ATTR_DIR
+                beq     _split
+                ldx     arg1                    ; dirbuf = arg1
+-               lda     arg1,x
+                sta     dirbuf,x
+                dex
+                bpl     -
+_all            lda     #1                      ; patbuf = « * »
+                sta     patbuf
+                lda     #'*'
+                sta     patbuf+1
+                bra     _open
+_split          jsr     split_path
+_open           #setparam 0, dirbuf
                 #api    3,17                    ; Open Directory
                 lda     DError
                 beq     +
                 jmp     err_api
-+               #print  " Volume in drive "
++               stz     dirlines
+                stz     dircol
+                #print  " Volume in drive "
                 #api    3,26
                 lda     DParams
                 clc
@@ -79,39 +103,39 @@ cmd_dir         #setptr ptr, arg1
                 jsr     putc
                 #print  " is "
                 jsr     print_volname
-                jsr     newline
+                jsr     dir_newline
                 #print  " Directory of "
                 jsr     build_prompt            ; « A:\chemin> »
                 dec     promptbuf               ; sans le « > »
-                lda     arg1                    ; chemin demandé (sauf « . »)
+                lda     dirbuf                  ; répertoire demandé (sauf « . »)
                 cmp     #1
-                bne     _witharg
-                lda     arg1+1
+                bne     _withdir
+                lda     dirbuf+1
                 cmp     #'.'
-                bne     _witharg
+                bne     _withdir
                 #setptr ptr, promptbuf
                 jsr     putpstr
                 bra     _hdr
-_witharg        lda     arg1+1                  ; chemin absolu : « A: » + chemin
+_withdir        lda     dirbuf+1                ; chemin absolu : « A: » + chemin
                 cmp     #'/'
                 bne     _relative
                 lda     #2
                 sta     promptbuf
                 #setptr ptr, promptbuf
                 jsr     putpstr
-                bra     _showarg
+                bra     _showdir
 _relative       #setptr ptr, promptbuf
                 jsr     putpstr
                 ldx     promptbuf               ; racine : pas de second « \ »
                 lda     promptbuf,x
                 cmp     #'\'
-                beq     _showarg
+                beq     _showdir
                 lda     #'\'
                 jsr     putc
-_showarg        #setptr ptr, arg1
+_showdir        #setptr ptr, dirbuf
                 jsr     putpstr_dos
-_hdr            jsr     newline
-                jsr     newline
+_hdr            jsr     dir_newline
+                jsr     dir_newline
                 stz     nfiles
                 stz     nfiles+1
                 stz     ndirs
@@ -125,7 +149,14 @@ _entry          lda     #100
                 #setparam 0, namebuf
                 #api    3,18                    ; Read Directory
                 lda     DError
-                bne     _end
+                beq     +
+                jmp     _end
++               jsr     match_glob
+                bcs     +
+                jmp     _entry
++               lda     dirflags
+                and     #2
+                bne     _wide
                 #setptr ptr, namebuf
                 ldx     #16
                 jsr     putpstr_pad
@@ -133,12 +164,88 @@ _entry          lda     #100
                 and     #ATTR_DIR
                 beq     _file
                 #print  "     <DIR>"
+                jsr     dir_newline
+                inc     ndirs
+                bne     _entry
+                inc     ndirs+1
+                bra     _entry
+_file           jsr     dir_addsize
+                ldx     #10
+                jsr     print32
+                jsr     dir_newline
+                bra     _entry
+_wide           lda     DParams+6               ; /W : [DIR] ou NOM, 4 colonnes
+                and     #ATTR_DIR
+                beq     _wfile
                 inc     ndirs
                 bne     +
                 inc     ndirs+1
-+               jsr     newline
-                bra     _entry
-_file           lda     DParams+2               ; taille -> num et total
++               lda     #'['
+                jsr     putc
+                #setptr ptr, namebuf
+                jsr     putpstr
+                lda     #']'
+                jsr     putc
+                lda     namebuf
+                inc     a
+                inc     a
+                bra     _wpad
+_wfile          jsr     dir_addsize
+                #setptr ptr, namebuf
+                jsr     putpstr
+                lda     namebuf
+_wpad           cmp     #13                     ; complète à 13 colonnes
+                bcs     _wnext
+                sta     tmp
+                lda     #13
+                sec
+                sbc     tmp
+                tax
+                jsr     spaces
+_wnext          inc     dircol
+                lda     dircol
+                cmp     #4
+                bcc     _next
+                stz     dircol
+                jsr     dir_newline
+_next           jmp     _entry
+_end            #api    3,19                    ; Close Directory
+                lda     dircol
+                beq     +
+                jsr     dir_newline
++               lda     nfiles
+                ora     nfiles+1
+                ora     ndirs
+                ora     ndirs+1
+                bne     _totals
+                jmp     err_notfound
+_totals         lda     nfiles
+                ldy     nfiles+1
+                ldx     #9
+                jsr     print16
+                #print  " file(s) "
+                lda     total
+                sta     num
+                lda     total+1
+                sta     num+1
+                lda     total+2
+                sta     num+2
+                lda     total+3
+                sta     num+3
+                ldx     #10
+                jsr     print32
+                #print  " bytes"
+                jsr     dir_newline
+                lda     ndirs
+                ldy     ndirs+1
+                ldx     #9
+                jsr     print16
+                #print  " dir(s)"
+                jmp     dir_newline
+
+; dir_addsize : taille de l'entrée (DParams+2..5) -> num, ajoutée à total ;
+; compte un fichier
+dir_addsize     lda     DParams+2
                 sta     num
                 clc
                 adc     total
@@ -155,38 +262,69 @@ _file           lda     DParams+2               ; taille -> num et total
                 sta     num+3
                 adc     total+3
                 sta     total+3
-                ldx     #10
-                jsr     print32
-                jsr     newline
                 inc     nfiles
-                bne     _entry
+                bne     +
                 inc     nfiles+1
-                bra     _entry
-_end            #api    3,19                    ; Close Directory
-                lda     nfiles
-                ldy     nfiles+1
-                ldx     #9
-                jsr     print16
-                #print  " file(s) "
-                lda     total
-                sta     num
-                lda     total+1
-                sta     num+1
-                lda     total+2
-                sta     num+2
-                lda     total+3
-                sta     num+3
-                ldx     #10
-                jsr     print32
-                #println " bytes"
-                lda     ndirs
-                ldy     ndirs+1
-                ldx     #9
-                jsr     print16
-                #println " dir(s)"
++               rts
+
+; dir_newline : retour chariot ; avec /P, pause toutes les DIR_PAGE_LINES
+dir_newline     jsr     newline
+                lda     dirflags
+                and     #1
+                beq     _done
+                inc     dirlines
+                lda     dirlines
+                cmp     #DIR_PAGE_LINES
+                bcc     _done
+                stz     dirlines
+                #print  "Press any key to continue . . ."
+-               #api    2,1
+                lda     DParams
+                beq     -
+                jmp     newline
+_done           rts
+
+; dir_parse_args : mots de argrest -> arg1 (premier mot qui n'est pas un
+; commutateur) et dirflags (/P = 1, /W = 2). Un commutateur est un mot de
+; deux caractères commençant par « / ».
+dir_parse_args  stz     dirflags
+                stz     arg1
+                ldy     #0
+_word           #setptr ptr, arg2               ; mot suivant -> arg2
+                jsr     get_word
+                lda     arg2
+                beq     _done
+                cmp     #2
+                bne     _path
+                lda     arg2+1
+                cmp     #'/'
+                bne     _path
+                lda     arg2+2
+                jsr     upper
+                cmp     #'P'
+                bne     +
+                lda     dirflags
+                ora     #1
+                sta     dirflags
+                bra     _word
++               cmp     #'W'
+                bne     _word                   ; commutateur inconnu : ignoré
+                lda     dirflags
+                ora     #2
+                sta     dirflags
+                bra     _word
+_path           lda     arg1                    ; premier chemin seulement
+                bne     _word
+                ldx     arg2
+-               lda     arg2,x
+                sta     arg1,x
+                dex
+                bpl     -
+                bra     _word
+_done           stz     arg2
                 rts
 
-; print_volname : nom du volume courant
+
 print_volname   #api    3,26                    ; Parameter:0 = volume courant
                 lda     #32
                 sta     namebuf
@@ -256,12 +394,14 @@ _ok             rts
 _syntax         jmp     err_syntax
 
 ; ---------------------------------------------------------------------------
-; DEL fichier : supprime un fichier (pas un répertoire)
+; DEL fichier|motif : supprime des fichiers (jamais un répertoire)
 ; ---------------------------------------------------------------------------
 cmd_del         lda     arg1
                 beq     _syntax
                 #setptr ptr, arg1
                 jsr     to_apipath
+                jsr     has_wild
+                bcs     _wild
                 #setparam 0, arg1
                 #api    3,16
                 lda     DError
@@ -277,9 +417,70 @@ _nf             jmp     err_notfound
 _denied         jmp     err_denied
 _ok             rts
 _syntax         jmp     err_syntax
+_wild           jsr     split_path
+                lda     patbuf                  ; « * » ou « *.* » : confirmer
+                cmp     #1
+                bne     +
+                lda     patbuf+1
+                cmp     #'*'
+                beq     _confirm
++               lda     patbuf
+                cmp     #3
+                bne     _collect
+                lda     patbuf+1
+                cmp     #'*'
+                bne     _collect
+                lda     patbuf+2
+                cmp     #'.'
+                bne     _collect
+                lda     patbuf+3
+                cmp     #'*'
+                bne     _collect
+_confirm        #println "All files in directory will be deleted!"
+                #print  "Are you sure (Y/N)?"
+                jsr     ask_yn
+                bcc     _collect
+                rts
+_collect        lda     #0                      ; fichiers seulement
+                jsr     collect_matches
+                bcs     _wdone
+                lda     lcount
+                bne     +
+                jmp     err_notfound
++               jsr     list_first
+_each           jsr     list_next
+                bcs     _wdone
+                #setptr ptr, namebuf
+                jsr     build_path
+                #setparam 0, namebuf
+                #api    3,13
+                lda     DError
+                beq     _each
+                jsr     err_api
+                bra     _each
+_wdone          rts
+
+; ask_yn : attend Y ou N ; C=0 pour Y (affiche la réponse et un retour)
+ask_yn          #api    2,1
+                lda     DParams
+                beq     ask_yn
+                jsr     upper
+                cmp     #'Y'
+                beq     _yes
+                cmp     #'N'
+                bne     ask_yn
+                jsr     putc
+                jsr     newline
+                sec
+                rts
+_yes            jsr     putc
+                jsr     newline
+                clc
+                rts
 
 ; ---------------------------------------------------------------------------
-; REN ancien nouveau
+; REN ancien nouveau : renomme ; avec jokers, substitution façon DOS
+; (REN *.TXT *.BAK, REN A?.* B?.*)
 ; ---------------------------------------------------------------------------
 cmd_ren         lda     arg1
                 beq     _syntax
@@ -289,40 +490,192 @@ cmd_ren         lda     arg1
                 jsr     to_apipath
                 #setptr ptr, arg2
                 jsr     to_apipath
+                #setptr ptr, arg1
+                jsr     has_wild
+                bcs     _wild
                 #setparam 0, arg1
                 #setparam 2, arg2
                 #api    3,12
                 lda     DError
                 beq     _ok
-                #println "Duplicate file name or file not found"
+_dup            #println "Duplicate file name or file not found"
 _ok             rts
 _syntax         jmp     err_syntax
+_wild           jsr     split_path
+                lda     #1                      ; fichiers et répertoires
+                jsr     collect_matches
+                bcs     _ok
+                lda     lcount
+                beq     _dup
+                jsr     list_first
+_each           jsr     list_next
+                bcs     _ok
+                jsr     apply_pattern           ; newname
+                lda     newname
+                beq     _each
+                #setptr ptr, namebuf            ; ancien chemin
+                jsr     build_path
+                lda     ptr2                    ; nouveau chemin -> iobuf
+                pha
+                lda     ptr2+1
+                pha
+                #setptr ptr2, newname
+                #setptr ptr, iobuf
+                jsr     build_path
+                pla
+                sta     ptr2+1
+                pla
+                sta     ptr2
+                #setparam 0, namebuf
+                #setparam 2, iobuf
+                #api    3,12
+                lda     DError
+                beq     _each
+                #setptr ptr, namebuf
+                jsr     putpstr_dos
+                #print  " -> "
+                #setptr ptr, iobuf
+                jsr     putpstr_dos
+                #println ": Duplicate file name or file not found"
+                jmp     _each
 
 ; ---------------------------------------------------------------------------
-; COPY source destination
+; COPY source|motif destination[répertoire]
 ; ---------------------------------------------------------------------------
 cmd_copy        lda     arg1
-                beq     _syntax
+                beq     _syn
                 lda     arg2
-                beq     _syntax
-                #setptr ptr, arg1
+                bne     +
+_syn            jmp     err_syntax
++               #setptr ptr, arg1
                 jsr     to_apipath
                 #setptr ptr, arg2
                 jsr     to_apipath
-                #setparam 0, arg1
-                #api    3,16                    ; la source doit exister
+                stz     wflag                   ; wflag = destination répertoire
+                #setparam 0, arg2
+                #api    3,16
+                lda     DError
+                bne     +
+                lda     DParams+4
+                and     #ATTR_DIR
+                sta     wflag
++               stz     nfiles
+                #setptr ptr, arg1
+                jsr     has_wild
+                bcs     _wild
+                #setparam 0, arg1               ; la source doit exister
+                #api    3,16
                 lda     DError
                 bne     _nf
+                lda     wflag
+                beq     _single
+                ; destination = arg2 + « / » + nom de base de arg1
+                jsr     copy_dest_name
                 #setparam 0, arg1
+                #setparam 2, iobuf
+                bra     _one
+_single         #setparam 0, arg1
                 #setparam 2, arg2
-                #api    3,20
+_one            #api    3,20
                 lda     DError
                 bne     _err
-                #println "        1 file(s) copied"
-                rts
+                inc     nfiles
+                jmp     _count
 _nf             jmp     err_notfound
 _err            jmp     err_api
-_syntax         jmp     err_syntax
+_wild           lda     wflag
+                bne     +
+                #println "Cannot copy several files to one file"
+                rts
++               jsr     split_path
+                lda     #0                      ; fichiers seulement
+                jsr     collect_matches
+                bcs     _done
+                lda     lcount
+                beq     _nf
+                jsr     list_first
+_each           jsr     list_next
+                bcs     _count
+                #setptr ptr, namebuf            ; source complète
+                jsr     build_path
+                jsr     dest_path               ; iobuf = arg2/nom
+                #setparam 0, namebuf
+                #setparam 2, iobuf
+                #api    3,20
+                lda     DError
+                bne     _cerr
+                inc     nfiles
+                bra     _each
+_cerr           sta     errsave
+                #setptr ptr, namebuf
+                jsr     putpstr_dos
+                #print  ": "
+                lda     errsave
+                jsr     err_api
+                bra     _each
+_count          lda     nfiles
+                ldx     #9
+                jsr     print8_pad
+                #println " file(s) copied"
+_done           rts
+
+; copy_dest_name : iobuf = arg2 + « / » + nom de base de arg1 (après « / »)
+copy_dest_name  ldx     arg1                    ; X = dernier « / » (0 : aucun)
+-               lda     arg1,x
+                cmp     #'/'
+                beq     +
+                dex
+                bne     -
++               txa                             ; ptr2 -> pstring temporaire :
+                clc                             ; on fabrique newname = base
+                adc     #1
+                tax
+                ldy     #0
+-               cpx     arg1
+                beq     +
+                bcs     ++
++               lda     arg1,x
+                iny
+                sta     newname,y
+                inx
+                bra     -
++               sty     newname
+                lda     ptr2
+                pha
+                lda     ptr2+1
+                pha
+                #setptr ptr2, newname
+                jsr     dest_path
+                pla
+                sta     ptr2+1
+                pla
+                sta     ptr2
+                rts
+
+; dest_path : iobuf = arg2 + « / » + pstring (ptr2) (arg2 finissant par « / »
+; ou « . » traité comme build_path, via une copie de arg2 dans dirbuf)
+dest_path       lda     dirbuf                  ; sauve dirbuf dans patbuf
+                sta     patbuf
+                tax
+                beq     +
+-               lda     dirbuf,x
+                sta     patbuf,x
+                dex
+                bne     -
++               ldx     arg2                    ; dirbuf = arg2
+-               lda     arg2,x
+                sta     dirbuf,x
+                dex
+                bpl     -
+                #setptr ptr, iobuf
+                jsr     build_path
+                ldx     patbuf                  ; restaure dirbuf
+-               lda     patbuf,x
+                sta     dirbuf,x
+                dex
+                bpl     -
+                rts
+
 
 ; ---------------------------------------------------------------------------
 ; TYPE fichier : affiche un fichier texte
@@ -634,24 +987,24 @@ cmd_mem         jsr     newline
                 ldy     #>(PROG_TOP-PROG_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes free for programs ($0800-$D7FF)"
+                #println " bytes free for programs ($0800-$CFFF)"
                 lda     #<(NEODOS_TOP-NEODOS_BASE)
                 ldy     #>(NEODOS_TOP-NEODOS_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes reserved for NeoDOS ($D800-$FBFF)"
+                #println " bytes reserved for NeoDOS ($D000-$FBFF)"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
 ; HELP
 ; ---------------------------------------------------------------------------
 cmd_help        jsr     newline
-                #println "DIR [path]        List directory"
+                #println "DIR [path] [/P /W] List directory (wildcards)"
                 #println "CD [path]         Change/show directory"
                 #println "MD RD path        Make/remove directory"
-                #println "DEL file          Delete a file"
-                #println "REN old new       Rename a file"
-                #println "COPY src dst      Copy a file"
+                #println "DEL file|*.*      Delete files"
+                #println "REN old new       Rename files (REN *.TXT *.BAK)"
+                #println "COPY src dst      Copy files (COPY *.TXT DIR)"
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"

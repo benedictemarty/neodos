@@ -3,6 +3,34 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.2.0] — 2026-09-19
+
+Sprint 2 : jokers et pagination.
+
+### Ajouté
+- Jokers DOS `*` et `?` (`src/wildcard.asm`) : correspondance insensible à
+  la casse avec retour arrière, `*.*` équivalent à `*`, découpage
+  `répertoire\motif`, collecte des entrées correspondantes (255 noms, 1,25 Ko).
+- `DIR motif`, `DIR chemin\motif` (`File not found` si rien ne correspond,
+  comme MS-DOS) ; `DIR /P` (pause « Press any key to continue . . . » toutes
+  les 28 lignes) ; `DIR /W` (4 colonnes de 13, répertoires entre crochets).
+- `DEL motif` (fichiers seulement ; confirmation `Are you sure (Y/N)?` pour
+  `*` et `*.*`).
+- `COPY motif répertoire` et `COPY fichier répertoire` (nom de base conservé),
+  compte « n file(s) copied » ; refus explicite de copier plusieurs fichiers
+  vers un seul.
+- `REN motif motif` avec substitution façon DOS, nom et extension traités
+  séparément (`REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD`).
+- Tests `10_wild_dir`, `10b_dir_w`, `11_wild_del`, `12_wild_ren_copy`,
+  `13_dir_p` (fixture `MANY/` de 35 fichiers) ; le runner accepte `\c` en fin
+  de ligne (frappe sans Entrée, pour répondre Y/N).
+
+### Modifié
+- NeoDOS chargé en `$D000` (au lieu de `$D800`) pour loger le tampon de
+  liste ; programmes en `$0800-$CFFF` (51 200 octets). ADR-002 amendé.
+- `err_api` prend le code d'erreur dans A (les affichages intermédiaires
+  remettaient `$FF02` à zéro : « Error 0 »).
+
 ## [0.1.0] — 2026-09-19
 
 Sprint 1 : MVP « un DOS utilisable à la place de NeoBASIC ».

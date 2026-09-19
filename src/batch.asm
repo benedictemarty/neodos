@@ -2,7 +2,7 @@
 ;
 ; Le fichier est chargé en entier dans batbuf (1 Ko maximum) puis exécuté
 ; ligne par ligne. Un programme .NEO lancé depuis un batch rend la main au
-; batch s'il se termine par RTS (et s'il n'a pas écrasé $D800-$FBFF) ; un
+; batch s'il se termine par RTS (et s'il n'a pas écrasé $D000-$FBFF) ; un
 ; .BAT lancé depuis un .BAT le remplace (comme MS-DOS sans CALL).
 
 ; ---------------------------------------------------------------------------

@@ -20,18 +20,31 @@ minuscules ; les chemins acceptent `\` ou `/`.
 
 | Commande | Exemple |
 |---|---|
-| `DIR [chemin]` | `DIR`, `DIR GAMES`, `DIR \`, `DIR ..` |
+| `DIR [chemin][motif] [/P] [/W]` | `DIR`, `DIR GAMES`, `DIR \`, `DIR *.TXT`, `DIR GAMES\*.NEO /W`, `DIR /P` |
 | `CD [chemin]` | `CD GAMES`, `CD ..`, `CD \`, `CD` (affiche le répertoire) |
 | `MD chemin` | `MD SAVES` |
 | `RD chemin` | `RD SAVES` (le répertoire doit être vide) |
-| `DEL fichier` | `DEL OLD.TXT` (refuse un répertoire : `Access denied`) |
-| `REN ancien nouveau` | `REN A.TXT B.TXT` |
-| `COPY source destination` | `COPY A.TXT GAMES\A.TXT` |
+| `DEL fichier\|motif` | `DEL OLD.TXT`, `DEL *.BAK`, `DEL SAVES\*.*` (confirmation) ; refuse un répertoire : `Access denied` |
+| `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
+| `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` |
 | `TYPE fichier` | `TYPE README.TXT` |
 | `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
 
 `DIR` affiche pour chaque entrée le nom, `<DIR>` ou la taille en octets,
 puis le nombre de fichiers, le total des octets et le nombre de répertoires.
+`/P` marque une pause toutes les 28 lignes (« Press any key to continue »),
+`/W` affiche les noms sur 4 colonnes, répertoires entre crochets. Sans
+correspondance : `File not found`.
+
+### Jokers
+
+`*` remplace une suite quelconque de caractères, `?` un seul ; la casse est
+ignorée ; `*.*` désigne tous les fichiers. Le motif porte sur la dernière
+partie du chemin (`GAMES\*.NEO`). `DEL` avec joker ne touche jamais aux
+répertoires et demande confirmation (`Y/N`) pour `*` et `*.*`. `REN` avec
+jokers applique le second motif nom et extension séparément : `*` recopie le
+reste de la partie source, `?` un caractère (`REN *.TXT *.BAK`,
+`REN A?.DAT B?.DAT`). `COPY` avec joker exige un répertoire de destination.
 
 ## Programmes
 
@@ -40,7 +53,7 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$D800` et `$FBFF` (zone NeoDOS).
+Un programme ne doit pas écrire entre `$D000` et `$FBFF` (zone NeoDOS).
 
 ## Scripts .BAT
 
@@ -85,13 +98,16 @@ PAUSE
 | `Invalid directory` | `CD` vers un répertoire inexistant |
 | `Access denied` | `DEL` sur un répertoire, volume en lecture seule |
 | `Syntax error` | argument manquant |
+| `Too many files` | plus de 255 noms (ou 1,25 Ko) pour un joker |
+| `Cannot copy several files to one file` | `COPY motif fichier` |
+| `Duplicate file name or file not found` | `REN` impossible (cible existante…) |
 | `Invalid drive specification` | lettre de lecteur sans volume monté |
 | `Batch file too large (max 1024 bytes)` | script trop long |
 | `Error nn` | autre code d'erreur de l'API fichiers |
 
 ## Limites connues (v0.1)
 
-- Pas de jokers (`*.TXT`), pas de `DIR /P`, pas de `IF`/`GOTO` dans les
-  scripts (voir le backlog dans `docs/AGILE_PLAN.md`).
+- Pas de `IF`/`GOTO`/`CALL` dans les scripts, pas de `PATH`, pas de dates de
+  fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`
   laisse `..` dans le chemin affiché ; la carte (FAT) n'a pas ces limites.

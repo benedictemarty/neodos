@@ -18,12 +18,14 @@ Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
 
 ## Structure
 
-- `tests/cases/NOM.keys` : texte frappé, une commande par ligne.
+- `tests/cases/NOM.keys` : texte frappé, une commande par ligne ; une ligne
+  terminée par `\c` est frappée sans Entrée (réponse à `Y/N`).
 - `tests/expected/NOM.txt` : console attendue (à partir de « NeoDOS version »,
   sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
   des fichiers du stockage après le test.
 - `tests/fixtures/` : fichiers présents au démarrage (`README.TXT`,
-  `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`) ; `storage/` (exemples) est ajouté.
+  `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`, `MANY/F01..F35.DAT`) ; `storage/`
+  (exemples) est ajouté.
 
 Le budget de cycles est calculé d'après le nombre de touches (≈ 700 000
 cycles par touche, 6 trames) ; un test dure environ 0,5 s.
@@ -41,8 +43,15 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `07_echo_misc` | `ECHO` (état, ON/OFF, texte, `.`), `REM`, `X:` invalide, `CLS` |
 | `08_date_time` | `DATE`/`TIME` affichage, réglage, valeurs invalides |
 | `09_exit` | `EXIT` : retour à NeoBASIC (`print 6*7` → 42) |
+| `10_wild_dir` | `DIR *.TXT`, `DIR GAMES\*.TXT`, `DIR R*`, `DIR ?TRL.TXT`, motif sans correspondance |
+| `10b_dir_w` | `DIR /W` (racine, sous-répertoire, motif), commutateur inconnu ignoré |
+| `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |
+| `12_wild_ren_copy` | `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD`, `COPY fichier répertoire`, `COPY motif fichier` refusé, `REN` vers un nom existant |
+| `13_dir_p` | `DIR MANY /P` : pause après 28 lignes, reprise sur une touche |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).
+L'ordre des entrées de `DIR` est celui du système de fichiers hôte (stable
+sur ext4 pour un même jeu de noms).
 
 ## Non couvert (à faire sur carte)
 

@@ -34,12 +34,22 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S6 `CLS`, `VER`, `VOL`, `MEM`, `DATE`, `TIME`, `HELP`, `EXIT`, `X:` | fait |
 | S7 Tests headless et documentation | fait |
 
+## Sprint 2 — Jokers et pagination (2026-09-19) — livré, v0.2.0
+
+| Story | État |
+|---|---|
+| S8 Correspondance de motifs DOS (`*`, `?`, insensible à la casse, `*.*` = tout) | fait |
+| S9 `DIR motif`, `DIR chemin\motif`, « File not found » si rien | fait |
+| S10 `DEL motif` (fichiers seulement, confirmation `Y/N` pour `*` et `*.*`) | fait |
+| S11 `COPY motif répertoire`, `COPY fichier répertoire`, compte des copies | fait |
+| S12 `REN motif motif` (substitution nom/extension façon DOS) | fait |
+| S13 `DIR /P` (pause par page de 28 lignes) et `DIR /W` (4 colonnes, `[DIR]`) | fait |
+| S14 Base déplacée en `$D000` (tampon de liste pour les jokers), tests, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
-| B1 | Jokers `*` et `?` pour `DIR`, `DEL`, `COPY`, `REN` | filtrage côté 6502 sur Read Directory |
-| B2 | `DIR /P` (pause par page) et `/W` (large) | 30 lignes d'écran |
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B4 | `PROMPT`, `PATH` (recherche des programmes dans plusieurs répertoires) | |
 | B5 | `IF`, `GOTO`, `CALL`, `%1..%9` dans les `.BAT` | |
@@ -55,5 +65,5 @@ NeoBASIC (qui reste accessible par `EXIT`).
 - Les émulateurs (`neo`, Phosphoneo) ne normalisent pas `..` dans le
   répertoire courant (`A:\GAMES\..`) et sont sensibles à la casse des noms ;
   la carte (FatFs) n'a pas ces limites. À traiter côté émulateurs.
-- Un programme `.NEO` qui écrit au-dessus de `$D800` détruit NeoDOS ; le
+- Un programme `.NEO` qui écrit au-dessus de `$D000` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

@@ -1,0 +1,74 @@
+README.BAK              31
+CTRL.BAK                 9
+        2 file(s)         40 bytes
+        0 dir(s)
+A:\>ren C?RL.BAK X?RL.OLD
+A:\>dir *.OLD
+ Volume in drive A is HOST0
+ Directory of A:\
+XTRL.OLD                 9
+        1 file(s)          9 bytes
+        0 dir(s)
+A:\>copy README.BAK GAMES
+        1 file(s) copied
+A:\>dir GAMES
+ Volume in drive A is HOST0
+ Directory of A:\GAMES
+README.BAK              31
+A.TXT                    3
+        2 file(s)         34 bytes
+        0 dir(s)
+A:\>copy *.BAK X.TXT
+Cannot copy several files to one file
+A:\>copy NOPE* GAMES
+File not found
+A:\>ren *.OLD README.BAK
+XTRL.OLD -> README.BAK: Duplicate file name or file n
+ot found
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+GAMES/README.BAK
+HELLO.NEO
+MANY/
+MANY/F01.DAT
+MANY/F02.DAT
+MANY/F03.DAT
+MANY/F04.DAT
+MANY/F05.DAT
+MANY/F06.DAT
+MANY/F07.DAT
+MANY/F08.DAT
+MANY/F09.DAT
+MANY/F10.DAT
+MANY/F11.DAT
+MANY/F12.DAT
+MANY/F13.DAT
+MANY/F14.DAT
+MANY/F15.DAT
+MANY/F16.DAT
+MANY/F17.DAT
+MANY/F18.DAT
+MANY/F19.DAT
+MANY/F20.DAT
+MANY/F21.DAT
+MANY/F22.DAT
+MANY/F23.DAT
+MANY/F24.DAT
+MANY/F25.DAT
+MANY/F26.DAT
+MANY/F27.DAT
+MANY/F28.DAT
+MANY/F29.DAT
+MANY/F30.DAT
+MANY/F31.DAT
+MANY/F32.DAT
+MANY/F33.DAT
+MANY/F34.DAT
+MANY/F35.DAT
+README.BAK
+XTRL.OLD

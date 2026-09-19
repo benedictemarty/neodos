@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.1.0
+NeoDOS version 0.2.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -48,12 +48,12 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 
 | Commande | Rôle |
 |---|---|
-| `DIR [chemin]` | liste un répertoire (`<DIR>`, tailles, totaux) |
+| `DIR [chemin][motif] [/P] [/W]` | liste un répertoire (`<DIR>`, tailles, totaux) ; `/P` pause par page, `/W` colonnes |
 | `CD [chemin]`, `CHDIR` | change ou affiche le répertoire courant (`CD ..`, `CD \`) |
 | `MD`, `MKDIR` / `RD`, `RMDIR` | crée / supprime (vide) un répertoire |
-| `DEL`, `ERASE` | supprime un fichier |
-| `REN`, `RENAME` | renomme un fichier |
-| `COPY src dst` | copie un fichier |
+| `DEL`, `ERASE` | supprime des fichiers (`DEL *.BAK` ; confirmation pour `*.*`) |
+| `REN`, `RENAME` | renomme (`REN *.TXT *.BAK`, substitution nom/extension) |
+| `COPY src dst` | copie un fichier ou un motif vers un répertoire (`COPY *.TXT SAVES`) |
 | `TYPE fichier` | affiche un fichier texte (CR, LF, CR/LF, tabulations) |
 | `X:` | change de lecteur (volume `X` − `A` du firmware, 0-3) |
 | `CLS`, `VER`, `VOL`, `MEM` | écran, versions, nom du volume, mémoire |
@@ -63,14 +63,15 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 | `EXIT`, `BASIC` | retour à NeoBASIC |
 | `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script |
 
-Les chemins acceptent `\` ou `/`. Le nom d'un programme est cherché tel que
+Les chemins acceptent `\` ou `/` ; les jokers `*` et `?` s'appliquent à
+`DIR`, `DEL`, `COPY`, `REN` (insensibles à la casse). Le nom d'un programme est cherché tel que
 tapé puis en majuscules (les volumes FAT de la carte ignorent la casse, le
 stockage hôte des émulateurs non). Détails : [docs/MANUEL_UTILISATION.md](docs/MANUEL_UTILISATION.md).
 
 ## Organisation du dépôt
 
 ```
-src/          sources 64tass : neodos.asm (entrée), shell, commands, batch, console
+src/          sources 64tass : neodos.asm (entrée), shell, commands, wildcard, batch, console
 examples/     HELLO.NEO (programme d'exemple, source hello.asm), AUTOEXEC.BAT, DEMO.BAT
 storage/      image de stockage de démonstration (make examples)
 tests/        run_tests.py + cas (.keys) et références (expected/), fixtures
@@ -82,9 +83,9 @@ docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, adr/
 
 | Zone | Usage |
 |---|---|
-| `$0000-$00FF` | page zéro (NeoDOS : `$80-$9F`) |
-| `$0800-$D7FF` | programmes lancés depuis l'invite (53 248 octets) |
-| `$D800-$FBFF` | NeoDOS (code ≈ 4,6 Ko + tampons) |
+| `$0000-$00FF` | page zéro (NeoDOS : `$80-$A9`) |
+| `$0800-$CFFF` | programmes lancés depuis l'invite (51 200 octets) |
+| `$D000-$FBFF` | NeoDOS (code ≈ 6,6 Ko + tampons ≈ 4,3 Ko) |
 | `$FC00-$FFFF` | noyau 6502 du firmware, API `$FF00` |
 
 ## Licence

@@ -14,4 +14,8 @@ argrest         .fill   256             ; reste de la ligne après la commande
 namebuf         .fill   129             ; nom de fichier de travail
 iobuf           .fill   256             ; tampon de lecture (TYPE)
 batbuf          .fill   BATBUF_SIZE     ; fichier batch en cours
+dirbuf          .fill   129             ; jokers : partie répertoire
+patbuf          .fill   129             ; jokers : motif
+newname         .fill   129             ; REN : nom résultant
+listbuf         .fill   LISTBUF_SIZE    ; jokers : noms collectés
 dataend

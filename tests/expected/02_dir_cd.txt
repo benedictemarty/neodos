@@ -1,4 +1,3 @@
- Volume in drive A is HOST0
  Directory of A:\GAMES
 A.TXT                    3
         1 file(s)          3 bytes
@@ -17,11 +16,12 @@ AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+MANY                 <DIR>
 CTRL.TXT                 9
 README.TXT              31
 CHAIN.BAT               25
         6 file(s)        345 bytes
-        1 dir(s)
+        2 dir(s)
 A:\GAMES>cd NOPE
 Invalid directory
 A:\GAMES>
@@ -33,4 +33,40 @@ DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+MANY/
+MANY/F01.DAT
+MANY/F02.DAT
+MANY/F03.DAT
+MANY/F04.DAT
+MANY/F05.DAT
+MANY/F06.DAT
+MANY/F07.DAT
+MANY/F08.DAT
+MANY/F09.DAT
+MANY/F10.DAT
+MANY/F11.DAT
+MANY/F12.DAT
+MANY/F13.DAT
+MANY/F14.DAT
+MANY/F15.DAT
+MANY/F16.DAT
+MANY/F17.DAT
+MANY/F18.DAT
+MANY/F19.DAT
+MANY/F20.DAT
+MANY/F21.DAT
+MANY/F22.DAT
+MANY/F23.DAT
+MANY/F24.DAT
+MANY/F25.DAT
+MANY/F26.DAT
+MANY/F27.DAT
+MANY/F28.DAT
+MANY/F29.DAT
+MANY/F30.DAT
+MANY/F31.DAT
+MANY/F32.DAT
+MANY/F33.DAT
+MANY/F34.DAT
+MANY/F35.DAT
 README.TXT

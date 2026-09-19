@@ -1,0 +1,5 @@
+dir *.TXT
+dir GAMES\*.TXT
+dir R*
+dir ?TRL.TXT
+dir *.NOPE

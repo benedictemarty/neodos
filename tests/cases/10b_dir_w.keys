@@ -1,0 +1,4 @@
+dir /w
+dir GAMES /w
+dir *.bat /w
+dir /x

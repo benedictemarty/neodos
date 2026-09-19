@@ -442,9 +442,9 @@ err_syntax      #println "Syntax error"
 err_denied      #println "Access denied"
                 rts
 
-; err_api : message selon DError (l'erreur du dernier appel API)
-err_api         lda     DError
-                cmp     #ERR_NO_FILE
+; err_api : message selon le code d'erreur API dans A (= DError du dernier
+; appel ; à sauver dans errsave si des affichages précèdent)
+err_api         cmp     #ERR_NO_FILE
                 beq     err_notfound
                 cmp     #ERR_NO_PATH
                 beq     _path
@@ -454,8 +454,9 @@ err_api         lda     DError
                 beq     err_denied
                 cmp     #ERR_EXIST
                 beq     _exist
+                sta     errsave
                 #print  "Error "
-                lda     DError
+                lda     errsave
                 jsr     print8
                 jsr     newline
                 rts

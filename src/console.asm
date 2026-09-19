@@ -212,3 +212,10 @@ print2          ldx     #0
 
 pow10           .dword  1000000000, 100000000, 10000000, 1000000, 100000
                 .dword  10000, 1000, 100, 10, 1
+
+; print8_pad : affiche A (8 bits) en décimal cadré sur X colonnes
+print8_pad      sta     num
+                stz     num+1
+                stz     num+2
+                stz     num+3
+                jmp     print32
