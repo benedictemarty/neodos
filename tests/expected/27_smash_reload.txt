@@ -2,26 +2,17 @@ NeoDOS version 0.8.1
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>echo abc
-abc
-A:\>echo xyz
-xyz
-A:\>echo abc
-abc
-A:\>echo xyz
-xyz
-A:\>
-A:\>
-A:\>echo done
-done
-A:\>echo hello
-hello
-A:\>echo abcdef
-abcdef
-A:\>echo 1Z2Q
-1Z2Q
-A:\>echo c
-c
+A:\>path \
+A:\>smash
+Smashing $C000-$FBFF...
+NeoDOS version 0.8.1
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>echo after smash
+after smash
+A:\>path
+PATH=\BIN
 A:\>
 --- files ---
 ARGS.BAT

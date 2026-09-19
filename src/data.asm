@@ -1,5 +1,6 @@
 ; data.asm — tampons de NeoDOS (non initialisés, en fin d'image)
 
+canary_lo       .fill   1               ; sentinelle basse (début des données)
 digitbuf        .fill   10              ; chiffres de print32
 echo_off        .fill   1               ; 1 = ECHO OFF (batch)
 bat_active      .fill   1               ; 1 = un batch est en cours
@@ -33,4 +34,5 @@ dpsave          .fill   9               ; sauvegarde DParams/DError pendant redi
 hcount          .fill   1               ; historique : nombre d'entrées
 hused           .fill   1               ; historique : octets utilisés
 histbuf         .fill   HIST_SIZE       ; historique : pstrings consécutives
+canary_hi       .fill   1               ; sentinelle haute (fin des données)
 dataend

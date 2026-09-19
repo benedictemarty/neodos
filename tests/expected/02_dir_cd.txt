@@ -1,4 +1,3 @@
- Directory of A:\GAMES
 A.TXT                    3
         1 file(s)          3 bytes
         0 dir(s)
@@ -6,6 +5,7 @@ A:\>cd GAMES
 A:\GAMES>dir ..
  Volume in drive A is HOST0
  Directory of A:\GAMES\..
+boot                 <DIR>
 AUTOEXEC.BAT           151
 DEMO.BAT                79
 HELLO.NEO               66
@@ -20,9 +20,10 @@ CTRL.TXT                 9
 CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
+SMASH.NEO               84
 LOOP.BAT               102
-       11 file(s)        940 bytes
-        4 dir(s)
+       12 file(s)       1024 bytes
+        5 dir(s)
 A:\GAMES>cd NOPE
 Invalid directory
 A:\GAMES>
@@ -81,5 +82,6 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SMASH.NEO
 SUB.BAT
 SUB2.BAT

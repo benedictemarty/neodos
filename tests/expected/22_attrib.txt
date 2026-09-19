@@ -1,4 +1,3 @@
-Type HELP for the list of commands
 A:\>attrib README.TXT
      README.TXT
 A:\>attrib +r +h README.TXT
@@ -25,6 +24,7 @@ A:\>attrib
      CALLER.BAT
      README.TXT
      CHAIN.BAT
+     SMASH.NEO
      LOOP.BAT
 A:\>
 --- files ---
@@ -82,5 +82,6 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SMASH.NEO
 SUB.BAT
 SUB2.BAT

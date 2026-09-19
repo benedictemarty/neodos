@@ -28,6 +28,7 @@ VERSION         = "0.8.1"
                 .include "batch.asm"
                 .include "wildcard.asm"
                 .include "lineedit.asm"
+                .include "stub.asm"
                 .include "console.asm"
 codeend
                 .include "data.asm"

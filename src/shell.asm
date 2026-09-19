@@ -16,6 +16,9 @@ start           cld
                 stz     pathbuf
                 stz     hcount
                 stz     hused
+                lda     #CANARY                 ; sentinelles de la zone données
+                sta     canary_lo
+                sta     canary_hi
                 jsr     detect_caps
                 ldx     #4                      ; PROMPT $p$g
 -               lda     default_prompt,x
@@ -574,21 +577,29 @@ _run            jsr     redir_close             ; la sortie du programme va à
                 #api    3,2
                 lda     DError
                 bne     _loaderr
-                jsr     DExec                   ; JMP exec (ou RTS) ; la ligne de
+                jsr     install_stub            ; stub de retour en $0100
+                lda     #>(STUB_BASE-1)         ; le RTS du programme y revient
+                pha
+                lda     #<(STUB_BASE-1)
+                pha
+                jmp     DExec                   ; JMP exec (ou RTS) ; la ligne de
                                                 ; commande reste dans linebuf
                                                 ; (pointeur en $C00C)
-                bra     _back
 _loaderr        jsr     err_api
-_back           ldx     #$ff                    ; retour : pile réinitialisée
+                jmp     neodos_back
+_bat            jsr     stat_namebuf
+                bne     _none
+_runbat         jmp     run_batch
+_none           rts
+
+; neodos_back : retour d'un programme (depuis le stub, NeoDOS intact) ou
+; échec de chargement : pile réinitialisée, reprise du batch ou invite
+neodos_back     ldx     #$ff
                 txs
                 lda     bat_active              ; un batch reprend après le
                 beq     +                       ; programme (comme MS-DOS)
                 jmp     batch_next
 +               jmp     mainloop
-_bat            jsr     stat_namebuf
-                bne     _none
-_runbat         jmp     run_batch
-_none           rts
 
 ; first_word_raw : premier mot de linebuf (tel que tapé) -> namebuf
 first_word_raw  ldy     #1

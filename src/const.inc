@@ -95,9 +95,11 @@ CH_BAT          = 7             ; lecture d'un fichier batch
 CH_OUT          = 1             ; redirection de la sortie (>, >>)
 CAP_VOLUMES     = 1
 CAP_DATETIME    = 2
+STUB_BASE       = $0100         ; stub de retour des programmes (bas de la page pile)
+CANARY          = $A5           ; sentinelle des données NeoDOS (vérifiée par le stub)
 
 BATBUF_SIZE     = 768           ; taille maximale d'un fichier .BAT
-LISTBUF_SIZE    = 1024          ; noms collectés par les jokers (pstrings)
+LISTBUF_SIZE    = 960           ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
 BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)
 BAT_ARGS_SIZE   = 96            ; ligne de commande d'un batch (pstring, %0-%9)

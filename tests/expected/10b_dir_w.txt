@@ -1,5 +1,3 @@
-A:\>dir *.bat /w
- Volume in drive A is HOST0
  Directory of A:\
 AUTOEXEC.BAT DEMO.BAT     SUB2.BAT     ARGS.BAT
 SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
@@ -8,6 +6,7 @@ SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
 A:\>dir /x
  Volume in drive A is HOST0
  Directory of A:\
+boot                 <DIR>
 AUTOEXEC.BAT           151
 DEMO.BAT                79
 HELLO.NEO               66
@@ -22,9 +21,10 @@ CTRL.TXT                 9
 CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
+SMASH.NEO               84
 LOOP.BAT               102
-       11 file(s)        940 bytes
-        4 dir(s)
+       12 file(s)       1024 bytes
+        5 dir(s)
 A:\>
 --- files ---
 ARGS.BAT
@@ -81,5 +81,6 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SMASH.NEO
 SUB.BAT
 SUB2.BAT

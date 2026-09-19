@@ -43,6 +43,8 @@ def build_storage(tmp):
     for src in (FIXTURES, STORAGE):
         if os.path.isdir(src):
             shutil.copytree(src, tmp, dirs_exist_ok=True)
+    os.makedirs(os.path.join(tmp, "boot"), exist_ok=True)   # rechargement par le stub
+    shutil.copy(NEO, os.path.join(tmp, "boot", "neodos.neo"))
     gitkeep = os.path.join(tmp, ".gitkeep")
     if os.path.exists(gitkeep):
         os.remove(gitkeep)
@@ -51,6 +53,8 @@ def build_storage(tmp):
 def list_files(root):
     out = []
     for d, dirs, files in os.walk(root):
+        if "boot" in dirs:
+            dirs.remove("boot")                 # boot/neodos.neo : hors listing
         rel = os.path.relpath(d, root)
         rel = "" if rel == "." else rel + "/"
         for x in dirs:

@@ -43,6 +43,7 @@ run_batch       ldx     namebuf                 ; batname = namebuf (tronqué)
                 bcc     +
                 ldx     #BAT_ARGS_SIZE-1
 +               stx     batargs
+                cpx     #0                      ; (STX ne positionne pas Z)
                 beq     +
 -               lda     linebuf,x
                 sta     batargs,x
