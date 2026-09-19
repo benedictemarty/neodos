@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.8.2
+NeoDOS version 0.9.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -76,6 +76,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
+| `MORE fichier`, `TREE [chemin] [/F]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : affichage paginé, arborescence |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 
@@ -92,7 +93,7 @@ stockage hôte des émulateurs non). Détails : [docs/MANUEL_UTILISATION.md](doc
 
 ```
 src/          sources 64tass : neodos.asm (entrée), shell, commands, wildcard, batch, console
-examples/     HELLO.NEO (programme d'exemple, source hello.asm), AUTOEXEC.BAT, DEMO.BAT
+examples/     HELLO.NEO, args/smash (tests), ext/ (commandes externes : neoext.inc, MORE, TREE), .BAT
 storage/      image de stockage de démonstration (make examples)
 tests/        run_tests.py + cas (.keys) et références (expected/), fixtures
 tools/        mkneo.py (emballage .neo)

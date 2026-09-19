@@ -1,6 +1,5 @@
-README.BAK              31
 CTRL.BAK                 9
-        2 file(s)         40 bytes
+        3 file(s)       1860 bytes
         0 dir(s)
 A:\>ren C?RL.BAK X?RL.OLD
 A:\>dir *.OLD
@@ -16,8 +15,9 @@ A:\>dir GAMES
  Directory of A:\GAMES
 README.BAK              31
 A.TXT                    3
+SUB                  <DIR>
         2 file(s)         34 bytes
-        0 dir(s)
+        1 dir(s)
 A:\>copy *.BAK X.TXT
 Destination must be a directory
 A:\>copy NOPE* GAMES
@@ -32,14 +32,21 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 GAMES/README.BAK
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.BAK
 LOOP.BAT
 MANY/
 MANY/F01.DAT

@@ -169,6 +169,16 @@ API et la lecture de son résultat (`DIR`). `redir_close` (fin de
 `execute_line`, `mainloop`, `batch_next`, lancement d'un `.NEO`) vide et
 ferme.
 
+## Commandes externes
+
+`examples/ext/neoext.inc` : mêmes conventions que le résident (API par
+`SendMessage`, `putc`/`puts`/`putpstr`), `cmd_arg` (n-ième mot de la ligne
+de commande lue via `$C00C`, `\` → `/`). Chaque programme commence par
+`jmp main` (l'include contient du code) et se termine par `RTS` (stub de
+retour). `TREE` illustre le parcours récursif avec l'API (un seul répertoire
+ouvert à la fois) : pile `skip[depth]` du nombre de sous-répertoires déjà
+visités à chaque niveau, ré-énumération à la remontée.
+
 ## Format `.neo`
 
 `tools/mkneo.py` : en-tête `03 'N' 'E' 'O'`, version, adresse d'exécution,

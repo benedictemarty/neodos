@@ -1,16 +1,33 @@
-NeoDOS version 0.8.2
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>cd GAMES
-A:\GAMES>args one two
-Command line: args one two
-A:\GAMES>\BIN\ARGS.NEO x
-Command line: \BIN\ARGS.NEO x
-A:\GAMES>path ;
-A:\GAMES>args
-Bad command or file name
-A:\GAMES>
+Line 31 of the long file
+Line 32 of the long file
+Line 33 of the long file
+Line 34 of the long file
+Line 35 of the long file
+Line 36 of the long file
+Line 37 of the long file
+Line 38 of the long file
+Line 39 of the long file
+Line 40 of the long file
+Line 41 of the long file
+Line 42 of the long file
+Line 43 of the long file
+Line 44 of the long file
+Line 45 of the long file
+Line 46 of the long file
+Line 47 of the long file
+Line 48 of the long file
+Line 49 of the long file
+Line 50 of the long file
+Line 51 of the long file
+Line 52 of the long file
+Line 53 of the long file
+Line 54 of the long file
+Line 55 of the long file
+Line 56 of the long file
+-- More --
+A:\>echo end
+end
+A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT

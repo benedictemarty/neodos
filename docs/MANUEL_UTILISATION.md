@@ -160,6 +160,19 @@ TYPE A.TXT >> TOUT.TXT
 retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 `$p$g`. Exemple : `PROMPT $d $t$_$p$g`.
 
+## Commandes externes (BIN\)
+
+Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
+
+| Commande | Rôle |
+|---|---|
+| `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
+| `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
+| `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |
+
+Écrire la sienne : `examples/ext/NOM.asm` avec `.include "neoext.inc"`
+(`cmd_arg` lit les arguments), `make examples` produit `storage/BIN/NOM.NEO`.
+
 ## Système
 
 | Commande | Rôle |

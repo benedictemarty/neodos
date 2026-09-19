@@ -1,5 +1,5 @@
-README.TXT              31
-        2 file(s)         40 bytes
+LONG.TXT              1820
+        3 file(s)       1860 bytes
         0 dir(s)
 A:\>dir GAMES\*.TXT
  Volume in drive A is HOST0
@@ -30,14 +30,21 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.TXT
 LOOP.BAT
 MANY/
 MANY/F01.DAT

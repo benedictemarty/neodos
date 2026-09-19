@@ -7,8 +7,9 @@ A:\>type D.TXT
  Volume in drive A is HOST0
  Directory of A:\GAMES
 A.TXT                    3
+SUB                  <DIR>
         1 file(s)          3 bytes
-        0 dir(s)
+        1 dir(s)
 A:\>dir *.NOPE > F.TXT
 A:\>type F.TXT
  Volume in drive A is HOST0
@@ -24,7 +25,9 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
@@ -35,7 +38,12 @@ G.TXT
 GAMES/
 GAMES/A.TXT
 GAMES/README.TXT
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.TXT
 LOOP.BAT
 MANY/
 MANY/F01.DAT

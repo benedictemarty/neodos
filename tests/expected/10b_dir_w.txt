@@ -1,4 +1,3 @@
- Directory of A:\
 AUTOEXEC.BAT DEMO.BAT     SUB2.BAT     ARGS.BAT
 SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
         8 file(s)        834 bytes
@@ -20,10 +19,11 @@ POKER                <DIR>
 CTRL.TXT                 9
 CALLER.BAT             187
 README.TXT              31
+LONG.TXT              1820
 CHAIN.BAT               25
 SMASH.NEO               84
 LOOP.BAT               102
-       12 file(s)       1024 bytes
+       13 file(s)       2844 bytes
         5 dir(s)
 A:\>
 --- files ---
@@ -32,14 +32,21 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.TXT
 LOOP.BAT
 MANY/
 MANY/F01.DAT

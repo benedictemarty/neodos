@@ -1,25 +1,26 @@
- Directory of A:\GAMES
-README.TXT              31
-CTRL.TXT                 9
 A.TXT                    3
-        3 file(s)         43 bytes
-        0 dir(s)
+SUB                  <DIR>
+        4 file(s)       1863 bytes
+        1 dir(s)
 A:\>del GAMES\*.*
 All files in directory will be deleted!
 Are you sure (Y/N)?N
 A:\>dir GAMES /w
  Volume in drive A is HOST0
  Directory of A:\GAMES
-README.TXT   CTRL.TXT     A.TXT
-        3 file(s)         43 bytes
-        0 dir(s)
+LONG.TXT     README.TXT   CTRL.TXT     A.TXT
+[SUB]
+        4 file(s)       1863 bytes
+        1 dir(s)
 A:\>del GAMES\*.*
 All files in directory will be deleted!
 Are you sure (Y/N)?Y
 A:\>dir GAMES
  Volume in drive A is HOST0
  Directory of A:\GAMES
-File not found
+SUB                  <DIR>
+        0 file(s)          0 bytes
+        1 dir(s)
 A:\>del *.NOPE
 File not found
 A:\>del GAMES\*.TXT
@@ -31,13 +32,20 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.TXT
 LOOP.BAT
 MANY/
 MANY/F01.DAT

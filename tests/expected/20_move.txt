@@ -1,8 +1,7 @@
- Directory of A:\GAMES
-README.TXT              31
 A.TXT                    3
+SUB                  <DIR>
         2 file(s)         34 bytes
-        0 dir(s)
+        1 dir(s)
 A:\>move GAMES\README.TXT R2.TXT
         1 file(s) moved
 A:\>dir *.TXT
@@ -10,16 +9,18 @@ A:\>dir *.TXT
  Directory of A:\
 R2.TXT                  31
 CTRL.TXT                 9
-        2 file(s)         40 bytes
+LONG.TXT              1820
+        3 file(s)       1860 bytes
         0 dir(s)
 A:\>move *.TXT GAMES
-        2 file(s) moved
+        3 file(s) moved
 A:\>dir GAMES /w
  Volume in drive A is HOST0
  Directory of A:\GAMES
-CTRL.TXT     R2.TXT       A.TXT
-        3 file(s)         43 bytes
-        0 dir(s)
+LONG.TXT     CTRL.TXT     R2.TXT       A.TXT
+[SUB]
+        4 file(s)       1863 bytes
+        1 dir(s)
 A:\>move *.BAT X.TXT
 Destination must be a directory
 A:\>move NOPE GAMES
@@ -31,14 +32,21 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/HI.NEO
+BIN/MORE.NEO
 BIN/TOOL.BAT
+BIN/TREE.NEO
 CALLER.BAT
 CHAIN.BAT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 GAMES/CTRL.TXT
+GAMES/LONG.TXT
 GAMES/R2.TXT
+GAMES/SUB/
+GAMES/SUB/DEEP/
+GAMES/SUB/DEEP/Y.TXT
+GAMES/SUB/X.TXT
 HELLO.NEO
 LOOP.BAT
 MANY/

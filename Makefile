@@ -49,7 +49,7 @@ clean:
 	rm -rf $(BUILD)
 
 # Exemples : programmes HELLO.NEO, BIN/ARGS.NEO et scripts .BAT copiés dans storage/
-EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
+EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/BIN/MORE.NEO storage/BIN/TREE.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
 
 examples: $(EXAMPLES)
 
@@ -61,6 +61,12 @@ storage/BIN/ARGS.NEO: examples/args.asm tools/mkneo.py | $(BUILD)
 	mkdir -p storage/BIN
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/args.bin examples/args.asm
 	python3 tools/mkneo.py $(BUILD)/args.bin $@ 0800 0800 "Args"
+
+# Commandes externes (examples/ext/NOM.asm, base neoext.inc) -> storage/BIN/NOM.NEO
+storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc tools/mkneo.py | $(BUILD)
+	mkdir -p storage/BIN
+	$(AS) --mw65c02 --nostart --quiet --case-sensitive -I examples/ext -o $(BUILD)/$*.bin $<
+	python3 tools/mkneo.py $(BUILD)/$*.bin $@ 0800 0800 "$*"
 
 storage/%.BAT: examples/%.BAT
 	cp $< $@
@@ -74,5 +80,5 @@ dist: $(NEO) examples
 	cp $(NEO) $(DIST)/boot/neodos.neo
 	echo neodos.neo > $(DIST)/boot/auto.txt
 	cp storage/AUTOEXEC.BAT storage/DEMO.BAT storage/HELLO.NEO $(DIST)/
-	cp storage/BIN/ARGS.NEO $(DIST)/BIN/
+	cp storage/BIN/*.NEO $(DIST)/BIN/
 	@echo "Image prête : $(DIST)/ (copier son contenu à la racine de la clé USB)"

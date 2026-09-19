@@ -3,6 +3,23 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.9.0] — 2026-09-20
+
+Sprint 9 : premières commandes externes (ADR-003), le résident étant plein.
+
+### Ajouté
+- `examples/ext/neoext.inc` : base des commandes externes (API, `putc`,
+  `puts`, `putpstr`, `getkey`, `cmd_arg` qui lit le n-ième mot de la ligne de
+  commande via l'en-tête NeoDOS `$C00C`) ; règle Makefile générique
+  `examples/ext/NOM.asm` → `storage/BIN/NOM.NEO` ; `make dist` copie `BIN/`.
+- **`MORE fichier`** (`BIN/MORE.NEO`) : affichage paginé (28 lignes,
+  « -- More -- », touche = suite, `Q` = fin), CR/LF/CR-LF, tabulations.
+- **`TREE [chemin] [/F]`** (`BIN/TREE.NEO`) : arborescence récursive (8
+  niveaux) avec fichiers sur `/F` ; le firmware n'ayant qu'un répertoire
+  ouvert à la fois, chaque niveau est ré-énuméré en sautant les
+  sous-répertoires déjà visités (pile de compteurs).
+- Tests `28_ext_tree`, `29_ext_more` (fixtures `GAMES/SUB/DEEP`, `LONG.TXT`).
+
 ## [0.8.2] — 2026-09-20
 
 Comment NeoDOS « survit » aux programmes (question bmarty) : comme NeoBASIC,
