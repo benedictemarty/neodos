@@ -574,12 +574,9 @@ _run            jsr     redir_close             ; la sortie du programme va à
                 #api    3,2
                 lda     DError
                 bne     _loaderr
-                ldx     linebuf                 ; ligne de commande -> $0200
--               lda     linebuf,x               ; (contrat des commandes externes)
-                sta     CMDLINE,x
-                dex
-                bpl     -
-                jsr     DExec                   ; JMP exec (ou RTS)
+                jsr     DExec                   ; JMP exec (ou RTS) ; la ligne de
+                                                ; commande reste dans linebuf
+                                                ; (pointeur en $C00C)
                 bra     _back
 _loaderr        jsr     err_api
 _back           ldx     #$ff                    ; retour : pile réinitialisée

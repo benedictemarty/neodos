@@ -73,10 +73,13 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS). Il
-trouve sa ligne de commande complète en `$0200` (octet de longueur puis les
-caractères) : c'est le contrat des **commandes externes** (`BIN\ARGS.NEO`
-l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
+Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS) —
+attention, les programmes llvm-mos y placent leur pile C (`$F600`) : ils
+fonctionnent mais NeoDOS ne survit pas à leur exécution (redémarrer). Un
+programme trouve sa ligne de commande complète via l'en-tête de NeoDOS :
+`$C003` = `NEODOS`, `$C009` = version, `$C00C` = adresse de la ligne (octet de
+longueur puis les caractères) : c'est le contrat des **commandes externes**
+(`BIN\ARGS.NEO` l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
 de partout.
 
 `PATH BIN;GAMES` : un nom qui n'est ni une commande interne ni un fichier du

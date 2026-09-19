@@ -93,7 +93,6 @@ SCREEN_COLS     = 53
 CH_IO           = 0             ; TYPE, COPY manuel
 CH_BAT          = 7             ; lecture d'un fichier batch
 CH_OUT          = 1             ; redirection de la sortie (>, >>)
-CMDLINE         = $0200         ; ligne de commande transmise aux programmes .NEO (pstring)
 CAP_VOLUMES     = 1
 CAP_DATETIME    = 2
 

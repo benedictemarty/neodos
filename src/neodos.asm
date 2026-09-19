@@ -12,13 +12,16 @@
 ;  (bloc de contrôle $FF00).
 ; ***************************************************************************
 
-VERSION         = "0.8.0"
+VERSION         = "0.8.1"
 
                 .include "const.inc"
                 .include "macros.inc"
 
                 * = NEODOS_BASE
-                jmp     start
+                jmp     start                   ; $C000
+                .text   "NEODOS"                ; $C003 : signature (commandes externes)
+                .byte   0, 8, 1                 ; $C009 : version majeure, mineure, correctif
+                .word   linebuf                 ; $C00C : ligne de commande (pstring, 200 max)
 
                 .include "shell.asm"
                 .include "commands.asm"

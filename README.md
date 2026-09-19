@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.8.0
+NeoDOS version 0.8.1
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -79,7 +79,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 | `EXIT`, `BASIC` | retour à NeoBASIC |
-| `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script (ligne de commande transmise en `$0200`) |
+| `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script (ligne de commande : pointeur en `$C00C`) |
 
 Les chemins acceptent `\` ou `/` ; les jokers `*` et `?` s'appliquent à
 `DIR`, `DEL`, `COPY`, `REN` (insensibles à la casse). Le nom d'un programme est cherché tel que

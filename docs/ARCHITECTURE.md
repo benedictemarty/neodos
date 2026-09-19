@@ -62,8 +62,10 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 5. `run_program` → `try_run` : nom tel que tapé puis en majuscules ; avec
    extension `.NEO`/`.BAT` ou en essayant `.NEO` puis `.BAT` (File Stat 3,16).
    Sans succès, chaque entrée de `PATH` (`path_next`, séparateur `;`) est
-   essayée avec `build_path`. Avant `JSR $FF08`, `linebuf` est recopié en
-   `$0200` (contrat des commandes externes).
+   essayée avec `build_path`. La ligne reste dans `linebuf`, dont l'adresse
+   est publiée dans l'en-tête `$C000` (`jmp start`, `NEODOS`, version,
+   pointeur en `$C00C`) : contrat des commandes externes — rien n'est écrit
+   dans la zone programme (un programme peut se charger dès `$0200`).
    `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
    File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.
    Au retour : pile réinitialisée, reprise du batch en cours ou invite.

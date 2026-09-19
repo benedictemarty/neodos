@@ -1,4 +1,4 @@
-NeoDOS version 0.8.0
+NeoDOS version 0.8.1
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -16,7 +16,7 @@ A:\>dir BIN /w
  Volume in drive A is HOST0
  Directory of A:\BIN
 A.TXT        ARGS.NEO     HI.NEO       TOOL.BAT
-        4 file(s)        167 bytes
+        4 file(s)        190 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 File not found

@@ -103,6 +103,13 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S40 Mémo au projet firmware (`docs/MEMO-NEODOS-2026-09-19.md` sur `trinity`, story T-10) | fait |
 | S41 Validation sur carte Trinity (B9) | à faire — dépend de bmarty |
 
+## Correctif 0.8.1 (2026-09-20) — retour de test carte
+
+| Story | État |
+|---|---|
+| S42 Gel de `poker.neo` (chargé en `$0200`) : la copie de la ligne de commande en `$0200` écrasait le programme → en-tête `$C000` avec pointeur | fait |
+| S43 Documenter la pile llvm-mos (`$F600`) qui détruit NeoDOS ; option `--defsym=__stack=0xC000` | fait (doc) |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

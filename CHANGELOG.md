@@ -3,6 +3,23 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.8.1] — 2026-09-20
+
+### Corrigé
+- **Gel au lancement des programmes chargés en `$0200`** (llvm-mos : `poker.neo`,
+  signalé par bmarty sur carte) : la 0.8.0 recopiait la ligne de commande en
+  `$0200` après le chargement, écrasant le début du programme. La ligne n'est
+  plus copiée : elle reste dans `linebuf` et NeoDOS publie un **en-tête** en
+  `$C000` — `$C003` signature `NEODOS`, `$C009` version (3 octets), `$C00C`
+  pointeur vers la ligne (pstring). `examples/args.asm` mis à jour ; test
+  `26_run_at_0200` (fixture `POKER/`, programme llvm-mos réel).
+
+### Connu
+- Les programmes llvm-mos placent leur pile C en `$F600` (descendante), dans
+  la zone de NeoDOS : ils tournent, mais NeoDOS est détruit derrière eux
+  (retour impossible ; redémarrer). Pour être compatible : lier avec
+  `-Wl,--defsym=__stack=0xC000` (ou ne pas dépasser `$BFFF`).
+
 ## [0.8.0] — 2026-09-19
 
 Publié sur le serveur Prophet (`https://prophet.3617.fr`, catégorie

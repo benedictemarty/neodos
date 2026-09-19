@@ -1,11 +1,4 @@
-NeoDOS version 0.8.1
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>
-A:\>echo after
-after
-A:\>
+
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -57,6 +50,9 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
+POKER/
+POKER/POKER.NEO
+POKER/cards.bin
 README.TXT
 SUB.BAT
 SUB2.BAT
