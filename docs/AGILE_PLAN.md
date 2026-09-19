@@ -110,6 +110,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S42 Gel de `poker.neo` (chargé en `$0200`) : la copie de la ligne de commande en `$0200` écrasait le programme → en-tête `$C000` avec pointeur | fait |
 | S43 Documenter la pile llvm-mos (`$F600`) qui détruit NeoDOS ; option `--defsym=__stack=0xC000` | fait (doc) |
 
+## Correctif 0.8.2 (2026-09-20) — survie aux programmes
+
+| Story | État |
+|---|---|
+| S44 Stub de retour en `$0100` : vérification (somme de contrôle, sentinelles) et rechargement de NeoDOS depuis `/boot/neodos.neo` | fait |
+| S45 Story Trinity T-11 : `1,3` appliquant `boot/auto.txt` à chaque appel (rendrait le stub inutile) | proposée |
+| S46 Bug `run_batch` (copie de `batargs`) trouvé par la fixture SMASH | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
