@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.11.0
+NeoDOS version 0.12.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -75,7 +75,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
-| `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : pagination, arborescence, copie et suppression récursives, recherche, tri ; leur sortie suit la redirection `>` |
+| `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri ; leur sortie suit la redirection `>` |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 

@@ -1,4 +1,4 @@
-NeoDOS version 0.11.0
+NeoDOS version 0.12.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -29,6 +29,7 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/EDIT.NEO
 BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO

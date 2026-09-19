@@ -145,6 +145,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S57 `SORT.NEO` (`/R`, tri de Shell, 40 Ko) | fait |
 | S58 Tests 32-34, docs | fait |
 
+## Sprint 12 — EDIT (2026-09-20) — livré, v0.12.0
+
+| Story | État |
+|---|---|
+| S59 `EDIT.NEO` : chargement/sauvegarde CR/LF, affichage 28 lignes avec défilement, curseur | fait |
+| S60 Navigation, insertion, Retour arrière/Suppr (fusion), Entrée (scission), menu Échap | fait |
+| S61 Tests 35/35b, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -152,7 +160,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
-| B10 | `EDIT.NEO` : éditeur de texte plein écran (commande externe, ADR-003) | gros chantier |
+| B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
 | B12 | `MOVE`/`ATTRIB` en externes pour dégager le résident ; `HEAD`/`TAIL`, `WC` | commandes externes |
 | B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |

@@ -79,6 +79,8 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `32_ext_sort` | `SORT` croissant / `/R`, sans argument, fichier absent |
 | `33_ext_find` | `FIND` sensible à la casse, `/I /N`, `/C`, `/V`, usage, fichier absent |
 | `34_ext_redirect` | sortie de `FIND`, `SORT`, `TREE` redirigée par `>` et `>>` (vecteur `$C00E`) |
+| `35_ext_edit` | `EDIT` : déplacements, insertion, fusion et scission de lignes, sauvegarde `X`, relecture par `TYPE` (CR/LF) |
+| `35b_ext_edit_new` | `EDIT` d'un fichier absent : création, `S` puis `Q`, usage sans argument |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

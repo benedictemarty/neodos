@@ -14,10 +14,10 @@ Invalid source directory
 A:\>dir BIN /w
  Volume in drive A is HOST0
  Directory of A:\BIN
-MORE.NEO     XCOPY.NEO    ARGS.NEO     FIND.NEO
-SORT.NEO     DELTREE.NEO  TREE.NEO     HI.NEO
-TOOL.BAT
-        9 file(s)       5186 bytes
+MORE.NEO     EDIT.NEO     XCOPY.NEO    ARGS.NEO
+FIND.NEO     SORT.NEO     DELTREE.NEO  TREE.NEO
+HI.NEO       TOOL.BAT
+       10 file(s)       7042 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -30,6 +30,7 @@ AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
 BIN/DELTREE.NEO
+BIN/EDIT.NEO
 BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO

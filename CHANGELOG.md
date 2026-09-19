@@ -3,6 +3,22 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.12.0] — 2026-09-20
+
+Sprint 12 : `EDIT`, l'éditeur plein écran.
+
+### Ajouté
+- **`EDIT fichier`** (`BIN/EDIT.NEO`, ~2,3 Ko) : éditeur de texte plein écran
+  (ligne d'état, 28 lignes, ligne d'aide avec le numéro de ligne) ; texte en
+  `$2000-$BDFF` (≈ 38 Ko), CR/LF et LF seuls acceptés, sauvegarde en CR/LF ;
+  flèches, Début/Fin, PgUp/PgDn, saisie en insertion, Tab, Retour arrière et
+  Suppr (fusion de lignes), Entrée (scission) ; Échap → menu `S` sauver,
+  `X` sauver et quitter, `Q` quitter sans sauver ; `*` dans la ligne d'état
+  si modifié ; fichier absent = nouveau. Redessin complet à chaque touche
+  (simple ; ~1 500 caractères).
+- Tests `35_ext_edit` (édition, fusion, scission, sauvegarde relue par
+  `TYPE`), `35b_ext_edit_new` (nouveau fichier, `S` puis `Q`, usage).
+
 ## [0.11.0] — 2026-09-20
 
 Sprint 11 : `FIND`, `SORT`, redirection des commandes externes.

@@ -172,6 +172,18 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 | `DELTREE répertoire` | supprime un répertoire et tout son contenu (confirmation `Y/N`) |
 | `FIND [/I] [/N] [/C] [/V] "texte" fichier` | lignes contenant le texte (`/I` casse ignorée, `/N` numéros, `/C` compte, `/V` lignes sans le texte) |
 | `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 40 Ko, 2 048 lignes max) |
+| `EDIT fichier` | éditeur plein écran (fichier créé s'il n'existe pas) |
+
+### EDIT
+
+Flèches, Début/Fin, PgUp/PgDn pour se déplacer ; les caractères tapés
+s'insèrent ; Retour arrière et Suppr effacent (en début/fin de ligne, la
+ligne est fusionnée avec la précédente/suivante) ; Entrée coupe la ligne.
+**Échap** ouvre le menu : `S` sauver, `X` sauver et quitter, `Q` quitter sans
+sauver, Échap revenir. La ligne d'état montre le nom (`*` si modifié), la
+ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko, lignes affichées sur 52
+colonnes (le reste est conservé mais invisible), pas de recherche ni de
+sélection.
 
 La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |
