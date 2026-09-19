@@ -61,6 +61,9 @@ redir           = $AF           ; sortie redirigée vers CH_OUT (bit 7 = active)
 opfn            = $B0           ; COPY/MOVE : fonction API (20 copie, 12 renomme)
 attr_set        = $B1           ; ATTRIB : bits à mettre / à retirer
 attr_clr        = $B2
+lpos            = $B3           ; éditeur de ligne : curseur
+llen            = $B4           ; éditeur de ligne : longueur
+hcur            = $B5           ; historique : entrée en cours de rappel
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
 ERR_OK          = 0
@@ -95,5 +98,6 @@ BAT_ARGS_SIZE   = 128           ; ligne de commande d'un batch (pstring, %0-%9)
 BAT_DEPTH       = 3             ; niveaux de CALL
 BAT_LEVEL_SIZE  = BAT_NAME_SIZE + BAT_ARGS_SIZE + 2
 OUTBUF_SIZE     = 128           ; tampon de la redirection
+HIST_SIZE       = 200           ; historique de commandes (octets, pstrings)
 PATH_SIZE       = 128           ; PATH (pstring, entrées séparées par « ; »)
 PROMPT_SIZE     = 48            ; format de PROMPT (pstring)

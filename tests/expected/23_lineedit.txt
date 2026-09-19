@@ -2,25 +2,26 @@ NeoDOS version 0.6.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>caller
-before
-in SUB with one
-in SUB2 with one
-SUB end
-in SUB with two
-in SUB2 with two
-SUB end
-after
-File not found
-error seen
-x
-ok
-File not found
-end
-A:\>call sub Z
-in SUB with Z
-in SUB2 with Z
-SUB end
+A:\>echo abc
+abc
+A:\>echo xyz
+xyz
+A:\>echo abc
+abc
+A:\>echo xyz
+xyz
+A:\>
+A:\>
+A:\>echo done
+done
+A:\>echo hello
+hello
+A:\>echo abcdef
+abcdef
+A:\>echo 1Z2Q
+1Z2Q
+A:\>echo c
+c
 A:\>
 --- files ---
 ARGS.BAT

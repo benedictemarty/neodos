@@ -16,6 +16,14 @@ dans le répertoire courant, puis affiche l'invite `A:\>`.
 `\GAMES` le répertoire courant. Les commandes ne distinguent pas majuscules et
 minuscules ; les chemins acceptent `\` ou `/`.
 
+### Édition de la ligne de commande
+
+Gauche/Droite déplacent le curseur, les caractères tapés s'insèrent, Retour
+arrière et Suppr effacent, Début/Fin (Home/End) vont aux extrémités, Échap
+efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
+dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
+dernière entrée redonne une ligne vide.
+
 ## Fichiers et répertoires
 
 | Commande | Exemple |

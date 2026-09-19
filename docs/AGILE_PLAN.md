@@ -75,13 +75,21 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S27 `ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif]` : affiche / modifie les attributs | fait |
 | S28 Tampons réduits (`listbuf` 1 Ko, `argrest` 200) pour rester en `$C000`, tests, docs | fait |
 
+## Sprint 6 — Consolidation et historique (2026-09-19) — livré, v0.6.0
+
+| Story | État |
+|---|---|
+| S29 Réduction du code : raccourcis `p0_*`/`ptr_*` pour les motifs répétés (−344 octets) | fait |
+| S30 Éditeur de ligne NeoDOS (`lineedit.asm`) : insertion, Suppr, flèches, Début/Fin, Échap | fait |
+| S31 Historique de commandes (Haut/Bas, 200 octets, doublons consécutifs ignorés) | fait |
+| S32 Phosphoneo : `--type-keys` accepte flèches/Début/Fin/Suppr/Retour arrière ; test `23_lineedit` | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
-| B8 | Historique de commandes (flèche haut) | ReadLine du noyau ne le fait pas |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT` : éditeur de texte plein écran | gros chantier |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |

@@ -3,9 +3,8 @@
 digitbuf        .fill   10              ; chiffres de print32
 echo_off        .fill   1               ; 1 = ECHO OFF (batch)
 bat_active      .fill   1               ; 1 = un batch est en cours
-promptbuf       .fill   96              ; invite « A:\chemin> » (pstring)
-cwdbuf          .fill   96              ; répertoire courant (pstring)
-screenline      .fill   256             ; ligne d'écran lue (pstring)
+promptbuf       .fill   92              ; invite « A:\chemin> » (pstring)
+cwdbuf          .fill   82              ; répertoire courant (pstring)
 linebuf         .fill   256             ; ligne de commande sans l'invite
 cmdbuf          .fill   17              ; mot de commande en majuscules
 arg1            .fill   129             ; premier argument
@@ -27,8 +26,11 @@ outbuf          .fill   OUTBUF_SIZE     ; redirection : caractères en attente
 outlen          .fill   1               ; nombre de caractères dans outbuf
 pathbuf         .fill   PATH_SIZE+1     ; PATH
 promptfmt       .fill   PROMPT_SIZE+1   ; format de l'invite
-cwdpath         .fill   96              ; « A:\chemin » (DIR, CD)
+cwdpath         .fill   84              ; « A:\chemin » (DIR, CD)
 runword         .fill   129             ; run_program : nom tel que tapé
 promptskip      .fill   1               ; longueur de la dernière ligne de l'invite
 dpsave          .fill   9               ; sauvegarde DParams/DError pendant redir_flush
+hcount          .fill   1               ; historique : nombre d'entrées
+hused           .fill   1               ; historique : octets utilisés
+histbuf         .fill   HIST_SIZE       ; historique : pstrings consécutives
 dataend

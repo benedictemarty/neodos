@@ -5,7 +5,9 @@ run_tests.py — tests de NeoDOS sur cible (Phosphoneo headless).
 
 Chaque cas est un fichier tests/cases/NOM.keys : le texte tapé au clavier,
 une commande par ligne (Entrée à la fin de chaque ligne ; une ligne terminée
-par « \\c » est frappée sans Entrée, pour répondre à « Y/N » par exemple). Le résultat attendu est tests/expected/NOM.txt :
+par « \\c » est frappée sans Entrée, pour répondre à « Y/N » par exemple ;
+les séquences \\u \\d \\l \\r \\h \\k \\x \\b \\e sont les touches d'édition du typer
+Phosphoneo, les autres antislashs sont des séparateurs DOS). Le résultat attendu est tests/expected/NOM.txt :
   - la console (53x30) après exécution, lignes vides et espaces de fin
     retirés, à partir de la ligne « NeoDOS version » ;
   - facultativement une section « --- files --- » : liste triée des fichiers
@@ -71,7 +73,10 @@ def run_case(name, ref):
     keys = open(os.path.join(CASES, name + ".keys"), encoding="utf-8").read()
     keys = keys.rstrip("\n").replace("\\c\n", "")   # « \c » en fin de ligne : pas d'Entrée
     nkeys = len(keys) + 1
-    keys = keys.replace("\\", "\\\\").replace("\n", "\\n") + "\\n"
+    # séquences du typer conservées (\u \d \l \r flèches, \h \k Début/Fin, \x Suppr,
+    # \b Retour arrière, \e Échap, \1..\8, \n) ; tout autre « \ » est un antislash DOS
+    import re
+    keys = re.sub(r"\\(?![udlrhkxbe1-8n])", r"\\\\", keys).replace("\n", "\\n") + "\\n"
     cycles = START_CYCLES + CYCLES_PER_KEY * nkeys + TAIL_CYCLES
     tmp = tempfile.mkdtemp(prefix="neodos-" + name + "-")
     try:

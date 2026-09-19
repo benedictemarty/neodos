@@ -14,12 +14,16 @@ python3 tests/run_tests.py --ref     # régénère les références (à relire !
 ```
 
 Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
-`~/Phosphoneo/build/phosphoneo`).
+`~/Phosphoneo/build/phosphoneo`), version avec les touches d'édition du
+typer (commit `93e0e45` de Phosphoneo, 2026-09-19).
 
 ## Structure
 
 - `tests/cases/NOM.keys` : texte frappé, une commande par ligne ; une ligne
-  terminée par `\c` est frappée sans Entrée (réponse à `Y/N`).
+  terminée par `\c` est frappée sans Entrée (réponse à `Y/N`) ; `\u \d \l
+  \r` (flèches), `\h` `\k` (Début/Fin), `\x` (Suppr), `\b` (Retour
+  arrière), `\e` (Échap) sont les touches d'édition du typer Phosphoneo (les
+  autres antislashs sont des séparateurs DOS ; éviter `\d`… en début de nom).
 - `tests/expected/NOM.txt` : console attendue (à partir de « NeoDOS version »,
   sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
   des fichiers du stockage après le test.
@@ -58,6 +62,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `20_move` | `MOVE` vers un répertoire, vers un nom, motif vers répertoire, motif vers un nom refusé, source absente |
 | `21_xcopy` | `XCOPY` d'un répertoire vers un nouveau, d'un motif vers un existant, source absente, syntaxe |
 | `22_attrib` | affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
+| `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

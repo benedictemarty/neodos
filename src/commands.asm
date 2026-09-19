@@ -75,7 +75,7 @@ cmdtable        .ptext  "DIR"
 ; DIR [chemin][motif] [/P] [/W] : liste un répertoire au format DOS
 ; ---------------------------------------------------------------------------
 cmd_dir         jsr     dir_parse_args          ; arg1 = chemin, dirflags
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
                 lda     arg1
                 bne     _witharg
@@ -86,7 +86,7 @@ cmd_dir         jsr     dir_parse_args          ; arg1 = chemin, dirflags
                 bra     _all
 _witharg        jsr     has_wild
                 bcs     _split
-                #setparam 0, arg1               ; un répertoire existant ?
+                jsr     p0_arg1               ; un répertoire existant ?
                 #api    3,16
                 lda     DError
                 bne     _split
@@ -161,7 +161,7 @@ _hdr            jsr     dir_newline
                 stz     total+3
 _entry          lda     #100
                 sta     namebuf
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #api    3,18                    ; Read Directory
                 lda     DError
                 beq     +
@@ -172,7 +172,7 @@ _entry          lda     #100
 +               lda     dirflags
                 and     #2
                 bne     _wide
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 ldx     #16
                 jsr     putpstr_pad
                 lda     DParams+6
@@ -197,7 +197,7 @@ _wide           lda     DParams+6               ; /W : [DIR] ou NOM, 4 colonnes
                 inc     ndirs+1
 +               lda     #'['
                 jsr     putc
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr
                 lda     #']'
                 jsr     putc
@@ -206,7 +206,7 @@ _wide           lda     DParams+6               ; /W : [DIR] ou NOM, 4 colonnes
                 inc     a
                 bra     _wpad
 _wfile          jsr     dir_addsize
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr
                 lda     namebuf
 _wpad           cmp     #13                     ; complète à 13 colonnes
@@ -305,7 +305,7 @@ _done           rts
 dir_parse_args  stz     dirflags
                 stz     arg1
                 ldy     #0
-_word           #setptr ptr, arg2               ; mot suivant -> arg2
+_word           jsr     ptr_arg2               ; mot suivant -> arg2
                 jsr     get_word
                 lda     arg2
                 beq     _done
@@ -347,7 +347,7 @@ print_volname   #api    3,26                    ; Parameter:0 = volume courant
                 #api    3,24
                 lda     DError
                 bne     _unk
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jmp     putpstr
 _unk            #print  "?"
                 rts
@@ -361,9 +361,9 @@ cmd_cd          lda     arg1
                 #setptr ptr, cwdpath
                 jsr     putpstr
                 jmp     newline
-_chdir          #setptr ptr, arg1
+_chdir          jsr     ptr_arg1
                 jsr     to_apipath
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,15
                 lda     DError
                 beq     _ok
@@ -376,9 +376,9 @@ _ok             rts
 ; ---------------------------------------------------------------------------
 cmd_md          lda     arg1
                 beq     _syntax
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,14
                 lda     DError
                 beq     _ok
@@ -392,16 +392,16 @@ _syntax         jmp     err_syntax
 ; ---------------------------------------------------------------------------
 cmd_rd          lda     arg1
                 beq     _syntax
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,16                    ; doit être un répertoire
                 lda     DError
                 bne     _bad
                 lda     DParams+4
                 and     #ATTR_DIR
                 beq     _bad
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,13
                 lda     DError
                 beq     _ok
@@ -415,18 +415,18 @@ _syntax         jmp     err_syntax
 ; ---------------------------------------------------------------------------
 cmd_del         lda     arg1
                 beq     _syntax
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
                 jsr     has_wild
                 bcs     _wild
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,16
                 lda     DError
                 bne     _nf
                 lda     DParams+4
                 and     #ATTR_DIR
                 bne     _denied
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,13
                 lda     DError
                 beq     _ok
@@ -467,9 +467,9 @@ _collect        lda     #0                      ; fichiers seulement
 +               jsr     list_first
 _each           jsr     list_next
                 bcs     _wdone
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     build_path
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #api    3,13
                 lda     DError
                 beq     _each
@@ -503,14 +503,14 @@ cmd_ren         lda     arg1
                 beq     _syntax
                 lda     arg2
                 beq     _syntax
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     to_apipath
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     has_wild
                 bcs     _wild
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #setparam 2, arg2
                 #api    3,12
                 lda     DError
@@ -531,7 +531,7 @@ _each           jsr     list_next
                 jsr     apply_pattern           ; newname
                 lda     newname
                 beq     _each
-                #setptr ptr, namebuf            ; ancien chemin
+                jsr     ptr_namebuf            ; ancien chemin
                 jsr     build_path
                 lda     ptr2                    ; nouveau chemin -> iobuf
                 pha
@@ -544,12 +544,12 @@ _each           jsr     list_next
                 sta     ptr2+1
                 pla
                 sta     ptr2
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #setparam 2, iobuf
                 #api    3,12
                 lda     DError
                 beq     _each
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr_dos
                 #print  " -> "
                 #setptr ptr, iobuf
@@ -570,9 +570,9 @@ copy_move       lda     arg1
                 lda     arg2
                 bne     +
 _syn            jmp     err_syntax
-+               #setptr ptr, arg1
++               jsr     ptr_arg1
                 jsr     to_apipath
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     to_apipath
                 stz     wflag                   ; wflag = destination répertoire
                 #setparam 0, arg2
@@ -583,10 +583,10 @@ _syn            jmp     err_syntax
                 and     #ATTR_DIR
                 sta     wflag
 +               stz     nfiles
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     has_wild
                 bcs     _wild
-                #setparam 0, arg1               ; la source doit exister
+                jsr     p0_arg1               ; la source doit exister
                 #api    3,16
                 lda     DError
                 bne     _nf
@@ -594,10 +594,10 @@ _syn            jmp     err_syntax
                 beq     _single
                 ; destination = arg2 + « / » + nom de base de arg1
                 jsr     copy_dest_name
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #setparam 2, iobuf
                 bra     _one
-_single         #setparam 0, arg1
+_single         jsr     p0_arg1
                 #setparam 2, arg2
 _one            jsr     file_op
                 lda     DError
@@ -620,10 +620,10 @@ _wild           lda     wflag
                 jsr     list_first
 _each           jsr     list_next
                 bcs     _count
-                #setptr ptr, namebuf            ; source complète
+                jsr     ptr_namebuf            ; source complète
                 jsr     build_path
                 jsr     dest_path               ; iobuf = arg2/nom
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #setparam 2, iobuf
                 jsr     file_op
                 lda     DError
@@ -631,7 +631,7 @@ _each           jsr     list_next
                 inc     nfiles
                 bra     _each
 _cerr           sta     errsave
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr_dos
                 #print  ": "
                 lda     errsave
@@ -665,14 +665,14 @@ cmd_xcopy       lda     arg1
                 lda     arg2
                 bne     +
 _jsyn           jmp     err_syntax
-+               #setptr ptr, arg1
++               jsr     ptr_arg1
                 jsr     to_apipath
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     to_apipath
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     has_wild
                 bcs     _dest
-                #setparam 0, arg1               ; source = répertoire ? -> « /* »
+                jsr     p0_arg1               ; source = répertoire ? -> « /* »
                 #api    3,16
                 lda     DError
                 bne     _nf
@@ -710,7 +710,7 @@ cmd_attrib      stz     attr_set
                 stz     attr_clr
                 stz     arg1
                 ldy     #0
-_word           #setptr ptr, arg2
+_word           jsr     ptr_arg2
                 jsr     get_word
                 lda     arg2
                 beq     _parsed
@@ -749,11 +749,11 @@ _parsed         lda     arg1
                 sta     arg1
                 lda     #'*'
                 sta     arg1+1
-+               #setptr ptr, arg1
++               jsr     ptr_arg1
                 jsr     to_apipath
                 jsr     has_wild
                 bcs     _wild
-                #setparam 0, arg1               ; un répertoire : son contenu
+                jsr     p0_arg1               ; un répertoire : son contenu
                 #api    3,16
                 lda     DError
                 bne     _wild
@@ -780,9 +780,9 @@ _wild           jsr     split_path
 _each           jsr     list_next
                 bcc     +
 _jdone          jmp     _done
-+               #setptr ptr, namebuf
++               jsr     ptr_namebuf
                 jsr     build_path
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #api    3,16
                 lda     DError
                 bne     _each
@@ -808,7 +808,7 @@ _jdone          jmp     _done
                 ldx     #'R'
                 jsr     attr_show
                 jsr     space
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr_dos
                 jsr     newline
                 bra     _each
@@ -824,13 +824,13 @@ _change         lda     DParams+4
                 and     #~ATTR_DIR
                 ora     tmp
                 sta     DParams+2
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #api    3,21
                 lda     DError
                 bne     +
                 jmp     _each
 +               sta     errsave
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     putpstr_dos
                 #print  ": "
                 lda     errsave
@@ -929,7 +929,7 @@ cmd_type        lda     arg1
                 bne     +
                 jmp     err_syntax
 +
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
                 lda     #CH_IO
                 sta     DParams
@@ -1140,7 +1140,7 @@ cmd_prompt      ldx     argrest
 cmd_if          stz     negate
                 stz     cond
                 ldy     #0
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     get_word
                 lda     arg2
                 beq     _jsyn
@@ -1148,21 +1148,21 @@ cmd_if          stz     negate
                 jsr     word_is
                 bcc     +
                 inc     negate
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     get_word
                 lda     arg2
                 beq     _jsyn
 +               #setptr ptr2, kw_exist
                 jsr     word_is
                 bcc     _notexist
-                #setptr ptr, arg1               ; IF EXIST fichier
+                jsr     ptr_arg1               ; IF EXIST fichier
                 jsr     get_word
                 lda     arg1
                 beq     _jsyn
                 sty     by
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     to_apipath
-                #setparam 0, arg1
+                jsr     p0_arg1
                 #api    3,16
                 ldy     by
                 lda     DError
@@ -1174,12 +1174,12 @@ _jcond          jmp     _cond
 _notexist       #setptr ptr2, kw_errlvl
                 jsr     word_is
                 bcc     _compare
-                #setptr ptr, arg1               ; IF ERRORLEVEL n
+                jsr     ptr_arg1               ; IF ERRORLEVEL n
                 jsr     get_word
                 lda     arg1
                 beq     _jsyn
                 sty     by
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 ldy     #1
                 jsr     parse_num
                 ldy     by
@@ -1238,7 +1238,7 @@ _noeq           ldx     arg2                    ; gauche = arg2 entier
                 sta     arg1,x
                 dex
                 bpl     -
-                #setptr ptr, arg2               ; mot suivant : « == » ou « ==b »
+                jsr     ptr_arg2               ; mot suivant : « == » ou « ==b »
                 jsr     get_word
                 lda     arg2
                 cmp     #2
@@ -1355,7 +1355,7 @@ cmd_date        lda     arg1
                 jsr     print2
                 jmp     newline
 _set            #api    1,20                    ; lit l'heure courante
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 ldy     #1
                 jsr     parse_num               ; année
                 bcs     _bad
@@ -1397,7 +1397,7 @@ cmd_time        lda     arg1
                 jsr     print2
                 jmp     newline
 _set            #api    1,20
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 ldy     #1
                 jsr     parse_num
                 bcs     _bad

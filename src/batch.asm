@@ -85,7 +85,7 @@ _big            jsr     errlvl1
                 #println "Batch file too large (max 1024 bytes)"
                 sec
                 rts
-_load           #setparam 0, namebuf
+_load           jsr     p0_namebuf
                 #setparam 2, batbuf
                 #api    3,2
                 lda     DError
@@ -389,7 +389,7 @@ call_resolve    ldx     arg1
                 sta     namebuf,x
                 dex
                 bpl     -
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     to_apipath
                 jsr     call_try
                 bcc     _ok

@@ -12,7 +12,7 @@
 ;  (bloc de contrôle $FF00).
 ; ***************************************************************************
 
-VERSION         = "0.5.0"
+VERSION         = "0.6.0"
 
                 .include "const.inc"
                 .include "macros.inc"
@@ -24,6 +24,7 @@ VERSION         = "0.5.0"
                 .include "commands.asm"
                 .include "batch.asm"
                 .include "wildcard.asm"
+                .include "lineedit.asm"
                 .include "console.asm"
 codeend
                 .include "data.asm"

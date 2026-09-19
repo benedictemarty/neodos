@@ -3,6 +3,28 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.6.0] — 2026-09-19
+
+Sprint 6 : consolidation et historique de commandes.
+
+### Ajouté
+- Éditeur de ligne propre à NeoDOS (`src/lineedit.asm`) à la place du
+  `ReadLine` du noyau : insertion au curseur, Retour arrière, Suppr,
+  Gauche/Droite, Début/Fin, Échap (efface), lignes de 200 caractères sur
+  plusieurs lignes d'écran.
+- Historique de commandes : Haut/Bas rappellent les lignes précédentes
+  (tampon de 200 octets, doublons consécutifs et lignes vides ignorés).
+- Test `23_lineedit` ; le runner accepte les séquences `\u \d \l \r \h
+  \k \x \b \e` (touches d'édition du typer Phosphoneo, étendu pour
+  l'occasion).
+
+### Modifié
+- Code réduit de 344 octets (sous-programmes `p0_arg1`, `p0_namebuf`,
+  `ptr_arg1`, `ptr_arg2`, `ptr_namebuf` à la place des macros répétées) ;
+  `screenline` (256 octets) supprimé ; `cwdbuf`, `cwdpath`, `promptbuf`
+  ajustés. Marge ≈ 80 octets sous `$FC00`.
+- `promptskip` ne sert plus qu'au calcul de colonne de l'éditeur.
+
 ## [0.5.0] — 2026-09-19
 
 Sprint 5 : MOVE, XCOPY, ATTRIB.

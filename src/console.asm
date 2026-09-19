@@ -190,12 +190,8 @@ print16         sta     num
                 jmp     print32
 
 ; print8 : affiche A (8 bits) en décimal sans cadrage
-print8          sta     num
-                stz     num+1
-                stz     num+2
-                stz     num+3
-                ldx     #0
-                jmp     print32
+print8          ldx     #0
+                jmp     print8_pad
 
 ; print2 : affiche A (0-99) sur deux chiffres avec zéro de tête
 print2          ldx     #0

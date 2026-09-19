@@ -14,6 +14,8 @@ start           cld
                 stz     linebuf                 ; %0-%9 vides pour AUTOEXEC.BAT
                 stz     redir
                 stz     pathbuf
+                stz     hcount
+                stz     hused
                 ldx     #4                      ; PROMPT $p$g
 -               lda     default_prompt,x
                 sta     promptfmt,x
@@ -243,32 +245,10 @@ pr_2dig         ldx     #0
                 jmp     pr_char
 
 ; ---------------------------------------------------------------------------
-; read_command : lit la ligne d'écran (elle contient l'invite), la recopie
-; dans linebuf sans l'invite.
+; read_command : lit une ligne au clavier -> linebuf (éditeur de ligne avec
+; historique, lineedit.asm)
 ; ---------------------------------------------------------------------------
-read_command    ldx     #<screenline
-                ldy     #>screenline
-                jsr     ReadLine
-                ; la ligne d'écran commence par l'invite : on la saute
-                lda     screenline
-                sec
-                sbc     promptskip
-                bcc     _empty
-                sta     linebuf
-                beq     _done
-                sta     cnt
-                ldy     #1
-                ldx     promptskip
-                inx
-_copy           lda     screenline,x
-                sta     linebuf,y
-                inx
-                iny
-                dec     cnt
-                bne     _copy
-_done           rts
-_empty          stz     linebuf
-                rts
+read_command    jmp     readline_ed
 
 ; ---------------------------------------------------------------------------
 ; execute_line : analyse linebuf et exécute la commande
@@ -381,9 +361,9 @@ _rest           jsr     at_end
 _rend           stx     argrest
                 ; arg1 et arg2 : découpage sur les espaces
                 ldy     #0
-                #setptr ptr, arg1
+                jsr     ptr_arg1
                 jsr     get_word
-                #setptr ptr, arg2
+                jsr     ptr_arg2
                 jsr     get_word
                 rts
 
@@ -485,7 +465,7 @@ _path           jsr     path_next               ; dirbuf = entrée suivante
                 bcs     _bad
                 sty     by
                 #setptr ptr2, runword
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     build_path
                 jsr     try_run
                 ldx     runword                 ; en majuscules
@@ -496,7 +476,7 @@ _path           jsr     path_next               ; dirbuf = entrée suivante
                 dex
                 bpl     -
                 #setptr ptr2, newname
-                #setptr ptr, namebuf
+                jsr     ptr_namebuf
                 jsr     build_path
                 jsr     try_run
                 ldy     by
@@ -534,7 +514,7 @@ _end            stx     dirbuf
 
 ; try_run : namebuf = nom ; lance NOM(.NEO|.BAT) s'il existe (sans retour),
 ; sinon revient.
-try_run         #setptr ptr, namebuf
+try_run         jsr     ptr_namebuf
                 jsr     to_apipath
                 jsr     ext_of                  ; A = 1 .NEO, 2 .BAT, 0 aucune
                 cmp     #1
@@ -562,7 +542,7 @@ _run            jsr     redir_close             ; la sortie du programme va à
                 sta     DParams                 ; répertoire
                 #api    3,5
                 #api    3,19
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 stz     DParams+2               ; adresse : donnée par l'en-tête
                 stz     DParams+3
                 #api    3,2
@@ -654,7 +634,7 @@ _end            stx     namebuf
                 rts
 
 ; stat_namebuf : File Stat sur namebuf ; Z=1 si le fichier existe (A = erreur)
-stat_namebuf    #setparam 0, namebuf
+stat_namebuf    jsr     p0_namebuf
                 #api    3,16
                 lda     DError
                 rts
@@ -868,3 +848,32 @@ redir_flush     lda     outlen
                 stz     outlen
                 ply
 _done           rts
+
+; ---------------------------------------------------------------------------
+; Raccourcis (taille du code) : pointeurs et paramètres API fréquents
+; ---------------------------------------------------------------------------
+p0_arg1         lda     #<arg1
+                sta     DParams
+                lda     #>arg1
+                sta     DParams+1
+                rts
+p0_namebuf      lda     #<namebuf
+                sta     DParams
+                lda     #>namebuf
+                sta     DParams+1
+                rts
+ptr_arg1        lda     #<arg1
+                sta     ptr
+                lda     #>arg1
+                sta     ptr+1
+                rts
+ptr_arg2        lda     #<arg2
+                sta     ptr
+                lda     #>arg2
+                sta     ptr+1
+                rts
+ptr_namebuf     lda     #<namebuf
+                sta     ptr
+                lda     #>namebuf
+                sta     ptr+1
+                rts

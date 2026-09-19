@@ -33,6 +33,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/shell.asm` | démarrage, boucle, invite (`PROMPT`), lecture de ligne, analyse, dispatch, lancement `.NEO` (+ `PATH`), redirection `>`, messages d'erreur |
 | `src/commands.asm` | table des commandes et leurs implémentations (`copy_move` commun à `COPY`/`MOVE`/`XCOPY` via `opfn`) |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
+| `src/lineedit.asm` | éditeur de ligne (`readline_ed`), historique (`hist_add`, `hist_entry`) |
 | `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf`, `%n`, `GOTO`, `CALL`, pile des niveaux |
 | `src/console.asm` | `putc`, `puts` (texte inline), pstrings, décimal 32 bits |
 | `src/data.asm` | tampons (non émis dans le `.neo`, réservés en RAM) |
@@ -43,8 +44,13 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    avec `/` → `\` ; `cwdpath` = `A:\CHEMIN`) puis `build_prompt` interprète
    `promptfmt` (`$p`, `$g`, `$d`… ; `promptskip` = longueur de la dernière
    ligne de l'invite).
-2. `read_command` : `ReadLine` du noyau renvoie **toute la ligne d'écran**
-   (invite comprise) ; on saute `promptskip` caractères → `linebuf`.
+2. `read_command` → `readline_ed` : lecture touche par touche (2,1) ; la
+   ligne est dans `linebuf` avec un curseur `lpos`, l'écran est tenu en
+   miroir par les codes de contrôle de la console (insertion 5, suppression
+   26, retour arrière 8, gauche/droite 1/4 ; `column` = (`promptskip` +
+   `lpos`) mod 53 pour passer d'une ligne d'écran à l'autre avec 23/19).
+   Haut/Bas rappellent une entrée de `histbuf` (pstrings consécutives,
+   `hcount`/`hused` ; la plus ancienne est retirée quand la place manque).
    `execute_line` appelle d'abord `redir_setup` (voir Redirection).
 3. `parse_line` : `cmdbuf` = premier mot en majuscules (arrêt sur espace,
    `\`, `/`, `.` après la 1re lettre, `:` sauf pour `X:`) ; `argrest` = reste
@@ -88,10 +94,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$B2` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr` |
-| `$C000-$E681` | code (≈ 9,8 Ko ; `codeend`) |
-| `$E682-$FB50` | tampons : `promptbuf`, `cwdbuf`, `screenline`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 024), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave` |
-| `$FB51-$FBFF` | libre (≈ 170 octets de marge ; `.cerror` si `dataend > $FC00`) |
+| `$80-$B5` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`) |
+| `$C000-$E730` | code (≈ 10 Ko ; `codeend`) |
+| `$E731-$FBAE` | tampons : `promptbuf`, `cwdbuf`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 024), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
+| `$FBAF-$FBFF` | libre (≈ 80 octets de marge ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
@@ -122,6 +128,10 @@ et appelle `execute_line`.
 `redir_setup` cherche le premier `>` de `linebuf`, lit `>>` éventuel et le
 nom qui suit, tronque la ligne, ouvre le fichier sur `CH_OUT` (mode 3, ou 2
 puis Seek à la taille pour `>>` ; création si absent) et arme `redir` (bit 7).
+Les macros `#setparam`/`#setptr` les plus fréquentes sont remplacées par
+`p0_arg1`, `p0_namebuf`, `ptr_arg1`, `ptr_arg2`, `ptr_namebuf` (3 octets par
+appel au lieu de 8-10).
+
 `putc` teste `redir` par `BIT` et envoie alors dans `outbuf` (`redir_put`,
 CR → CR LF) ; `redir_flush` écrit le tampon (3,9) en sauvegardant et
 restaurant `DParams`/`DError`, car un affichage peut survenir entre un appel

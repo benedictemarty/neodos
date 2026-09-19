@@ -1,0 +1,11 @@
+echo abc
+echo xyz
+\u\u
+\u\u\u\d
+\u\u\u\d\d\d\d
+\u\e
+echo done
+echo helo\l\ll
+echo abcXdef\l\l\l\l\x
+echo 12\h\r\r\r\r\r\rZ\k\r\r\r\rQ
+echo ab\b\bc

@@ -154,7 +154,7 @@ collect_matches sta     flag
                 rts
 _next           lda     #100
                 sta     namebuf
-                #setparam 0, namebuf
+                jsr     p0_namebuf
                 #api    3,18
                 lda     DError
                 bne     _done
