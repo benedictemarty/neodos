@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.4.0
+NeoDOS version 0.5.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -53,7 +53,9 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 | `MD`, `MKDIR` / `RD`, `RMDIR` | crée / supprime (vide) un répertoire |
 | `DEL`, `ERASE` | supprime des fichiers (`DEL *.BAK` ; confirmation pour `*.*`) |
 | `REN`, `RENAME` | renomme (`REN *.TXT *.BAK`, substitution nom/extension) |
-| `COPY src dst` | copie un fichier ou un motif vers un répertoire (`COPY *.TXT SAVES`) |
+| `COPY src dst`, `MOVE src dst` | copie / déplace un fichier ou un motif vers un répertoire (`COPY *.TXT SAVES`) |
+| `XCOPY rép rép` | copie les fichiers d'un répertoire (créé au besoin) |
+| `ATTRIB [+R -H…] [fichier]` | affiche / modifie les attributs |
 | `TYPE fichier` | affiche un fichier texte (CR, LF, CR/LF, tabulations) |
 | `X:` | change de lecteur (volume `X` − `A` du firmware, 0-3) |
 | `CLS`, `VER`, `VOL`, `MEM` | écran, versions, nom du volume, mémoire |
@@ -86,9 +88,9 @@ docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, adr/
 
 | Zone | Usage |
 |---|---|
-| `$0000-$00FF` | page zéro (NeoDOS : `$80-$AF`) |
+| `$0000-$00FF` | page zéro (NeoDOS : `$80-$B2`) |
 | `$0800-$BFFF` | programmes lancés depuis l'invite (47 104 octets) |
-| `$C000-$FBFF` | NeoDOS (code ≈ 9 Ko + tampons ≈ 5,6 Ko) |
+| `$C000-$FBFF` | NeoDOS (code ≈ 9,8 Ko + tampons ≈ 5,3 Ko) |
 | `$FC00-$FFFF` | noyau 6502 du firmware, API `$FF00` |
 
 ## Licence

@@ -10,7 +10,7 @@ linebuf         .fill   256             ; ligne de commande sans l'invite
 cmdbuf          .fill   17              ; mot de commande en majuscules
 arg1            .fill   129             ; premier argument
 arg2            .fill   129             ; second argument
-argrest         .fill   256             ; reste de la ligne après la commande
+argrest         .fill   201             ; reste de la ligne après la commande (200 max)
 namebuf         .fill   129             ; nom de fichier de travail
 iobuf           .fill   256             ; tampon de lecture (TYPE)
 batbuf          .fill   BATBUF_SIZE     ; fichier batch en cours

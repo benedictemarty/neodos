@@ -1,0 +1,8 @@
+move README.TXT GAMES
+dir GAMES
+move GAMES\README.TXT R2.TXT
+dir *.TXT
+move *.TXT GAMES
+dir GAMES /w
+move *.BAT X.TXT
+move NOPE GAMES

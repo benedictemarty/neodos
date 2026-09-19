@@ -27,6 +27,12 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_ren
                 .ptext  "COPY"
                 .word   cmd_copy
+                .ptext  "MOVE"
+                .word   cmd_move
+                .ptext  "XCOPY"
+                .word   cmd_xcopy
+                .ptext  "ATTRIB"
+                .word   cmd_attrib
                 .ptext  "TYPE"
                 .word   cmd_type
                 .ptext  "CLS"
@@ -554,7 +560,12 @@ _each           jsr     list_next
 ; ---------------------------------------------------------------------------
 ; COPY source|motif destination[répertoire]
 ; ---------------------------------------------------------------------------
-cmd_copy        lda     arg1
+cmd_copy        lda     #20                     ; Copy File
+                sta     opfn
+                bra     copy_move
+cmd_move        lda     #12                     ; Rename
+                sta     opfn
+copy_move       lda     arg1
                 beq     _syn
                 lda     arg2
                 bne     +
@@ -588,7 +599,7 @@ _syn            jmp     err_syntax
                 bra     _one
 _single         #setparam 0, arg1
                 #setparam 2, arg2
-_one            #api    3,20
+_one            jsr     file_op
                 lda     DError
                 bne     _err
                 inc     nfiles
@@ -598,7 +609,7 @@ _err            jmp     err_api
 _wild           lda     wflag
                 bne     +
                 jsr     errlvl1
-                #println "Cannot copy several files to one file"
+                #println "Destination must be a directory"
                 rts
 +               jsr     split_path
                 lda     #0                      ; fichiers seulement
@@ -614,7 +625,7 @@ _each           jsr     list_next
                 jsr     dest_path               ; iobuf = arg2/nom
                 #setparam 0, namebuf
                 #setparam 2, iobuf
-                #api    3,20
+                jsr     file_op
                 lda     DError
                 bne     _cerr
                 inc     nfiles
@@ -629,8 +640,229 @@ _cerr           sta     errsave
 _count          lda     nfiles
                 ldx     #9
                 jsr     print8_pad
+                lda     opfn
+                cmp     #12
+                beq     _moved
                 #println " file(s) copied"
 _done           rts
+_moved          #println " file(s) moved"
+                rts
+
+; file_op : appel API 3,opfn (paramètres déjà en place)
+file_op         jsr     WaitMessage
+                lda     opfn
+                sta     DFunction
+                lda     #3
+                sta     DCommand
+                jmp     WaitMessage
+
+; ---------------------------------------------------------------------------
+; XCOPY source[/motif] destination : copie les fichiers d'un répertoire vers
+; un répertoire (créé s'il n'existe pas)
+; ---------------------------------------------------------------------------
+cmd_xcopy       lda     arg1
+                beq     _jsyn
+                lda     arg2
+                bne     +
+_jsyn           jmp     err_syntax
++               #setptr ptr, arg1
+                jsr     to_apipath
+                #setptr ptr, arg2
+                jsr     to_apipath
+                #setptr ptr, arg1
+                jsr     has_wild
+                bcs     _dest
+                #setparam 0, arg1               ; source = répertoire ? -> « /* »
+                #api    3,16
+                lda     DError
+                bne     _nf
+                lda     DParams+4
+                and     #ATTR_DIR
+                beq     _dest
+                ldx     arg1
+                lda     #'/'
+                inx
+                sta     arg1,x
+                lda     #'*'
+                inx
+                sta     arg1,x
+                stx     arg1
+_dest           #setparam 0, arg2               ; destination absente : créée
+                #api    3,16
+                lda     DError
+                beq     _go
+                #setparam 0, arg2
+                #api    3,14
+                lda     DError
+                beq     _go
+                jsr     errlvl1
+                #println "Unable to create directory"
+                rts
+_go             lda     #20
+                sta     opfn
+                jmp     copy_move
+_nf             jmp     err_notfound
+
+; ---------------------------------------------------------------------------
+; ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif] : affiche ou modifie
+; ---------------------------------------------------------------------------
+cmd_attrib      stz     attr_set
+                stz     attr_clr
+                stz     arg1
+                ldy     #0
+_word           #setptr ptr, arg2
+                jsr     get_word
+                lda     arg2
+                beq     _parsed
+                cmp     #2
+                bne     _path
+                lda     arg2+1
+                cmp     #'+'
+                beq     _plus
+                cmp     #'-'
+                bne     _path
+                lda     arg2+2
+                jsr     attr_bit
+                beq     _bad
+                ora     attr_clr
+                sta     attr_clr
+                bra     _word
+_plus           lda     arg2+2
+                jsr     attr_bit
+                beq     _bad
+                ora     attr_set
+                sta     attr_set
+                bra     _word
+_bad            #println "Invalid parameter"
+                jmp     errlvl1
+_path           lda     arg1
+                bne     _word
+                ldx     arg2
+-               lda     arg2,x
+                sta     arg1,x
+                dex
+                bpl     -
+                bra     _word
+_parsed         lda     arg1
+                bne     +
+                lda     #1                      ; sans fichier : « * »
+                sta     arg1
+                lda     #'*'
+                sta     arg1+1
++               #setptr ptr, arg1
+                jsr     to_apipath
+                jsr     has_wild
+                bcs     _wild
+                #setparam 0, arg1               ; un répertoire : son contenu
+                #api    3,16
+                lda     DError
+                bne     _wild
+                lda     DParams+4
+                and     #ATTR_DIR
+                beq     _wild
+                ldx     arg1
+                lda     #'/'
+                inx
+                sta     arg1,x
+                lda     #'*'
+                inx
+                sta     arg1,x
+                stx     arg1
+                bra     _wild
+_wild           jsr     split_path
+                lda     #0                      ; fichiers seulement
+                jsr     collect_matches
+                bcs     _jdone
+                lda     lcount
+                bne     +
+                jmp     err_notfound
++               jsr     list_first
+_each           jsr     list_next
+                bcc     +
+_jdone          jmp     _done
++               #setptr ptr, namebuf
+                jsr     build_path
+                #setparam 0, namebuf
+                #api    3,16
+                lda     DError
+                bne     _each
+                lda     attr_set
+                ora     attr_clr
+                bne     _change
+                ; affichage : A S H R  chemin
+                lda     DParams+4
+                sta     tmp
+                and     #ATTR_ARCHIVE
+                ldx     #'A'
+                jsr     attr_show
+                lda     tmp
+                and     #ATTR_SYSTEM
+                ldx     #'S'
+                jsr     attr_show
+                lda     tmp
+                and     #ATTR_HIDDEN
+                ldx     #'H'
+                jsr     attr_show
+                lda     tmp
+                and     #ATTR_READONLY
+                ldx     #'R'
+                jsr     attr_show
+                jsr     space
+                #setptr ptr, namebuf
+                jsr     putpstr_dos
+                jsr     newline
+                bra     _each
+_change         lda     DParams+4
+                and     #ATTR_DIR               ; jamais le bit répertoire
+                sta     tmp
+                lda     DParams+4
+                ora     attr_set
+                sta     flag
+                lda     attr_clr
+                eor     #$ff
+                and     flag
+                and     #~ATTR_DIR
+                ora     tmp
+                sta     DParams+2
+                #setparam 0, namebuf
+                #api    3,21
+                lda     DError
+                bne     +
+                jmp     _each
++               sta     errsave
+                #setptr ptr, namebuf
+                jsr     putpstr_dos
+                #print  ": "
+                lda     errsave
+                jsr     err_api
+                jmp     _each
+_done           rts
+
+; attr_bit : A = lettre -> masque (0 si inconnue)
+attr_bit        jsr     upper
+                ldx     #ATTR_READONLY
+                cmp     #'R'
+                beq     _ok
+                ldx     #ATTR_HIDDEN
+                cmp     #'H'
+                beq     _ok
+                ldx     #ATTR_SYSTEM
+                cmp     #'S'
+                beq     _ok
+                ldx     #ATTR_ARCHIVE
+                cmp     #'A'
+                beq     _ok
+                lda     #0
+                rts
+_ok             txa
+                rts
+
+; attr_show : affiche X si A != 0, sinon un espace
+attr_show       cmp     #0
+                bne     +
+                ldx     #' '
++               txa
+                jmp     putc
 
 ; copy_dest_name : iobuf = arg2 + « / » + nom de base de arg1 (après « / »)
 copy_dest_name  ldx     arg1                    ; X = dernier « / » (0 : aucun)
@@ -1266,7 +1498,9 @@ cmd_help        jsr     newline
                 #println "MD RD path        Make/remove directory"
                 #println "DEL file|*.*      Delete files"
                 #println "REN old new       Rename files (REN *.TXT *.BAK)"
-                #println "COPY src dst      Copy files (COPY *.TXT DIR)"
+                #println "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)"
+                #println "XCOPY dir dir     Copy a directory's files"
+                #println "ATTRIB +R -H file Show/set attributes"
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"

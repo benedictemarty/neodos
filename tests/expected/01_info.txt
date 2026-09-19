@@ -1,11 +1,12 @@
-Neo6502 firmware 1.0.0
 A:\>help
 DIR [path] [/P /W] List directory (wildcards)
 CD [path]         Change/show directory
 MD RD path        Make/remove directory
 DEL file|*.*      Delete files
 REN old new       Rename files (REN *.TXT *.BAK)
-COPY src dst      Copy files (COPY *.TXT DIR)
+COPY MOVE src dst Copy/move files (COPY *.TXT DIR)
+XCOPY dir dir     Copy a directory's files
+ATTRIB +R -H file Show/set attributes
 TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory

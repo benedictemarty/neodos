@@ -19,7 +19,7 @@ A.TXT                    3
         2 file(s)         34 bytes
         0 dir(s)
 A:\>copy *.BAK X.TXT
-Cannot copy several files to one file
+Destination must be a directory
 A:\>copy NOPE* GAMES
 File not found
 A:\>ren *.OLD README.BAK

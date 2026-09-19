@@ -3,6 +3,27 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.5.0] — 2026-09-19
+
+Sprint 5 : MOVE, XCOPY, ATTRIB.
+
+### Ajouté
+- `MOVE source|motif destination` : déplace par renommage (vers un nom ou un
+  répertoire), « n file(s) moved » ; implémentation commune avec `COPY`
+  (`copy_move`, fonction API paramétrée).
+- `XCOPY source[\motif] destination` : copie les fichiers d'un répertoire
+  (ou d'un motif) vers un répertoire créé au besoin (un niveau, pas de `/S`).
+- `ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif|répertoire]` : affiche
+  (`A S H R chemin`) ou modifie les attributs ; sans argument, tous les
+  fichiers du répertoire courant.
+- Tests `20_move`, `21_xcopy`, `22_attrib`.
+
+### Modifié
+- `listbuf` ramené à 1 Ko et `argrest` à 200 caractères pour rester en
+  `$C000` (marge ≈ 170 octets).
+- Message `Cannot copy several files to one file` remplacé par `Destination
+  must be a directory` (commun à `COPY` et `MOVE`).
+
 ## [0.4.0] — 2026-09-19
 
 Sprint 4 : PATH, PROMPT, redirection.

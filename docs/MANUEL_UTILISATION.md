@@ -27,6 +27,9 @@ minuscules ; les chemins acceptent `\` ou `/`.
 | `DEL fichier\|motif` | `DEL OLD.TXT`, `DEL *.BAK`, `DEL SAVES\*.*` (confirmation) ; refuse un répertoire : `Access denied` |
 | `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
 | `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` |
+| `MOVE source destination` | `MOVE A.TXT OLD.TXT`, `MOVE *.BAK ARCHIVE` (déplacement par renommage) |
+| `XCOPY source destination` | `XCOPY GAMES SAVE` (fichiers de GAMES vers SAVE, créé au besoin), `XCOPY GAMES\*.NEO BIN` |
+| `ATTRIB [+R -R +H -H +S -S +A -A] [fichier]` | `ATTRIB *.TXT` (affiche `A S H R`), `ATTRIB +R CONFIG.BAT`, `ATTRIB` seul : tout le répertoire |
 | `TYPE fichier` | `TYPE README.TXT` |
 | `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
 
@@ -155,7 +158,8 @@ retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 | `Access denied` | `DEL` sur un répertoire, volume en lecture seule |
 | `Syntax error` | argument manquant |
 | `Too many files` | plus de 255 noms (ou 1,25 Ko) pour un joker |
-| `Cannot copy several files to one file` | `COPY motif fichier` |
+| `Destination must be a directory` | `COPY`/`MOVE` de plusieurs fichiers vers un seul nom |
+| `Invalid parameter` | `ATTRIB` avec un attribut inconnu |
 | `Duplicate file name or file not found` | `REN` impossible (cible existante…) |
 | `Label not found` | `GOTO` vers un `:label` absent (fin du script) |
 | `Too many nested CALLs` | plus de 3 niveaux de `CALL` |
@@ -166,6 +170,9 @@ retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 ## Limites connues (v0.1)
 
 - Pas de `FOR`, `SHIFT`, `%VAR%` dans les scripts, pas de `<` ni `|`, pas
-  de dates de fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
+  de `XCOPY /S` (récursif), pas de dates de fichiers dans `DIR` (voir le
+  backlog dans `docs/AGILE_PLAN.md`).
+- Sur les émulateurs, seul l'attribut `R` est réellement stocké (permissions
+  du fichier hôte) ; `H`, `S`, `A` n'ont d'effet que sur la carte (FAT).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`
   laisse `..` dans le chemin affiché ; la carte (FAT) n'a pas ces limites.

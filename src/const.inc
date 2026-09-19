@@ -57,7 +57,10 @@ bx              = $AB           ; batch : longueur de la ligne en cours d'expans
 by              = $AC           ; batch : index de lecture dans la ligne source
 cond            = $AD           ; IF : condition vraie
 preverr         = $AE           ; ERRORLEVEL de la commande précédente (lu par IF)
-redir           = $AF           ; sortie redirigée vers CH_OUT (1 = active)
+redir           = $AF           ; sortie redirigée vers CH_OUT (bit 7 = active)
+opfn            = $B0           ; COPY/MOVE : fonction API (20 copie, 12 renomme)
+attr_set        = $B1           ; ATTRIB : bits à mettre / à retirer
+attr_clr        = $B2
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
 ERR_OK          = 0
@@ -85,7 +88,7 @@ CH_BAT          = 7             ; lecture d'un fichier batch
 CH_OUT          = 1             ; redirection de la sortie (>, >>)
 
 BATBUF_SIZE     = 1024          ; taille maximale d'un fichier .BAT
-LISTBUF_SIZE    = 1280          ; noms collectés par les jokers (pstrings)
+LISTBUF_SIZE    = 1024          ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
 BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)
 BAT_ARGS_SIZE   = 128           ; ligne de commande d'un batch (pstring, %0-%9)

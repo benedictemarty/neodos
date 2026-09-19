@@ -66,12 +66,21 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S23 Redirection `commande > fichier` et `>> fichier` (CR/LF), messages inclus | fait |
 | S24 Base en `$C000`, tests, docs | fait |
 
+## Sprint 5 — MOVE, XCOPY, ATTRIB (2026-09-19) — livré, v0.5.0
+
+| Story | État |
+|---|---|
+| S25 `MOVE source|motif destination` (renommage, vers un répertoire ou un nom) | fait |
+| S26 `XCOPY source[\motif] destination` : copie d'un répertoire (créé au besoin), un niveau | fait |
+| S27 `ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif]` : affiche / modifie les attributs | fait |
+| S28 Tampons réduits (`listbuf` 1 Ko, `argrest` 200) pour rester en `$C000`, tests, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
-| B6 | `COPY` avec concaténation, `MOVE`, `XCOPY` de répertoires | |
+| B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B8 | Historique de commandes (flèche haut) | ReadLine du noyau ne le fait pas |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT` : éditeur de texte plein écran | gros chantier |

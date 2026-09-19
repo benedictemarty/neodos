@@ -371,6 +371,8 @@ _wend           stx     cmdbuf
                 ldx     #0
 _rest           jsr     at_end
                 bcs     _rend
+                cpx     #200
+                bcs     _rend
                 lda     linebuf,y
                 inx
                 sta     argrest,x

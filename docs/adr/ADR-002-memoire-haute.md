@@ -20,7 +20,7 @@ reprendre la main (retour à l'invite, suite d'un `.BAT`).
 Option 2. v0.1.0 : base `$D800` (9 Ko). v0.2.0 : `$D000` (11 Ko). v0.3.0 :
 `$C800` (13 Ko). v0.4.0 : base **`$C000`** (15 Ko : ≈ 9 Ko de code, 5,6 Ko de
 tampons dont `listbuf` 1,25 Ko pour les jokers, `batstack` 582 octets pour
-`CALL`, `outbuf` 128 pour la redirection ; ≈ 650 octets de marge). Les
+`CALL`, `outbuf` 128 pour la redirection ; v0.5.0 : `listbuf` 1 Ko, `argrest` 200, ≈ 170 octets de marge). Les
 programmes disposent de `$0800-$BFFF` (47 104 octets) ; page zéro NeoDOS
 `$80-$AF`, hors des zones du noyau (`$E0-$EF`, `$FC-$FF`).
 

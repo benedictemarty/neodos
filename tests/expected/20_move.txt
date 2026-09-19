@@ -1,22 +1,29 @@
-NeoDOS version 0.5.0
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>dir GAMES > D.TXT
-A:\>type D.TXT
- Volume in drive A is HOST0
  Directory of A:\GAMES
+README.TXT              31
 A.TXT                    3
-        1 file(s)          3 bytes
+        2 file(s)         34 bytes
         0 dir(s)
-A:\>dir *.NOPE > F.TXT
-A:\>type F.TXT
+A:\>move GAMES\README.TXT R2.TXT
+        1 file(s) moved
+A:\>dir *.TXT
  Volume in drive A is HOST0
  Directory of A:\
+R2.TXT                  31
+CTRL.TXT                 9
+        2 file(s)         40 bytes
+        0 dir(s)
+A:\>move *.TXT GAMES
+        2 file(s) moved
+A:\>dir GAMES /w
+ Volume in drive A is HOST0
+ Directory of A:\GAMES
+CTRL.TXT     R2.TXT       A.TXT
+        3 file(s)         43 bytes
+        0 dir(s)
+A:\>move *.BAT X.TXT
+Destination must be a directory
+A:\>move NOPE GAMES
 File not found
-A:\>copy README.TXT GAMES > G.TXT
-A:\>type G.TXT
-        1 file(s) copied
 A:\>
 --- files ---
 ARGS.BAT
@@ -26,14 +33,11 @@ BIN/HI.NEO
 BIN/TOOL.BAT
 CALLER.BAT
 CHAIN.BAT
-CTRL.TXT
-D.TXT
 DEMO.BAT
-F.TXT
-G.TXT
 GAMES/
 GAMES/A.TXT
-GAMES/README.TXT
+GAMES/CTRL.TXT
+GAMES/R2.TXT
 HELLO.NEO
 LOOP.BAT
 MANY/
@@ -72,6 +76,5 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
-README.TXT
 SUB.BAT
 SUB2.BAT
