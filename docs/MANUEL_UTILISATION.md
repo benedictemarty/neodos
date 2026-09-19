@@ -24,6 +24,10 @@ efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
 dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
 dernière entrée redonne une ligne vide.
 
+**Ctrl+Alt+Suppr** (à l'invite) redémarre NeoDOS à chaud : fichiers fermés,
+son coupé, retour à la racine, écran effacé, `AUTOEXEC.BAT` rejoué. Le
+firmware n'est pas réinitialisé (les programmes en mémoire sont perdus).
+
 ## Fichiers et répertoires
 
 | Commande | Exemple |

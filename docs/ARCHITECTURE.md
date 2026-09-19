@@ -49,6 +49,8 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    miroir par les codes de contrôle de la console (insertion 5, suppression
    26, retour arrière 8, gauche/droite 1/4 ; `column` = (`promptskip` +
    `lpos`) mod 53 pour passer d'une ligne d'écran à l'autre avec 23/19).
+   `getkey` interroge aussi Key Status (1,2) sur Suppr : avec Ctrl et Alt →
+   `warm_restart` (attend le relâchement, 8,1, `CD /`, 2,12, `jmp start`).
    Haut/Bas rappellent une entrée de `histbuf` (pstrings consécutives,
    `hcount`/`hused` ; la plus ancienne est retirée quand la place manque).
    `execute_line` appelle d'abord `redir_setup` (voir Redirection).

@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.6.0
+NeoDOS version 0.7.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -66,7 +66,7 @@ clé USB, puis depuis NeoBASIC : `run "neodos.neo"`. `EXIT` revient à NeoBASIC.
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
 
-Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes.
+Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 | `EXIT`, `BASIC` | retour à NeoBASIC |
 | `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script |
 

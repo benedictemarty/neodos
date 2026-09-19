@@ -76,7 +76,7 @@ def run_case(name, ref):
     # séquences du typer conservées (\u \d \l \r flèches, \h \k Début/Fin, \x Suppr,
     # \b Retour arrière, \e Échap, \1..\8, \n) ; tout autre « \ » est un antislash DOS
     import re
-    keys = re.sub(r"\\(?![udlrhkxbe1-8n])", r"\\\\", keys).replace("\n", "\\n") + "\\n"
+    keys = re.sub(r"\\(?![udlrhkxbze1-8n])", r"\\\\", keys).replace("\n", "\\n") + "\\n"
     cycles = START_CYCLES + CYCLES_PER_KEY * nkeys + TAIL_CYCLES
     tmp = tempfile.mkdtemp(prefix="neodos-" + name + "-")
     try:

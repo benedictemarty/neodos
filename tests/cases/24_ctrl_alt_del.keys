@@ -1,0 +1,4 @@
+cd GAMES
+echo before
+\z
+echo after

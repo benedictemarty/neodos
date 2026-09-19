@@ -2,21 +2,9 @@ NeoDOS version 0.7.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>echo hello > OUT.TXT
-A:\>type OUT.TXT
-hello
-A:\>echo again >> OUT.TXT
-A:\>type OUT.TXT
-hello
-again
-A:\>echo x >> NEW.TXT
-A:\>type NEW.TXT
-x
-A:\>type NOPE > E.TXT
-A:\>type E.TXT
-File not found
-A:\>echo >
-Syntax error
+A:\>
+A:\>echo after
+after
 A:\>
 --- files ---
 ARGS.BAT
@@ -28,7 +16,6 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
-E.TXT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
@@ -69,8 +56,6 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
-NEW.TXT
-OUT.TXT
 README.TXT
 SUB.BAT
 SUB2.BAT

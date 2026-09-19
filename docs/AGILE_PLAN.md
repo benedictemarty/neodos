@@ -84,6 +84,15 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S31 Historique de commandes (Haut/Bas, 200 octets, doublons consécutifs ignorés) | fait |
 | S32 Phosphoneo : `--type-keys` accepte flèches/Début/Fin/Suppr/Retour arrière ; test `23_lineedit` | fait |
 
+## Sprint 7 — Ctrl+Alt+Suppr et commandes externes (2026-09-19) — livré, v0.7.0
+
+| Story | État |
+|---|---|
+| S33 Ctrl+Alt+Suppr à l'invite : redémarrage à chaud (fichiers fermés, son coupé, racine, écran effacé, NeoDOS relancé) | fait |
+| S34 ADR-003 : résident gelé à `$C000`, extensions en commandes externes `.NEO` via `PATH` | fait |
+| S35 Phosphoneo : `\z` = Ctrl+Alt+Suppr dans `--type-keys` ; test `24_ctrl_alt_del` | fait |
+| S36 Ligne de commande transmise aux `.NEO` en `$0200` (contrat des commandes externes) | à faire (sprint 8) |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -91,7 +100,9 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
-| B10 | `EDIT` : éditeur de texte plein écran | gros chantier |
+| B10 | `EDIT.NEO` : éditeur de texte plein écran (commande externe, ADR-003) | gros chantier |
+| B12 | `XCOPY.NEO /S`, `FOR`, `SHIFT` en commandes externes ou après décision mémoire | ADR-003 |
+| B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts

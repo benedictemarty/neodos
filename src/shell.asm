@@ -44,6 +44,23 @@ mainloop        ldx     #$ff                    ; pile propre après un programm
                 jsr     execute_line
                 bra     mainloop
 
+; warm_restart : Ctrl+Alt+Suppr — redémarrage à chaud (le RP2040 n'est pas
+; réinitialisé) : fichiers fermés, son coupé, écran effacé, NeoDOS relancé
+warm_restart    ldx     #$ff
+                txs
+-               lda     #KEY_DELETE             ; attend le relâchement de Suppr
+                sta     DParams                 ; (sinon redémarrages en boucle)
+                #api    1,2
+                lda     DParams
+                bne     -
+                #api    8,1                     ; Reset Sound
+                #setparam 0, rootpath           ; retour à la racine, comme
+                #api    3,15                    ; après un démarrage
+                #api    2,12                    ; Clear Screen
+                jmp     start
+rootpath        .ptext  "/"
+
+
 ; ---------------------------------------------------------------------------
 ; show_prompt : « A:\CHEMIN> » ; mémorise sa longueur dans promptlen
 ; ---------------------------------------------------------------------------

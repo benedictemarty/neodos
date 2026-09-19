@@ -150,10 +150,22 @@ keytab          .byte   CR, CC_BACKSPACE, CC_DELETE, CC_LEFT, CC_RIGHT, CC_HOME
 handlers        .word   _enter, _bs, _del, _left, _right, _home
                 .word   _end, _up, _down, _esc
 
-; getkey : attend une touche (curseur inversé pendant l'attente)
+; getkey : attend une touche (curseur inversé pendant l'attente) ;
+; Ctrl+Alt+Suppr pendant l'attente : redémarrage à chaud de NeoDOS
 getkey          lda     #CC_REVERSE
                 jsr     putc
--               #api    2,1
+-               lda     #KEY_DELETE
+                sta     DParams
+                #api    1,2                     ; état de Suppr + modificateurs
+                lda     DParams
+                beq     +
+                lda     DParams+1
+                bit     #MOD_CTRL
+                beq     +
+                bit     #MOD_ALT
+                beq     +
+                jmp     warm_restart
++               #api    2,1
                 lda     DParams
                 beq     -
                 pha

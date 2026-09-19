@@ -83,6 +83,9 @@ ATTR_HIDDEN     = $10
 
 ; Console
 CR              = 13
+KEY_DELETE      = $4C           ; code HID de Suppr (Key Status 1,2)
+MOD_CTRL        = $11           ; bits Ctrl gauche/droit (Parameter:1 de 1,2)
+MOD_ALT         = $44           ; bits Alt / AltGr
 SCREEN_COLS     = 53
 
 ; Canaux fichiers utilisés par NeoDOS
@@ -94,7 +97,7 @@ BATBUF_SIZE     = 1024          ; taille maximale d'un fichier .BAT
 LISTBUF_SIZE    = 1024          ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
 BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)
-BAT_ARGS_SIZE   = 128           ; ligne de commande d'un batch (pstring, %0-%9)
+BAT_ARGS_SIZE   = 96            ; ligne de commande d'un batch (pstring, %0-%9)
 BAT_DEPTH       = 3             ; niveaux de CALL
 BAT_LEVEL_SIZE  = BAT_NAME_SIZE + BAT_ARGS_SIZE + 2
 OUTBUF_SIZE     = 128           ; tampon de la redirection

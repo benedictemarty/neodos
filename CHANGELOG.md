@@ -3,6 +3,22 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.7.0] — 2026-09-19
+
+Sprint 7 : Ctrl+Alt+Suppr, commandes externes (ADR-003).
+
+### Ajouté
+- **Ctrl+Alt+Suppr** à l'invite : redémarrage à chaud de NeoDOS — attente du
+  relâchement de la touche, son coupé (8,1), retour à la racine (3,15),
+  écran effacé, relance de `start` (fichiers fermés, `AUTOEXEC.BAT` rejoué).
+  Le RP2040 n'est pas réinitialisé (le reset complet 1,7 reste hors NeoDOS).
+- ADR-003 : le résident est gelé à `$C000` ; les fonctions volumineuses
+  seront des commandes externes `.NEO` trouvées via `PATH`.
+- Test `24_ctrl_alt_del` (`\z` du typer Phosphoneo).
+
+### Modifié
+- `BAT_ARGS_SIZE` 128 → 96 (ligne de commande d'un script) : −128 octets.
+
 ## [0.6.0] — 2026-09-19
 
 Sprint 6 : consolidation et historique de commandes.
