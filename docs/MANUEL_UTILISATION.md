@@ -73,9 +73,12 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$C000` et `$FBFF` (zone NeoDOS) —
-attention, les programmes llvm-mos y placent leur pile C (`$F600`) : ils
-fonctionnent mais NeoDOS ne survit pas à leur exécution (redémarrer). Un
+Un programme peut écrire entre `$C000` et `$FBFF` (zone NeoDOS — les
+programmes llvm-mos y placent leur pile C en `$F600`) à condition de rendre
+la main par `RTS` : NeoDOS détecte qu'il a été écrasé et se recharge depuis
+`/boot/neodos.neo` (ou `/neodos.neo` à la racine — garder l'un des deux sur
+la clé), avec `AUTOEXEC.BAT` rejoué ; s'il est intact, l'invite (ou le
+script en cours) reprend directement. Un
 programme trouve sa ligne de commande complète via l'en-tête de NeoDOS :
 `$C003` = `NEODOS`, `$C009` = version, `$C00C` = adresse de la ligne (octet de
 longueur puis les caractères) : c'est le contrat des **commandes externes**

@@ -1,4 +1,4 @@
-NeoDOS version 0.8.1
+NeoDOS version 0.8.2
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands

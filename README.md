@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.8.1
+NeoDOS version 0.8.2
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -78,6 +78,8 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `HELP` | aide en ligne |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
+
+Un programme qui écrase la zone de NeoDOS (pile C de llvm-mos en `$F600`, gros programme) et rend la main par `RTS` revient quand même à l'invite : un stub en `$0100` vérifie NeoDOS et le **recharge depuis `/boot/neodos.neo`** (ou `/neodos.neo`) — comme le firmware recharge NeoBASIC depuis la flash.
 | `EXIT`, `BASIC` | retour à NeoBASIC |
 | `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script (ligne de commande : pointeur en `$C00C`) |
 

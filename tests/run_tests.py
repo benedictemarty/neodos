@@ -14,7 +14,7 @@ Phosphoneo, les autres antislashs sont des séparateurs DOS). Le résultat atten
     du stockage après le test (chemins relatifs, « / » final pour un dossier).
 
 Le stockage de chaque test est une copie fraîche de tests/fixtures/ plus les
-exemples de storage/ (HELLO.NEO, AUTOEXEC.BAT, DEMO.BAT).
+exemples de storage/ (HELLO.NEO, AUTOEXEC.BAT, DEMO.BAT) et boot/neodos.neo (stub).
 
 Usage : run_tests.py [--ref] [NOM ...]
   --ref  régénère les fichiers attendus au lieu de comparer

@@ -34,6 +34,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/commands.asm` | table des commandes et leurs implémentations (`copy_move` commun à `COPY`/`MOVE`/`XCOPY` via `opfn`) |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
 | `src/lineedit.asm` | éditeur de ligne (`readline_ed`), historique (`hist_add`, `hist_entry`) |
+| `src/stub.asm` | stub de retour des programmes (`$0100`) : vérification et rechargement de NeoDOS |
 | `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf`, `%n`, `GOTO`, `CALL`, pile des niveaux |
 | `src/console.asm` | `putc`, `puts` (texte inline), pstrings, décimal 32 bits |
 | `src/data.asm` | tampons (non émis dans le `.neo`, réservés en RAM) |
@@ -127,6 +128,21 @@ de `:label`. `IF` (`cmd_if`, dans `commands.asm`) évalue `NOT`, `EXIST`,
 est remis à 0 au début de chaque `execute_line`, à 1 par `errlvl1` dans les
 chemins d'erreur) ou `a==b`, puis recopie le reste de la ligne dans `linebuf`
 et appelle `execute_line`.
+
+## Survie aux programmes (stub de retour)
+
+Le résident peut être écrasé par un programme (pile C llvm-mos en `$F600`).
+`install_stub` copie avant chaque lancement `stub_image` (assemblée en
+`.logical $0100`) en bas de la page pile et y inscrit la somme de contrôle
+16 bits du code (`sum_code`, routine du stub appelée en place) ; `try_run`
+pousse `STUB_BASE-1` comme adresse de retour puis `JMP $FF08`. Au `RTS` du
+programme, le stub vérifie les sentinelles `canary_lo`/`canary_hi` (`$A5`,
+premier et dernier octets des données) et la somme du code : intact →
+`jmp neodos_back` (pile réinitialisée, batch ou invite) ; sinon Load File
+(3,2) de `/boot/neodos.neo` puis `/neodos.neo` et `JMP $FF08` (→ `start`) ;
+si les deux manquent, 1,3 + `jmp (0)` (NeoBASIC). Limite : un programme qui
+utilise plus de 240 octets de pile matérielle ou écrit en `$0100-$01A0`
+détruit le stub (reset ; Trinity relance NeoDOS via `boot/auto.txt`).
 
 ## Fonctions du firmware absentes
 

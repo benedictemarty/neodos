@@ -3,6 +3,37 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.8.2] — 2026-09-20
+
+Comment NeoDOS « survit » aux programmes (question bmarty) : comme NeoBASIC,
+qui est rechargé depuis la flash par 1,3, NeoDOS se recharge depuis le disque.
+
+### Ajouté
+- **Stub de retour** (`src/stub.asm`) : avant chaque lancement, un stub de
+  ~150 octets est copié en `$0100` (bas de la page pile) et son adresse est
+  poussée comme adresse de retour. Au `RTS` du programme il vérifie NeoDOS
+  (somme de contrôle 16 bits du code `$C000..codeend`, sentinelles `$A5` aux
+  deux bouts des données) : intact → reprise normale (batch en cours,
+  invite) ; sinon → rechargement de `/boot/neodos.neo` puis `/neodos.neo`
+  (3,2 + `$FF08`), en dernier recours NeoBASIC (1,3). Un programme llvm-mos
+  qui écrase `$C000-$FBFF` avec sa pile C et rend la main revient donc à un
+  NeoDOS neuf (`AUTOEXEC.BAT` rejoué).
+- `examples/smash.asm` → fixture `SMASH.NEO` (écrase `$C000-$FBFF` puis
+  `RTS`) ; test `27_smash_reload` (le runner place `boot/neodos.neo` dans
+  chaque stockage de test).
+
+### Corrigé
+- `run_batch` : la copie de la ligne de commande dans `batargs` bouclait 256
+  fois quand la ligne était vide (`STX` ne positionne pas Z), écrasant
+  `batdepth` et `batstack` — sans effet visible tant que la RAM était à
+  zéro, détecté avec la fixture SMASH (« File not found » après
+  `AUTOEXEC.BAT`, 4 rechargements fantômes).
+- `install_stub` : boucle de copie `bpl` fausse au-delà de 128 octets.
+
+### Modifié
+- `listbuf` 1 024 → 960 octets. Marge ≈ 30 octets : le résident est plein
+  (ADR-003 : toute suite en commandes externes).
+
 ## [0.8.1] — 2026-09-20
 
 ### Corrigé
