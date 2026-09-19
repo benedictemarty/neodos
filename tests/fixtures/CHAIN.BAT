@@ -1,0 +1,2 @@
+HELLO
+ECHO after program

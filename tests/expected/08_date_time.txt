@@ -1,0 +1,28 @@
+NeoDOS version 0.1.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>date
+Current date is 1970-01-01
+A:\>time
+Current time is 00:00:01
+A:\>date 2026-09-19
+A:\>time 12:34:56
+A:\>date
+Current date is 2026-09-19
+A:\>time
+Current time is 12:34:57
+A:\>date x
+Invalid date
+A:\>time 99:99
+Invalid time
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

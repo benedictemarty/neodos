@@ -1,0 +1,35 @@
+NeoDOS version 0.1.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>md SUB
+A:\>dir
+ Volume in drive A is HOST0
+ Directory of A:\
+SUB                  <DIR>
+AUTOEXEC.BAT           135
+DEMO.BAT                79
+HELLO.NEO               66
+GAMES                <DIR>
+CTRL.TXT                 9
+README.TXT              31
+CHAIN.BAT               25
+        6 file(s)        345 bytes
+        2 dir(s)
+A:\>rd SUB
+A:\>rd NOPE
+Invalid path, not directory, or directory not empty
+A:\>rd README.TXT
+Invalid path, not directory, or directory not empty
+A:\>md
+Syntax error
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

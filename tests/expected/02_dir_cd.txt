@@ -1,0 +1,36 @@
+ Volume in drive A is HOST0
+ Directory of A:\GAMES
+A.TXT                    3
+        1 file(s)          3 bytes
+        0 dir(s)
+A:\>dir \GAMES
+ Volume in drive A is HOST0
+ Directory of A:\GAMES
+A.TXT                    3
+        1 file(s)          3 bytes
+        0 dir(s)
+A:\>cd GAMES
+A:\GAMES>dir ..
+ Volume in drive A is HOST0
+ Directory of A:\GAMES\..
+AUTOEXEC.BAT           135
+DEMO.BAT                79
+HELLO.NEO               66
+GAMES                <DIR>
+CTRL.TXT                 9
+README.TXT              31
+CHAIN.BAT               25
+        6 file(s)        345 bytes
+        1 dir(s)
+A:\GAMES>cd NOPE
+Invalid directory
+A:\GAMES>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

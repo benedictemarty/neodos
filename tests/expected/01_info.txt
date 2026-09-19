@@ -1,0 +1,31 @@
+NeoDOS version 0.1.0
+Neo6502 firmware 1.0.0
+A:\>help
+DIR [path]        List directory
+CD [path]         Change/show directory
+MD RD path        Make/remove directory
+DEL file          Delete a file
+REN old new       Rename a file
+COPY src dst      Copy a file
+TYPE file         Display a text file
+X:                Change drive
+CLS VER VOL MEM   Screen, versions, volume, memory
+DATE TIME         Show/set date and time
+ECHO PAUSE REM    Batch commands (.BAT)
+EXIT              Return to NeoBASIC
+name[.NEO]        Run a program
+A:\>mem
+   53248 bytes free for programs ($0800-$D7FF)
+    9216 bytes reserved for NeoDOS ($D800-$FBFF)
+A:\>vol
+ Volume in drive A is HOST0
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

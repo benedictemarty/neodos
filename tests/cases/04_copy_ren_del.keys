@@ -1,0 +1,8 @@
+copy README.TXT B.TXT
+ren B.TXT C.TXT
+dir
+del C.TXT
+del NOPE
+del GAMES
+copy NOPE X
+ren

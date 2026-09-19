@@ -1,0 +1,5 @@
+build/
+storage/*
+!storage/.gitkeep
+*.dump
+__pycache__/

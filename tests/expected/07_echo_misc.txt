@@ -1,0 +1,12 @@
+A:\>echo after cls
+after cls
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

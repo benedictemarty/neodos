@@ -1,0 +1,37 @@
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>copy README.TXT B.TXT
+        1 file(s) copied
+A:\>ren B.TXT C.TXT
+A:\>dir
+ Volume in drive A is HOST0
+ Directory of A:\
+C.TXT                   31
+AUTOEXEC.BAT           135
+DEMO.BAT                79
+HELLO.NEO               66
+GAMES                <DIR>
+CTRL.TXT                 9
+README.TXT              31
+CHAIN.BAT               25
+        7 file(s)        376 bytes
+        1 dir(s)
+A:\>del C.TXT
+A:\>del NOPE
+File not found
+A:\>del GAMES
+Access denied
+A:\>copy NOPE X
+File not found
+A:\>ren
+Syntax error
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT

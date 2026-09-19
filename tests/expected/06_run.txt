@@ -1,0 +1,38 @@
+Hello from a NeoDOS program!
+A:\>demo
+A:\>ECHO Demo batch: listing the directory
+Demo batch: listing the directory
+A:\>DIR
+ Volume in drive A is HOST0
+ Directory of A:\
+AUTOEXEC.BAT           135
+DEMO.BAT                79
+HELLO.NEO               66
+GAMES                <DIR>
+CTRL.TXT                 9
+README.TXT              31
+CHAIN.BAT               25
+        6 file(s)        345 bytes
+        1 dir(s)
+This line is not echoed
+A:\>HELLO
+Hello from a NeoDOS program!
+A:\>chain
+A:\>HELLO
+Hello from a NeoDOS program!
+A:\>ECHO after program
+after program
+A:\>foo
+Bad command or file name
+A:\>foo.neo
+Bad command or file name
+A:\>
+--- files ---
+AUTOEXEC.BAT
+CHAIN.BAT
+CTRL.TXT
+DEMO.BAT
+GAMES/
+GAMES/A.TXT
+HELLO.NEO
+README.TXT
