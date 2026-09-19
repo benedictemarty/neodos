@@ -2,10 +2,25 @@ NeoDOS version 0.10.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>exit
-Welcome to NeoBasic
-print 6*7
-42
+A:\>xcopy GAMES COPY1
+1 file(s) copied
+A:\>tree COPY1 /f
+COPY1
+| A.TXT
+A:\>xcopy GAMES COPY2 /s
+3 file(s) copied
+A:\>tree COPY2 /f
+COPY2
+| A.TXT
++-SUB
+|  | X.TXT
+|  +-DEEP
+|  |  | Y.TXT
+A:\>xcopy
+Usage: XCOPY source destination [/S]
+A:\>xcopy NOPE X
+Invalid source directory
+A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -19,6 +34,14 @@ BIN/TREE.NEO
 BIN/XCOPY.NEO
 CALLER.BAT
 CHAIN.BAT
+COPY1/
+COPY1/A.TXT
+COPY2/
+COPY2/A.TXT
+COPY2/SUB/
+COPY2/SUB/DEEP/
+COPY2/SUB/DEEP/Y.TXT
+COPY2/SUB/X.TXT
 CTRL.TXT
 DEMO.BAT
 GAMES/

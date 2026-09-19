@@ -45,7 +45,6 @@ firmware n'est pas réinitialisé (les programmes en mémoire sont perdus).
 | `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
 | `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` |
 | `MOVE source destination` | `MOVE A.TXT OLD.TXT`, `MOVE *.BAK ARCHIVE` (déplacement par renommage) |
-| `XCOPY source destination` | `XCOPY GAMES SAVE` (fichiers de GAMES vers SAVE, créé au besoin), `XCOPY GAMES\*.NEO BIN` |
 | `ATTRIB [+R -R +H -H +S -S +A -A] [fichier]` | `ATTRIB *.TXT` (affiche `A S H R`), `ATTRIB +R CONFIG.BAT`, `ATTRIB` seul : tout le répertoire |
 | `TYPE fichier` | `TYPE README.TXT` |
 | `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
@@ -168,6 +167,8 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 |---|---|
 | `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
 | `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
+| `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |
+| `DELTREE répertoire` | supprime un répertoire et tout son contenu (confirmation `Y/N`) |
 | `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |
 
 Écrire la sienne : `examples/ext/NOM.asm` avec `.include "neoext.inc"`

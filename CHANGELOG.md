@@ -3,6 +3,25 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.10.0] — 2026-09-20
+
+Sprint 10 : `XCOPY /S` et `DELTREE` en commandes externes.
+
+### Ajouté
+- `examples/ext/walk.inc` : parcours récursif générique (pile `skip[depth]`,
+  crochets `hook_file` / `hook_enter` / `hook_leave`, `join`).
+- **`XCOPY source destination [/S]`** (`BIN/XCOPY.NEO`) : copie les fichiers
+  d'un répertoire (créé au besoin) ; `/S` reproduit les sous-répertoires
+  (chemin de destination tenu en parallèle) ; « n file(s) copied ».
+- **`DELTREE répertoire`** (`BIN/DELTREE.NEO`) : supprime un répertoire et
+  tout son contenu après confirmation `Y/N` (fichiers à l'aller, répertoires
+  au retour).
+- Tests `30_ext_xcopy`, `31_ext_deltree`.
+
+### Modifié
+- `XCOPY` retiré du résident (une commande interne ne peut pas être remplacée
+  par `BIN\XCOPY.NEO`) : −180 octets, marge ≈ 250 octets.
+
 ## [0.9.0] — 2026-09-20
 
 Sprint 9 : premières commandes externes (ADR-003), le résident étant plein.

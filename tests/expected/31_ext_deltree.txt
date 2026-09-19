@@ -2,10 +2,25 @@ NeoDOS version 0.10.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>exit
-Welcome to NeoBasic
-print 6*7
-42
+A:\>xcopy GAMES COPY2 /s
+3 file(s) copied
+A:\>deltree COPY2
+Delete directory COPY2 and all its subdirectories? (Y
+/N) N
+A:\>tree COPY2
+COPY2
++-SUB
+|  +-DEEP
+A:\>deltree COPY2
+Delete directory COPY2 and all its subdirectories? (Y
+/N) Y
+A:\>tree COPY2
+Invalid path
+A:\>deltree NOPE
+Invalid path
+A:\>deltree
+Usage: DELTREE directory
+A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT

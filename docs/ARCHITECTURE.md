@@ -175,7 +175,8 @@ ferme.
 `SendMessage`, `putc`/`puts`/`putpstr`), `cmd_arg` (n-ième mot de la ligne
 de commande lue via `$C00C`, `\` → `/`). Chaque programme commence par
 `jmp main` (l'include contient du code) et se termine par `RTS` (stub de
-retour). `TREE` illustre le parcours récursif avec l'API (un seul répertoire
+retour). `walk.inc` (utilisé par `XCOPY`, `DELTREE`) généralise le parcours de `TREE`
+avec des crochets `hook_file`/`hook_enter`/`hook_leave`. `TREE` illustre le parcours récursif avec l'API (un seul répertoire
 ouvert à la fois) : pile `skip[depth]` du nombre de sous-répertoires déjà
 visités à chaque niveau, ré-énumération à la remontée.
 

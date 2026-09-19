@@ -1,9 +1,9 @@
-NeoDOS version 0.9.0
+NeoDOS version 0.10.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>xcopy GAMES NEWDIR
-        1 file(s) copied
+1 file(s) copied
 A:\>dir NEWDIR
  Volume in drive A is HOST0
  Directory of A:\NEWDIR
@@ -11,29 +11,30 @@ A.TXT                    3
         1 file(s)          3 bytes
         0 dir(s)
 A:\>xcopy GAMES\A.* BIN
-        1 file(s) copied
+Invalid source directory
 A:\>dir BIN /w
  Volume in drive A is HOST0
  Directory of A:\BIN
-A.TXT        MORE.NEO     ARGS.NEO     TREE.NEO
-HI.NEO       TOOL.BAT
-        6 file(s)       1298 bytes
+MORE.NEO     XCOPY.NEO    ARGS.NEO     DELTREE.NEO
+TREE.NEO     HI.NEO       TOOL.BAT
+        7 file(s)       3212 bytes
         0 dir(s)
 A:\>xcopy NOPE X
-File not found
+Invalid source directory
 A:\>xcopy GAMES
-Syntax error
+Usage: XCOPY source destination [/S]
 A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
 BIN/
-BIN/A.TXT
 BIN/ARGS.NEO
+BIN/DELTREE.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
+BIN/XCOPY.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT

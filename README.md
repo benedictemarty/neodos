@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.9.0
+NeoDOS version 0.10.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -65,7 +65,6 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `DEL`, `ERASE` | supprime des fichiers (`DEL *.BAK` ; confirmation pour `*.*`) |
 | `REN`, `RENAME` | renomme (`REN *.TXT *.BAK`, substitution nom/extension) |
 | `COPY src dst`, `MOVE src dst` | copie / déplace un fichier ou un motif vers un répertoire (`COPY *.TXT SAVES`) |
-| `XCOPY rép rép` | copie les fichiers d'un répertoire (créé au besoin) |
 | `ATTRIB [+R -H…] [fichier]` | affiche / modifie les attributs |
 | `TYPE fichier` | affiche un fichier texte (CR, LF, CR/LF, tabulations) |
 | `X:` | change de lecteur (volume `X` − `A` du firmware, 0-3) |
@@ -76,7 +75,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
-| `MORE fichier`, `TREE [chemin] [/F]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : affichage paginé, arborescence |
+| `MORE fichier`, `TREE [chemin] [/F]`, `XCOPY src dst [/S]`, `DELTREE rép` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : affichage paginé, arborescence, copie récursive, suppression récursive |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 

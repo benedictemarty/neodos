@@ -5,7 +5,6 @@ MD RD path        Make/remove directory
 DEL file|*.*      Delete files
 REN old new       Rename files (REN *.TXT *.BAK)
 COPY MOVE src dst Copy/move files (COPY *.TXT DIR)
-XCOPY dir dir     Copy a directory's files
 ATTRIB +R -H file Show/set attributes
 TYPE file         Display a text file
 X:                Change drive
@@ -29,10 +28,12 @@ ARGS.BAT
 AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
+BIN/DELTREE.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
+BIN/XCOPY.NEO
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT

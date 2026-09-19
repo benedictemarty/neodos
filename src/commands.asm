@@ -29,8 +29,6 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_copy
                 .ptext  "MOVE"
                 .word   cmd_move
-                .ptext  "XCOPY"
-                .word   cmd_xcopy
                 .ptext  "ATTRIB"
                 .word   cmd_attrib
                 .ptext  "TYPE"
@@ -660,53 +658,6 @@ file_op         jsr     WaitMessage
                 lda     #3
                 sta     DCommand
                 jmp     WaitMessage
-
-; ---------------------------------------------------------------------------
-; XCOPY source[/motif] destination : copie les fichiers d'un répertoire vers
-; un répertoire (créé s'il n'existe pas)
-; ---------------------------------------------------------------------------
-cmd_xcopy       lda     arg1
-                beq     _jsyn
-                lda     arg2
-                bne     +
-_jsyn           jmp     err_syntax
-+               jsr     ptr_arg1
-                jsr     to_apipath
-                jsr     ptr_arg2
-                jsr     to_apipath
-                jsr     ptr_arg1
-                jsr     has_wild
-                bcs     _dest
-                jsr     p0_arg1               ; source = répertoire ? -> « /* »
-                #api    3,16
-                lda     DError
-                bne     _nf
-                lda     DParams+4
-                and     #ATTR_DIR
-                beq     _dest
-                ldx     arg1
-                lda     #'/'
-                inx
-                sta     arg1,x
-                lda     #'*'
-                inx
-                sta     arg1,x
-                stx     arg1
-_dest           #setparam 0, arg2               ; destination absente : créée
-                #api    3,16
-                lda     DError
-                beq     _go
-                #setparam 0, arg2
-                #api    3,14
-                lda     DError
-                beq     _go
-                jsr     errlvl1
-                #println "Unable to create directory"
-                rts
-_go             lda     #20
-                sta     opfn
-                jmp     copy_move
-_nf             jmp     err_notfound
 
 ; ---------------------------------------------------------------------------
 ; ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif] : affiche ou modifie
@@ -1520,8 +1471,7 @@ cmd_help        jsr     newline
                 #println "DEL file|*.*      Delete files"
                 #println "REN old new       Rename files (REN *.TXT *.BAK)"
                 #println "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)"
-                #println "XCOPY dir dir     Copy a directory's files"
-                #println "ATTRIB +R -H file Show/set attributes"
+                                #println "ATTRIB +R -H file Show/set attributes"
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"

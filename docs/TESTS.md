@@ -74,6 +74,8 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `27_smash_reload` | `SMASH.NEO` écrase `$C000-$FBFF` puis `RTS` : NeoDOS rechargé depuis `boot/neodos.neo`, `AUTOEXEC.BAT` rejoué, invite fonctionnelle |
 | `28_ext_tree` | `TREE GAMES /F` (fichiers puis sous-répertoires, 3 niveaux), chemin invalide, `MORE` sans argument / fichier absent |
 | `29_ext_more` | `MORE LONG.TXT` (70 lignes) : pause à 28 lignes, espace = suite, `Q` = fin, retour à l'invite |
+| `30_ext_xcopy` | `XCOPY` un niveau, `/S` (3 fichiers, 2 niveaux vérifiés par `TREE /F`), sans argument, source invalide |
+| `31_ext_deltree` | `DELTREE` refusé (N) puis accepté (Y), répertoire disparu, chemin invalide, sans argument |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

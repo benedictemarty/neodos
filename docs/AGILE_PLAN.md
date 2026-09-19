@@ -127,6 +127,15 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S49 `TREE.NEO` : arborescence récursive avec pile de compteurs (un seul répertoire ouvert dans l'API) | fait |
 | S50 Tests 28/29, docs, `make dist` avec `BIN/` | fait |
 
+## Sprint 10 — XCOPY /S et DELTREE (2026-09-20) — livré, v0.10.0
+
+| Story | État |
+|---|---|
+| S51 `walk.inc` : parcours récursif générique avec crochets | fait |
+| S52 `XCOPY.NEO` (`/S`), `XCOPY` interne retiré du résident | fait |
+| S53 `DELTREE.NEO` avec confirmation | fait |
+| S54 Tests 30/31, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -135,7 +144,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT.NEO` : éditeur de texte plein écran (commande externe, ADR-003) | gros chantier |
-| B12 | `XCOPY.NEO /S` (récursif, sur le modèle de `TREE`), `DELTREE.NEO`, `FIND.NEO` | commandes externes |
+| B12 | `FIND.NEO` (recherche de texte), `SORT.NEO`, `MOVE`/`ATTRIB` en externes pour dégager le résident | commandes externes |
 | B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
