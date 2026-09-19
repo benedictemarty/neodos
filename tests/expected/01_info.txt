@@ -1,4 +1,4 @@
-NeoDOS version 0.2.0
+NeoDOS version 0.3.0
 Neo6502 firmware 1.0.0
 A:\>help
 DIR [path] [/P /W] List directory (wildcards)
@@ -11,23 +11,28 @@ TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory
 DATE TIME         Show/set date and time
-ECHO PAUSE REM    Batch commands (.BAT)
+ECHO PAUSE REM    Batch commands (.BAT, %1-%9)
+IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :labe
+l
 EXIT              Return to NeoBASIC
 name[.NEO]        Run a program
 A:\>mem
-   51200 bytes free for programs ($0800-$CFFF)
-   11264 bytes reserved for NeoDOS ($D000-$FBFF)
+   49152 bytes free for programs ($0800-$C7FF)
+   13312 bytes reserved for NeoDOS ($C800-$FBFF)
 A:\>vol
  Volume in drive A is HOST0
 A:\>
 --- files ---
+ARGS.BAT
 AUTOEXEC.BAT
+CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+LOOP.BAT
 MANY/
 MANY/F01.DAT
 MANY/F02.DAT
@@ -65,3 +70,5 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 README.TXT
+SUB.BAT
+SUB2.BAT

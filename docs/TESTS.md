@@ -24,7 +24,8 @@ Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
   sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
   des fichiers du stockage après le test.
 - `tests/fixtures/` : fichiers présents au démarrage (`README.TXT`,
-  `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`, `MANY/F01..F35.DAT`) ; `storage/`
+  `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`, `MANY/F01..F35.DAT`, scripts
+  `ARGS.BAT`, `LOOP.BAT`, `SUB.BAT`, `SUB2.BAT`, `CALLER.BAT`) ; `storage/`
   (exemples) est ajouté.
 
 Le budget de cycles est calculé d'après le nombre de touches (≈ 700 000
@@ -48,6 +49,9 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |
 | `12_wild_ren_copy` | `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD`, `COPY fichier répertoire`, `COPY motif fichier` refusé, `REN` vers un nom existant |
 | `13_dir_p` | `DIR MANY /P` : pause après 28 lignes, reprise sur une touche |
+| `14_bat_args_if` | `%0`-`%3`, `%` littéral, `IF "%1"=="A"`, `IF NOT`, `IF EXIST`, `IF a == b` |
+| `15_bat_goto` | `GOTO label`, `GOTO :label`, `Label not found`, `GOTO` hors script, `IF` sans argument / faux / vrai |
+| `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).
 L'ordre des entrées de `DIR` est celui du système de fichiers hôte (stable

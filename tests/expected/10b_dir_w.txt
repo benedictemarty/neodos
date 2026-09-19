@@ -1,15 +1,11 @@
-        2 dir(s)
-A:\>dir GAMES /w
- Volume in drive A is HOST0
- Directory of A:\GAMES
-A.TXT
         1 file(s)          3 bytes
         0 dir(s)
 A:\>dir *.bat /w
  Volume in drive A is HOST0
  Directory of A:\
-AUTOEXEC.BAT DEMO.BAT     CHAIN.BAT
-        3 file(s)        239 bytes
+AUTOEXEC.BAT DEMO.BAT     SUB2.BAT     ARGS.BAT
+SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
+        8 file(s)        818 bytes
         0 dir(s)
 A:\>dir /x
  Volume in drive A is HOST0
@@ -18,21 +14,29 @@ AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+SUB2.BAT                33
+ARGS.BAT               201
 MANY                 <DIR>
+SUB.BAT                 56
 CTRL.TXT                 9
+CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
-        6 file(s)        345 bytes
+LOOP.BAT               102
+       11 file(s)        924 bytes
         2 dir(s)
 A:\>
 --- files ---
+ARGS.BAT
 AUTOEXEC.BAT
+CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+LOOP.BAT
 MANY/
 MANY/F01.DAT
 MANY/F02.DAT
@@ -70,3 +74,5 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 README.TXT
+SUB.BAT
+SUB2.BAT

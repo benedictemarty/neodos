@@ -193,6 +193,7 @@ _test           jsr     match_glob
                 inc     lcount
                 bne     _next
 _full           #api    3,19
+                jsr     errlvl1
                 #println "Too many files"
                 sec
                 rts

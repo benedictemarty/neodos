@@ -46,13 +46,23 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S13 `DIR /P` (pause par page de 28 lignes) et `DIR /W` (4 colonnes, `[DIR]`) | fait |
 | S14 Base déplacée en `$D000` (tampon de liste pour les jokers), tests, docs | fait |
 
+## Sprint 3 — Scripts .BAT avancés (2026-09-19) — livré, v0.3.0
+
+| Story | État |
+|---|---|
+| S15 Paramètres `%0`-`%9` dans les lignes de batch (`DEMO A B` → `%1`=A) | fait |
+| S16 `ERRORLEVEL` : 0 si la dernière commande a réussi, 1 sinon | fait |
+| S17 `IF [NOT] EXIST fichier`, `IF [NOT] a==b`, `IF [NOT] ERRORLEVEL n` + commande | fait |
+| S18 `GOTO label` / lignes `:label` (« Label not found » sinon) | fait |
+| S19 `CALL script [args]` : batch imbriqué (3 niveaux), retour à l'appelant | fait |
+| S20 Base en `$C800`, tests, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B4 | `PROMPT`, `PATH` (recherche des programmes dans plusieurs répertoires) | |
-| B5 | `IF`, `GOTO`, `CALL`, `%1..%9` dans les `.BAT` | |
 | B6 | `COPY` avec concaténation, `MOVE`, `XCOPY` de répertoires | |
 | B7 | Redirection `>` vers fichier pour `DIR`, `TYPE`, `ECHO` | |
 | B8 | Historique de commandes (flèche haut) | ReadLine du noyau ne le fait pas |
@@ -65,5 +75,5 @@ NeoBASIC (qui reste accessible par `EXIT`).
 - Les émulateurs (`neo`, Phosphoneo) ne normalisent pas `..` dans le
   répertoire courant (`A:\GAMES\..`) et sont sensibles à la casse des noms ;
   la carte (FatFs) n'a pas ces limites. À traiter côté émulateurs.
-- Un programme `.NEO` qui écrit au-dessus de `$D000` détruit NeoDOS ; le
+- Un programme `.NEO` qui écrit au-dessus de `$C800` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

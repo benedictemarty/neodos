@@ -18,4 +18,9 @@ dirbuf          .fill   129             ; jokers : partie répertoire
 patbuf          .fill   129             ; jokers : motif
 newname         .fill   129             ; REN : nom résultant
 listbuf         .fill   LISTBUF_SIZE    ; jokers : noms collectés
+errorlevel      .fill   1               ; 0 = dernière commande réussie
+batname         .fill   BAT_NAME_SIZE   ; chemin du batch courant
+batargs         .fill   BAT_ARGS_SIZE   ; ligne de commande du batch courant
+batdepth        .fill   1               ; niveaux CALL empilés
+batstack        .fill   BAT_LEVEL_SIZE*BAT_DEPTH ; niveaux sauvegardés (nom, args, bptr)
 dataend

@@ -1,4 +1,4 @@
-NeoDOS version 0.2.0
+NeoDOS version 0.3.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -14,13 +14,16 @@ A:\>type
 Syntax error
 A:\>
 --- files ---
+ARGS.BAT
 AUTOEXEC.BAT
+CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+LOOP.BAT
 MANY/
 MANY/F01.DAT
 MANY/F02.DAT
@@ -58,3 +61,5 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 README.TXT
+SUB.BAT
+SUB2.BAT

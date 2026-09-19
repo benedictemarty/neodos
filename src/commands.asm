@@ -39,6 +39,12 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_echo
                 .ptext  "REM"
                 .word   cmd_rem
+                .ptext  "IF"
+                .word   cmd_if
+                .ptext  "GOTO"
+                .word   cmd_goto
+                .ptext  "CALL"
+                .word   cmd_call
                 .ptext  "PAUSE"
                 .word   cmd_pause
                 .ptext  "DATE"
@@ -353,6 +359,7 @@ _chdir          #setptr ptr, arg1
                 #api    3,15
                 lda     DError
                 beq     _ok
+                jsr     errlvl1
                 #println "Invalid directory"
 _ok             rts
 
@@ -367,6 +374,7 @@ cmd_md          lda     arg1
                 #api    3,14
                 lda     DError
                 beq     _ok
+                jsr     errlvl1
                 #println "Unable to create directory"
 _ok             rts
 _syntax         jmp     err_syntax
@@ -389,7 +397,8 @@ cmd_rd          lda     arg1
                 #api    3,13
                 lda     DError
                 beq     _ok
-_bad            #println "Invalid path, not directory, or directory not empty"
+_bad            jsr     errlvl1
+                #println "Invalid path, not directory, or directory not empty"
 _ok             rts
 _syntax         jmp     err_syntax
 
@@ -498,7 +507,8 @@ cmd_ren         lda     arg1
                 #api    3,12
                 lda     DError
                 beq     _ok
-_dup            #println "Duplicate file name or file not found"
+_dup            jsr     errlvl1
+                #println "Duplicate file name or file not found"
 _ok             rts
 _syntax         jmp     err_syntax
 _wild           jsr     split_path
@@ -585,6 +595,7 @@ _nf             jmp     err_notfound
 _err            jmp     err_api
 _wild           lda     wflag
                 bne     +
+                jsr     errlvl1
                 #println "Cannot copy several files to one file"
                 rts
 +               jsr     split_path
@@ -835,6 +846,199 @@ _print          #setptr ptr, argrest
 ; REM : commentaire
 cmd_rem         rts
 
+; ---------------------------------------------------------------------------
+; IF [NOT] EXIST fichier | a==b | ERRORLEVEL n  commande
+; ---------------------------------------------------------------------------
+cmd_if          stz     negate
+                stz     cond
+                ldy     #0
+                #setptr ptr, arg2
+                jsr     get_word
+                lda     arg2
+                beq     _jsyn
+                #setptr ptr2, kw_not
+                jsr     word_is
+                bcc     +
+                inc     negate
+                #setptr ptr, arg2
+                jsr     get_word
+                lda     arg2
+                beq     _jsyn
++               #setptr ptr2, kw_exist
+                jsr     word_is
+                bcc     _notexist
+                #setptr ptr, arg1               ; IF EXIST fichier
+                jsr     get_word
+                lda     arg1
+                beq     _jsyn
+                sty     by
+                #setptr ptr, arg1
+                jsr     to_apipath
+                #setparam 0, arg1
+                #api    3,16
+                ldy     by
+                lda     DError
+                bne     _jcond
+                inc     cond
+                bra     _jcond
+_jsyn           jmp     _syntax
+_jcond          jmp     _cond
+_notexist       #setptr ptr2, kw_errlvl
+                jsr     word_is
+                bcc     _compare
+                #setptr ptr, arg1               ; IF ERRORLEVEL n
+                jsr     get_word
+                lda     arg1
+                beq     _jsyn
+                sty     by
+                #setptr ptr, arg1
+                ldy     #1
+                jsr     parse_num
+                ldy     by
+                bcs     _jsyn
+                lda     preverr
+                cmp     num
+                bcc     _jcond
+                inc     cond
+                bra     _jcond
+                bra     _jcond
+_jsyn2          jmp     _syntax
+_jcond2         jmp     _cond
+_compare        ; « a==b » dans arg2, ou « a » « == » « b », ou « a== » « b »
+                ldx     #1
+_findeq         cpx     arg2
+                bcs     _noeq
+                lda     arg2,x
+                cmp     #'='
+                bne     +
+                lda     arg2+1,x
+                cmp     #'='
+                beq     _eqat
++               inx
+                bra     _findeq
+_eqat           ; gauche = arg2[1..X-1] -> arg1 ; droite = arg2[X+2..] -> newname
+                stx     tmp
+                dex
+                stx     arg1
+                beq     +
+-               lda     arg2,x
+                sta     arg1,x
+                dex
+                bne     -
++               ldx     tmp
+                inx
+                inx                             ; X = début de la droite
+                stz     newname
+_right          cpx     arg2
+                beq     +
+                bcs     _rdone
++               lda     arg2,x
+                inc     newname
+                stx     tmp
+                ldx     newname
+                sta     newname,x
+                ldx     tmp
+                inx
+                bra     _right
+_rdone          lda     newname
+                bne     _test
+                #setptr ptr, newname            ; « a== b »
+                jsr     get_word
+                bra     _test
+_noeq           ldx     arg2                    ; gauche = arg2 entier
+-               lda     arg2,x
+                sta     arg1,x
+                dex
+                bpl     -
+                #setptr ptr, arg2               ; mot suivant : « == » ou « ==b »
+                jsr     get_word
+                lda     arg2
+                cmp     #2
+                bcc     _jsyn3
+                lda     arg2+1
+                cmp     #'='
+                bne     _jsyn3
+                lda     arg2+2
+                cmp     #'='
+                bne     _jsyn3
+                lda     arg2
+                cmp     #2
+                bne     _eqb
+                #setptr ptr, newname
+                jsr     get_word
+                bra     _test
+_eqb            sec                             ; newname = arg2[3..]
+                sbc     #2
+                sta     newname
+                tax
+-               lda     arg2+2,x
+                sta     newname,x
+                dex
+                bne     -
+                bra     _test
+_jsyn3          jmp     _syntax
+_jcond3         jmp     _cond
+_test           ldx     arg1                    ; arg1 == newname ? (casse exacte)
+                cpx     newname
+                bne     _jcond3
+-               lda     arg1,x
+                cmp     newname,x
+                bne     _jcond3
+                dex
+                bpl     -
+                inc     cond
+_cond           lda     cond
+                eor     negate
+                beq     _done
+                ; commande = reste de argrest à partir de Y
+                ldx     #0
+_skipsp         cpy     argrest
+                bcs     _cmd
+                lda     argrest+1,y
+                cmp     #' '
+                bne     _cmd
+                iny
+                bra     _skipsp
+_cmd            cpy     argrest
+                bcs     _run
+                lda     argrest+1,y
+                inx
+                sta     linebuf,x
+                iny
+                bra     _cmd
+_run            stx     linebuf
+                txa
+                beq     _jsyn3
+                jmp     execute_line
+_done           rts
+_syntax         jmp     err_syntax
+
+kw_not          .ptext  "NOT"
+kw_exist        .ptext  "EXIST"
+kw_errlvl       .ptext  "ERRORLEVEL"
+
+; word_is : C=1 si arg2 == pstring (ptr2), sans distinction de casse ;
+; préserve Y (index de get_word)
+word_is         phy
+                lda     (ptr2)
+                cmp     arg2
+                bne     _no
+                tay
+-               lda     (ptr2),y
+                sta     tmp
+                lda     arg2,y
+                jsr     upper
+                cmp     tmp
+                bne     _no
+                dey
+                bne     -
+                ply
+                sec
+                rts
+_no             ply
+                clc
+                rts
+
 ; PAUSE : attend une touche
 cmd_pause       #println "Press any key to continue . . ."
 _wait           #api    2,1
@@ -885,7 +1089,8 @@ _set            #api    1,20                    ; lit l'heure courante
                 lda     DError
                 bne     _bad
                 rts
-_bad            #println "Invalid date"
+_bad            jsr     errlvl1
+                #println "Invalid date"
                 rts
 
 cmd_time        lda     arg1
@@ -925,7 +1130,8 @@ _set            #api    1,20
                 lda     DError
                 bne     _bad
                 rts
-_bad            #println "Invalid time"
+_bad            jsr     errlvl1
+                #println "Invalid time"
                 rts
 
 ; parse_num : lit un entier décimal dans la pstring (ptr) à partir de Y ;
@@ -987,12 +1193,12 @@ cmd_mem         jsr     newline
                 ldy     #>(PROG_TOP-PROG_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes free for programs ($0800-$CFFF)"
+                #println " bytes free for programs ($0800-$C7FF)"
                 lda     #<(NEODOS_TOP-NEODOS_BASE)
                 ldy     #>(NEODOS_TOP-NEODOS_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes reserved for NeoDOS ($D000-$FBFF)"
+                #println " bytes reserved for NeoDOS ($C800-$FBFF)"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
@@ -1009,7 +1215,8 @@ cmd_help        jsr     newline
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"
                 #println "DATE TIME         Show/set date and time"
-                #println "ECHO PAUSE REM    Batch commands (.BAT)"
+                #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"
+                #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"
                 #println "EXIT              Return to NeoBASIC"
                 #println "name[.NEO]        Run a program"
                 jmp     newline
@@ -1032,5 +1239,6 @@ cmd_drive       lda     cmdbuf+1
                 #api    3,25
                 lda     DError
                 beq     _ok
-_bad            #println "Invalid drive specification"
+_bad            jsr     errlvl1
+                #println "Invalid drive specification"
 _ok             rts

@@ -1,0 +1,4 @@
+@ECHO OFF
+ECHO in SUB with %1
+CALL SUB2 %1
+ECHO SUB end

@@ -3,6 +3,29 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.3.0] — 2026-09-19
+
+Sprint 3 : scripts .BAT avancés.
+
+### Ajouté
+- Paramètres `%0`-`%9` dans les scripts (mots de la ligne de commande qui a
+  lancé le script ; `%` suivi d'autre chose reste littéral).
+- `ERRORLEVEL` : 0 si la dernière commande a réussi, 1 si elle a affiché une
+  erreur ; `IF [NOT] ERRORLEVEL n` (vrai si ≥ n).
+- `IF [NOT] EXIST fichier commande`, `IF [NOT] a==b commande` (formes
+  `a==b`, `a == b`, `"a"=="b"`, casse exacte), `IF` chaînables.
+- `GOTO label` (`:label` accepté, insensible à la casse) ; lignes `:label`
+  ignorées à l'exécution ; « Label not found » termine le script.
+- `CALL script [args]` : script imbriqué (3 niveaux), l'appelant est rechargé
+  et reprend après le `CALL` ; hors script, `CALL` lance simplement le `.BAT`.
+- Tests `14_bat_args_if`, `15_bat_goto`, `16_bat_call` (fixtures `ARGS.BAT`,
+  `LOOP.BAT`, `SUB.BAT`, `SUB2.BAT`, `CALLER.BAT`).
+
+### Modifié
+- NeoDOS chargé en `$C800` (pile des niveaux CALL) ; programmes en
+  `$0800-$C7FF` (49 152 octets). ADR-002 amendé.
+- La boucle batch (`batch_next`) réinitialise la pile 6502 à chaque ligne.
+
 ## [0.2.0] — 2026-09-19
 
 Sprint 2 : jokers et pagination.

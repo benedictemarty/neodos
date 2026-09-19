@@ -1,9 +1,13 @@
 ; batch.asm — exécution des fichiers .BAT (AUTOEXEC.BAT au démarrage)
 ;
 ; Le fichier est chargé en entier dans batbuf (1 Ko maximum) puis exécuté
-; ligne par ligne. Un programme .NEO lancé depuis un batch rend la main au
-; batch s'il se termine par RTS (et s'il n'a pas écrasé $D000-$FBFF) ; un
-; .BAT lancé depuis un .BAT le remplace (comme MS-DOS sans CALL).
+; ligne par ligne. Les paramètres %0-%9 sont remplacés par les mots de la
+; ligne de commande qui a lancé le script (batargs). Un programme .NEO lancé
+; depuis un batch rend la main au batch s'il se termine par RTS (et s'il n'a
+; pas écrasé $C800-$FBFF) ; un .BAT lancé sans CALL remplace le script
+; courant (comme MS-DOS) ; CALL empile le script courant (BAT_DEPTH niveaux)
+; et le recharge à la fin de l'appelé. Les lignes « :label » sont des cibles
+; de GOTO.
 
 ; ---------------------------------------------------------------------------
 ; run_autoexec : exécute AUTOEXEC.BAT s'il existe dans le répertoire courant
@@ -22,9 +26,50 @@ _none           rts
 autoexec_name   .ptext  "AUTOEXEC.BAT"
 
 ; ---------------------------------------------------------------------------
-; run_batch : namebuf = nom du fichier (stat déjà fait : taille en DParams)
+; run_batch : namebuf = nom du fichier (stat déjà fait : taille en DParams),
+; linebuf = ligne de commande (%0-%9). Ne revient pas.
 ; ---------------------------------------------------------------------------
-run_batch       lda     DParams+2               ; taille > 65535 ?
+run_batch       ldx     namebuf                 ; batname = namebuf (tronqué)
+                cpx     #BAT_NAME_SIZE-1
+                bcc     +
+                ldx     #BAT_NAME_SIZE-1
++               stx     batname
+-               lda     namebuf,x
+                sta     batname,x
+                dex
+                bne     -
+                ldx     linebuf                 ; batargs = linebuf (tronqué)
+                cpx     #BAT_ARGS_SIZE-1
+                bcc     +
+                ldx     #BAT_ARGS_SIZE-1
++               stx     batargs
+                beq     +
+-               lda     linebuf,x
+                sta     batargs,x
+                dex
+                bne     -
++               jsr     batch_load
+                bcc     +
+                jmp     batch_end
++               stz     bptr
+                stz     bptr+1
+                lda     #1
+                sta     bat_active
+                jmp     batch_next
+
+; batch_load : charge le fichier batname dans batbuf (taille via File Stat) ;
+; C=1 si impossible (message affiché)
+batch_load      ldx     batname
+-               lda     batname,x
+                sta     namebuf,x
+                dex
+                bpl     -
+                jsr     stat_namebuf
+                beq     +
+                jsr     err_api
+                sec
+                rts
++               lda     DParams+2               ; taille > 65535 ?
                 ora     DParams+3
                 bne     _big
                 lda     DParams
@@ -36,64 +81,41 @@ run_batch       lda     DParams+2               ; taille > 65535 ?
                 bne     _big
                 lda     blen
                 beq     _load
-_big            jmp     batch_toobig
+_big            jsr     errlvl1
+                #println "Batch file too large (max 1024 bytes)"
+                sec
+                rts
 _load           #setparam 0, namebuf
                 #setparam 2, batbuf
                 #api    3,2
                 lda     DError
                 beq     +
                 jsr     err_api
-                jmp     mainloop
-+               stz     bptr
-                stz     bptr+1
-                lda     #1
-                sta     bat_active
-batch_next
-_line           ; fin du tampon ?
-                lda     bptr
+                sec
+                rts
++               clc
+                rts
+
+; ---------------------------------------------------------------------------
+; batch_next : ligne suivante du script (boucle principale du batch)
+; ---------------------------------------------------------------------------
+batch_next      ldx     #$ff                    ; boucle de haut niveau : pile
+                txs                             ; propre (CALL/GOTO y sautent)
+                cli
+                lda     bptr                    ; fin du tampon ?
                 cmp     blen
                 lda     bptr+1
                 sbc     blen+1
-                bcs     _end
-                ; copie la ligne dans linebuf
-                lda     #<batbuf
-                clc
-                adc     bptr
-                sta     ptr
-                lda     #>batbuf
-                adc     bptr+1
-                sta     ptr+1
-                ldx     #0
-                ldy     #0
-_copy           lda     bptr                    ; fin du tampon ?
-                cmp     blen
-                lda     bptr+1
-                sbc     blen+1
-                bcs     _eol
-                lda     (ptr),y
-                inc     bptr
-                bne     +
-                inc     bptr+1
-+               cmp     #CR
-                beq     _eol
-                cmp     #10
-                beq     _eol
-                cpx     #200
-                beq     _copy                   ; ligne trop longue : tronquée
-                inx
-                sta     linebuf,x
-                iny
-                bra     _copy
-_eol            stx     linebuf
-                ; ligne vide ?
-                cpx     #0
-                beq     _line
-                ; « @ » en tête : pas d'écho
+                bcs     batch_end
+                jsr     batch_getline           ; -> linebuf (paramètres remplacés)
+                lda     linebuf
+                beq     batch_next
                 lda     linebuf+1
-                cmp     #'@'
+                cmp     #':'                    ; « :label » : ignorée
+                beq     batch_next
+                cmp     #'@'                    ; « @ » en tête : pas d'écho
                 bne     _echo
-                ; décale la ligne d'un caractère
-                ldy     #2
+                ldy     #2                      ; décale la ligne d'un caractère
 -               lda     linebuf,y
                 sta     linebuf-1,y
                 iny
@@ -109,11 +131,289 @@ _echo           lda     echo_off
                 jsr     putpstr
                 jsr     newline
 _exec           lda     linebuf
-                beq     _line
+                beq     batch_next
                 jsr     execute_line
-                jmp     _line
-_end            stz     bat_active
+                jmp     batch_next
+
+; ---------------------------------------------------------------------------
+; batch_end : fin du script courant : retour à l'appelant (CALL) ou à l'invite
+; ---------------------------------------------------------------------------
+batch_end       lda     batdepth
+                beq     _prompt
+                dec     batdepth
+                jsr     level_addr              ; ptr -> niveau à restaurer
+                ldy     #0
+-               lda     (ptr),y                 ; batname
+                sta     batname,y
+                iny
+                cpy     #BAT_NAME_SIZE
+                bne     -
+                ldx     #0
+-               lda     (ptr),y                 ; batargs
+                sta     batargs,x
+                iny
+                inx
+                cpx     #BAT_ARGS_SIZE
+                bne     -
+                lda     (ptr),y                 ; bptr
+                sta     bptr
+                iny
+                lda     (ptr),y
+                sta     bptr+1
+                jsr     batch_load              ; recharge l'appelant
+                bcs     _prompt
+                jmp     batch_next
+_prompt         stz     bat_active
+                stz     batdepth
                 stz     echo_off
                 jmp     mainloop
-batch_toobig    #println "Batch file too large (max 1024 bytes)"
-                jmp     mainloop
+
+; level_addr : ptr = batstack + batdepth * BAT_LEVEL_SIZE
+level_addr      lda     batdepth
+                asl     a
+                tax
+                lda     level_offsets,x
+                clc
+                adc     #<batstack
+                sta     ptr
+                lda     level_offsets+1,x
+                adc     #>batstack
+                sta     ptr+1
+                rts
+
+level_offsets   .word   0, BAT_LEVEL_SIZE, BAT_LEVEL_SIZE*2
+
+; ---------------------------------------------------------------------------
+; batch_getline : copie la ligne courante de batbuf dans linebuf en
+; remplaçant %0-%9 par les mots de batargs ; avance bptr après la ligne.
+; ---------------------------------------------------------------------------
+batch_getline   stz     bx                      ; longueur de linebuf
+_copy           lda     bptr                    ; fin du tampon ?
+                cmp     blen
+                lda     bptr+1
+                sbc     blen+1
+                bcs     _eol
+                lda     #<batbuf
+                clc
+                adc     bptr
+                sta     ptr
+                lda     #>batbuf
+                adc     bptr+1
+                sta     ptr+1
+                lda     (ptr)
+                inc     bptr
+                bne     +
+                inc     bptr+1
++               cmp     #CR
+                beq     _eol
+                cmp     #10
+                beq     _eol
+                cmp     #'%'
+                bne     _store
+                ; %d ? (s'il reste un caractère)
+                lda     bptr
+                cmp     blen
+                lda     bptr+1
+                sbc     blen+1
+                bcs     _pct
+                ldy     #1
+                lda     (ptr),y
+                cmp     #'0'
+                bcc     _pct
+                cmp     #'9'+1
+                bcs     _pct
+                inc     bptr                    ; consomme le chiffre
+                bne     +
+                inc     bptr+1
++               and     #$0f
+                jsr     insert_arg
+                bra     _copy
+_pct            lda     #'%'
+_store          ldx     bx
+                cpx     #200
+                bcs     _copy                   ; ligne trop longue : tronquée
+                inx
+                sta     linebuf,x
+                stx     bx
+                bra     _copy
+_eol            lda     bx
+                sta     linebuf
+                rts
+
+; insert_arg : ajoute à linebuf le mot n° A (0 = premier) de batargs
+insert_arg      sta     cnt
+                ldy     #0
+_skip           cpy     batargs                 ; sauter les espaces
+                bcs     _done
+                lda     batargs+1,y
+                cmp     #' '
+                bne     _word
+                iny
+                bra     _skip
+_word           lda     cnt
+                beq     _copy
+                dec     cnt
+-               cpy     batargs                 ; sauter ce mot
+                bcs     _done
+                lda     batargs+1,y
+                cmp     #' '
+                beq     _skip
+                iny
+                bra     -
+_copy           cpy     batargs
+                bcs     _done
+                lda     batargs+1,y
+                cmp     #' '
+                beq     _done
+                ldx     bx
+                cpx     #200
+                bcs     _done
+                inx
+                sta     linebuf,x
+                stx     bx
+                iny
+                bra     _copy
+_done           rts
+
+; ---------------------------------------------------------------------------
+; GOTO label : cherche « :label » dans batbuf et reprend après cette ligne
+; ---------------------------------------------------------------------------
+cmd_goto        lda     bat_active
+                bne     +
+                rts                             ; hors batch : ignoré (DOS)
++               lda     arg1
+                beq     _syntax
+                lda     arg1+1                  ; « GOTO :label » accepté
+                cmp     #':'
+                bne     _scan
+                ldx     #0
+-               lda     arg1+2,x
+                sta     arg1+1,x
+                inx
+                cpx     arg1
+                bne     -
+                dec     arg1
+                beq     _syntax
+_scan           stz     bptr                    ; parcours depuis le début
+                stz     bptr+1
+_line           lda     bptr
+                cmp     blen
+                lda     bptr+1
+                sbc     blen+1
+                bcs     _notfound
+                jsr     batch_getline
+                lda     linebuf
+                beq     _line
+                lda     linebuf+1
+                cmp     #':'
+                bne     _line
+                ; compare le label (jusqu'à un espace) avec arg1
+                ldy     #1
+_cmp            cpy     arg1
+                beq     +
+                bcs     _endlbl
++               lda     linebuf+1,y
+                jsr     upper
+                sta     tmp
+                lda     arg1,y
+                jsr     upper
+                cmp     tmp
+                bne     _line
+                iny
+                bra     _cmp
+_endlbl         ; arg1 épuisé : la ligne doit finir ou continuer par un espace
+                tya
+                cmp     linebuf
+                bcs     _found
+                lda     linebuf+1,y
+                cmp     #' '
+                bne     _line
+_found          jmp     batch_next
+_notfound       jsr     errlvl1
+                #println "Label not found"
+                jmp     batch_end
+_syntax         jmp     err_syntax
+
+; ---------------------------------------------------------------------------
+; CALL script [args] : exécute un .BAT puis revient au script appelant
+; ---------------------------------------------------------------------------
+cmd_call        lda     arg1
+                beq     _syntax
+                ; la ligne de commande de l'appelé = argrest (« script args »)
+                ldx     argrest
+-               lda     argrest,x
+                sta     linebuf,x
+                dex
+                bpl     -
+                lda     bat_active
+                beq     _run                    ; hors batch : simple lancement
+                lda     batdepth
+                cmp     #BAT_DEPTH
+                bcc     _push
+                jsr     errlvl1
+                #println "Too many nested CALLs"
+                rts
+_push           jsr     level_addr              ; empile le niveau courant
+                ldy     #0
+-               lda     batname,y
+                sta     (ptr),y
+                iny
+                cpy     #BAT_NAME_SIZE
+                bne     -
+                ldx     #0
+-               lda     batargs,x
+                sta     (ptr),y
+                iny
+                inx
+                cpx     #BAT_ARGS_SIZE
+                bne     -
+                lda     bptr
+                sta     (ptr),y
+                iny
+                lda     bptr+1
+                sta     (ptr),y
+                inc     batdepth
+_run            jsr     call_resolve            ; namebuf = script trouvé
+                bcc     +
+                lda     bat_active              ; échec : dépile
+                beq     _nf
+                dec     batdepth
+_nf             jmp     err_notfound
++               jmp     run_batch
+_syntax         jmp     err_syntax
+
+; call_resolve : namebuf = arg1 [+ « .BAT »], tel que tapé puis en
+; majuscules ; C=0 si le fichier existe (stat fait)
+call_resolve    ldx     arg1
+-               lda     arg1,x
+                sta     namebuf,x
+                dex
+                bpl     -
+                #setptr ptr, namebuf
+                jsr     to_apipath
+                jsr     call_try
+                bcc     _ok
+                ldx     namebuf                 ; en majuscules
+-               lda     namebuf,x
+                jsr     upper
+                sta     namebuf,x
+                dex
+                bne     -
+                jsr     call_try
+_ok             rts
+
+; call_try : stat namebuf, puis namebuf + « .BAT » ; C=0 si trouvé
+call_try        jsr     stat_namebuf
+                beq     _found
+                #setptr ptr2, ext_bat
+                jsr     append_ext
+                jsr     stat_namebuf
+                beq     _found
+                lda     namebuf
+                sec
+                sbc     #4
+                sta     namebuf
+                sec
+                rts
+_found          clc
+                rts

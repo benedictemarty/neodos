@@ -1,18 +1,18 @@
-A:\>demo
-A:\>ECHO Demo batch: listing the directory
-Demo batch: listing the directory
-A:\>DIR
- Volume in drive A is HOST0
  Directory of A:\
 AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+SUB2.BAT                33
+ARGS.BAT               201
 MANY                 <DIR>
+SUB.BAT                 56
 CTRL.TXT                 9
+CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
-        6 file(s)        345 bytes
+LOOP.BAT               102
+       11 file(s)        924 bytes
         2 dir(s)
 This line is not echoed
 A:\>HELLO
@@ -28,13 +28,16 @@ A:\>foo.neo
 Bad command or file name
 A:\>
 --- files ---
+ARGS.BAT
 AUTOEXEC.BAT
+CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+LOOP.BAT
 MANY/
 MANY/F01.DAT
 MANY/F02.DAT
@@ -72,3 +75,5 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 README.TXT
+SUB.BAT
+SUB2.BAT

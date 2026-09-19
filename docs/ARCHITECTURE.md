@@ -8,7 +8,7 @@
                                              ▲
                                              │ SendMessage/WaitMessage ($FFF7/$FFF4)
                                     ┌────────┴─────────┐
-                                    │ NeoDOS ($D000)   │
+                                    │ NeoDOS ($C800)   │
                                     │ shell ─ commands │
                                     │   │   wildcard   │
                                     │   │      batch   │
@@ -16,7 +16,7 @@
                                     └──────────────────┘
                                              │ Load File (3,2) + JSR $FF08
                                              ▼
-                                    programme .NEO ($0800-$CFFF)
+                                    programme .NEO ($0800-$C7FF)
 ```
 
 NeoDOS ne touche pas au matériel : tout passe par le bloc de contrôle de
@@ -33,7 +33,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/shell.asm` | démarrage, boucle, invite, lecture de ligne, analyse, table de dispatch, lancement `.NEO`, messages d'erreur |
 | `src/commands.asm` | table des commandes et leurs implémentations |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
-| `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf` |
+| `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf`, `%n`, `GOTO`, `CALL`, pile des niveaux |
 | `src/console.asm` | `putc`, `puts` (texte inline), pstrings, décimal 32 bits |
 | `src/data.asm` | tampons (non émis dans le `.neo`, réservés en RAM) |
 
@@ -83,24 +83,37 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$A9` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave` |
-| `$D000-$E9FF` | code (≈ 6,6 Ko ; `codeend`) |
-| `$EA00-$FABB` | tampons : `promptbuf`, `cwdbuf`, `screenline`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest`, `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 280) |
-| `$FABC-$FBFF` | libre (≈ 320 octets de marge ; `.cerror` si `dataend > $FC00`) |
+| `$80-$AE` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`) |
+| `$C800-$E6C3` | code (≈ 7,9 Ko ; `codeend`) |
+| `$E6C4-$FAAE` | tampons : `promptbuf`, `cwdbuf`, `screenline`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest`, `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 280), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582) |
+| `$FAAF-$FBFF` | libre (≈ 330 octets de marge ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
 
 ## Batch
 
-Le `.BAT` est chargé entier dans `batbuf` (Load File 3,2 ; taille vérifiée
-par File Stat, 1 024 octets max). `batch_next` découpe les lignes (CR, LF ou
-CR/LF), gère `@` et l'écho (`echo_off`), puis appelle `execute_line`. Un
-`.NEO` lancé depuis un batch revient dans `batch_next` (`bat_active`) ; un
-`.BAT` lancé depuis un batch le remplace (pas de `CALL`, comme MS-DOS).
+Le `.BAT` est chargé entier dans `batbuf` (`batch_load` : File Stat puis
+Load File 3,2, 1 024 octets max) ; `batname` garde son chemin et `batargs`
+la ligne de commande qui l'a lancé (`%0`-`%9`). `batch_next` (pile 6502
+réinitialisée à chaque ligne : `CALL`/`GOTO` y sautent) lit une ligne par
+`batch_getline` (CR, LF ou CR/LF ; `%d` remplacé par le mot `d` de `batargs`
+via `insert_arg`), ignore les `:label`, gère `@` et l'écho (`echo_off`), puis
+appelle `execute_line`. Un `.NEO` lancé depuis un batch revient dans
+`batch_next` (`bat_active`).
+
+`CALL` (`cmd_call`) empile `batname`/`batargs`/`bptr` dans `batstack`
+(`BAT_DEPTH` = 3 niveaux de 194 octets, `level_addr`) puis `run_batch` sur
+l'appelé ; `batch_end` dépile, recharge le fichier de l'appelant et reprend à
+`bptr`. `GOTO` (`cmd_goto`) rebalaye `batbuf` depuis le début à la recherche
+de `:label`. `IF` (`cmd_if`, dans `commands.asm`) évalue `NOT`, `EXIST`,
+`ERRORLEVEL` (lit `preverr`, le niveau de la commande précédente : `errorlevel`
+est remis à 0 au début de chaque `execute_line`, à 1 par `errlvl1` dans les
+chemins d'erreur) ou `a==b`, puis recopie le reste de la ligne dans `linebuf`
+et appelle `execute_line`.
 
 ## Format `.neo`
 
 `tools/mkneo.py` : en-tête `03 'N' 'E' 'O'`, version, adresse d'exécution,
 puis blocs (contrôle, adresse de chargement, taille, commentaire ASCIIZ,
-données). NeoDOS = un bloc en `$D000`, exec `$D000`.
+données). NeoDOS = un bloc en `$C800`, exec `$C800`.

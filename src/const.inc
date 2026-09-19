@@ -1,8 +1,8 @@
 ; const.inc — constantes NeoDOS : adresses du noyau, bloc de contrôle API, page zéro
-; NeoDOS occupe $D000-$FBFF (le noyau 6502 est en $FC00-$FFFF, l'API en $FF00-$FF0F).
+; NeoDOS occupe $C800-$FBFF (le noyau 6502 est en $FC00-$FFFF, l'API en $FF00-$FF0F).
 ; La zone $0800-$DFFF est laissée aux programmes lancés depuis l'invite.
 
-NEODOS_BASE     = $D000
+NEODOS_BASE     = $C800
 NEODOS_TOP      = $FC00
 PROG_BASE       = $0800         ; zone programme (comme NeoBASIC)
 PROG_TOP        = NEODOS_BASE
@@ -52,6 +52,11 @@ oidx            = $A6           ; apply_pattern : index d'écriture
 wflag           = $A7           ; jokers présents dans l'argument
 errsave         = $A8           ; code d'erreur API sauvegardé avant affichage
 lidx            = $A9           ; jokers : noms restants dans listbuf
+negate          = $AA           ; IF NOT
+bx              = $AB           ; batch : longueur de la ligne en cours d'expansion
+by              = $AC           ; batch : index de lecture dans la ligne source
+cond            = $AD           ; IF : condition vraie
+preverr         = $AE           ; ERRORLEVEL de la commande précédente (lu par IF)
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
 ERR_OK          = 0
@@ -80,3 +85,7 @@ CH_BAT          = 7             ; lecture d'un fichier batch
 BATBUF_SIZE     = 1024          ; taille maximale d'un fichier .BAT
 LISTBUF_SIZE    = 1280          ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
+BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)
+BAT_ARGS_SIZE   = 128           ; ligne de commande d'un batch (pstring, %0-%9)
+BAT_DEPTH       = 3             ; niveaux de CALL
+BAT_LEVEL_SIZE  = BAT_NAME_SIZE + BAT_ARGS_SIZE + 2

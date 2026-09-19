@@ -53,7 +53,7 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme ne doit pas écrire entre `$D000` et `$FBFF` (zone NeoDOS).
+Un programme ne doit pas écrire entre `$C800` et `$FBFF` (zone NeoDOS).
 
 ## Scripts .BAT
 
@@ -74,7 +74,37 @@ PAUSE
   d'une ligne supprime son écho ; `ECHO.` affiche une ligne vide.
 - `PAUSE` attend une touche ; `REM` est un commentaire.
 - Un programme `.NEO` lancé depuis un script rend la main au script ; un
-  `.BAT` lancé depuis un script le remplace.
+  `.BAT` lancé depuis un script **sans** `CALL` le remplace.
+
+### Paramètres, conditions, sauts, appels
+
+```
+@ECHO OFF
+REM usage : INSTALL source destination
+IF "%1"=="" GOTO usage
+IF NOT EXIST %1 GOTO missing
+COPY %1 %2
+IF ERRORLEVEL 1 ECHO copy failed
+CALL NOTIFY %2
+GOTO end
+:usage
+ECHO INSTALL source destination
+GOTO end
+:missing
+ECHO %1 not found
+:end
+```
+
+- `%0` est le nom du script tel que tapé, `%1`…`%9` les mots qui suivent
+  (vide si absent) ; `%` suivi d'autre chose qu'un chiffre reste littéral.
+- `IF [NOT] EXIST fichier commande` ; `IF [NOT] a==b commande` (`a == b` et
+  `"a"=="b"` acceptés, comparaison exacte) ; `IF [NOT] ERRORLEVEL n commande`
+  (vrai si le niveau d'erreur de la commande précédente est ≥ n : 1 après un
+  message d'erreur, 0 sinon). Les `IF` se chaînent.
+- `GOTO label` saute à la ligne `:label` (casse ignorée) ; « Label not
+  found » arrête le script.
+- `CALL script [args]` exécute un autre `.BAT` puis reprend à la ligne
+  suivante (3 niveaux d'imbrication, chaque niveau garde ses `%n`).
 
 ## Système
 
@@ -101,13 +131,15 @@ PAUSE
 | `Too many files` | plus de 255 noms (ou 1,25 Ko) pour un joker |
 | `Cannot copy several files to one file` | `COPY motif fichier` |
 | `Duplicate file name or file not found` | `REN` impossible (cible existante…) |
+| `Label not found` | `GOTO` vers un `:label` absent (fin du script) |
+| `Too many nested CALLs` | plus de 3 niveaux de `CALL` |
 | `Invalid drive specification` | lettre de lecteur sans volume monté |
 | `Batch file too large (max 1024 bytes)` | script trop long |
 | `Error nn` | autre code d'erreur de l'API fichiers |
 
 ## Limites connues (v0.1)
 
-- Pas de `IF`/`GOTO`/`CALL` dans les scripts, pas de `PATH`, pas de dates de
-  fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
+- Pas de `FOR`, `SHIFT`, `%VAR%` dans les scripts, pas de `PATH`, pas de
+  dates de fichiers dans `DIR` (voir le backlog dans `docs/AGILE_PLAN.md`).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`
   laisse `..` dans le chemin affiché ; la carte (FAT) n'a pas ces limites.

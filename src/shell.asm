@@ -9,6 +9,9 @@ start           cld
                 txs
                 stz     echo_off
                 stz     bat_active
+                stz     batdepth
+                stz     errorlevel
+                stz     linebuf                 ; %0-%9 vides pour AUTOEXEC.BAT
                 lda     #$ff                    ; ferme tout ce qui traîne
                 sta     DParams
                 #api    3,5
@@ -107,7 +110,10 @@ _empty          stz     linebuf
 ; ---------------------------------------------------------------------------
 ; execute_line : analyse linebuf et exécute la commande
 ; ---------------------------------------------------------------------------
-execute_line    jsr     parse_line
+execute_line    lda     errorlevel              ; IF ERRORLEVEL lit la commande
+                sta     preverr                 ; précédente
+                stz     errorlevel
+                jsr     parse_line
                 lda     cmdbuf
                 beq     _done                   ; ligne vide
                 ; « X: » : changement de lecteur
@@ -433,18 +439,30 @@ ext_bat         .ptext  ".BAT"
 ; ---------------------------------------------------------------------------
 ; Messages d'erreur DOS
 ; ---------------------------------------------------------------------------
-err_badcmd      #println "Bad command or file name"
+err_badcmd      jsr     errlvl1
+                #println "Bad command or file name"
                 rts
-err_notfound    #println "File not found"
+err_notfound    jsr     errlvl1
+                #println "File not found"
                 rts
-err_syntax      #println "Syntax error"
+err_syntax      jsr     errlvl1
+                #println "Syntax error"
                 rts
-err_denied      #println "Access denied"
+err_denied      jsr     errlvl1
+                #println "Access denied"
+                rts
+
+; errlvl1 : la commande a échoué (IF ERRORLEVEL 1) ; préserve A
+errlvl1         pha
+                lda     #1
+                sta     errorlevel
+                pla
                 rts
 
 ; err_api : message selon le code d'erreur API dans A (= DError du dernier
 ; appel ; à sauver dans errsave si des affichages précèdent)
-err_api         cmp     #ERR_NO_FILE
+err_api         jsr     errlvl1
+                cmp     #ERR_NO_FILE
                 beq     err_notfound
                 cmp     #ERR_NO_PATH
                 beq     _path

@@ -1,7 +1,3 @@
-NeoDOS version 0.2.0
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
 A:\>md SUB
 A:\>dir
  Volume in drive A is HOST0
@@ -11,11 +7,16 @@ AUTOEXEC.BAT           135
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
+SUB2.BAT                33
+ARGS.BAT               201
 MANY                 <DIR>
+SUB.BAT                 56
 CTRL.TXT                 9
+CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
-        6 file(s)        345 bytes
+LOOP.BAT               102
+       11 file(s)        924 bytes
         3 dir(s)
 A:\>rd SUB
 A:\>rd NOPE
@@ -26,13 +27,16 @@ A:\>md
 Syntax error
 A:\>
 --- files ---
+ARGS.BAT
 AUTOEXEC.BAT
+CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 GAMES/
 GAMES/A.TXT
 HELLO.NEO
+LOOP.BAT
 MANY/
 MANY/F01.DAT
 MANY/F02.DAT
@@ -70,3 +74,5 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 README.TXT
+SUB.BAT
+SUB2.BAT
