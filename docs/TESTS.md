@@ -24,6 +24,9 @@ typer (commit `ef145e3` de Phosphoneo, 2026-09-19 : `\z` = Ctrl+Alt+Suppr).
   \r` (flèches), `\h` `\k` (Début/Fin), `\x` (Suppr), `\b` (Retour
   arrière), `\e` (Échap) sont les touches d'édition du typer Phosphoneo (les
   autres antislashs sont des séparateurs DOS ; éviter `\d`… en début de nom).
+- `tests/cases/NOM.api` (facultatif) : groupes API à journaliser ; la
+  référence contient alors une section `--- api ---` avec les fonctions
+  distinctes appelées (vérifie qu'un programme graphique a bien tourné).
 - `tests/expected/NOM.txt` : console attendue (à partir de « NeoDOS version »,
   sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
   des fichiers du stockage après le test.
@@ -65,7 +68,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
 | `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |
-| `26_run_at_0200` | programme llvm-mos réel chargé en `$0200` (`POKER.NEO`) lancé depuis NeoDOS (régression du gel 0.8.0) |
+| `26_run_at_0200` | programme llvm-mos réel chargé en `$0200` (`POKER.NEO`) lancé depuis NeoDOS : appels graphiques (groupe 5) observés (régression du gel 0.8.0) |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

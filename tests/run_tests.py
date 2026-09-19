@@ -85,6 +85,14 @@ def run_case(name, ref):
         cmd = [PHOS, NEO, "--storage", tmp, "--cycles", str(cycles),
                "--type-keys", "%d:%s" % (START_CYCLES, keys),
                "--screenshot-text", out]
+        # NOM.api : groupes API à journaliser (ex. « 5 ») ; la référence reçoit
+        # la liste des fonctions distinctes appelées (programme graphique lancé…)
+        api_path = os.path.join(CASES, name + ".api")
+        api_log = None
+        if os.path.exists(api_path):
+            api_log = os.path.join(tmp, "api.log")
+            groups = open(api_path).read().strip()
+            cmd += ["--api-log", "%s:%s" % (api_log, groups)]
         r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
                            timeout=600, text=True)
         if r.returncode != 0 or not os.path.exists(out):
@@ -92,12 +100,20 @@ def run_case(name, ref):
             return False
         console = normalise(open(out, encoding="utf-8", errors="replace").read())
         os.remove(out)
+        api = None
+        if api_log:
+            import re as _re
+            calls = set(_re.findall(r"grp=(\d+) fn=(\d+)", open(api_log).read()))
+            api = sorted("%s,%s" % c for c in calls)
+            os.remove(api_log)
         files = list_files(tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
     exp_path = os.path.join(EXPECTED, name + ".txt")
     got = "\n".join(console) + "\n--- files ---\n" + "\n".join(files) + "\n"
+    if api is not None:
+        got += "--- api ---\n" + "\n".join(api) + "\n"
     if ref:
         open(exp_path, "w", encoding="utf-8").write(got)
         print("  référence écrite : %s" % os.path.relpath(exp_path, ROOT))

@@ -1,4 +1,3 @@
- Volume in drive A is HOST0
  Directory of A:\
 C.TXT                   31
 AUTOEXEC.BAT           151
@@ -10,13 +9,14 @@ SUB2.BAT                33
 ARGS.BAT               201
 MANY                 <DIR>
 SUB.BAT                 56
+POKER                <DIR>
 CTRL.TXT                 9
 CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
 LOOP.BAT               102
        12 file(s)        971 bytes
-        3 dir(s)
+        4 dir(s)
 A:\>del C.TXT
 A:\>del NOPE
 File not found
@@ -78,6 +78,9 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
+POKER/
+POKER/POKER.NEO
+POKER/cards.bin
 README.TXT
 SUB.BAT
 SUB2.BAT

@@ -56,3 +56,10 @@ POKER/cards.bin
 README.TXT
 SUB.BAT
 SUB2.BAT
+--- api ---
+5,1
+5,3
+5,6
+5,64
+5,65
+5,66

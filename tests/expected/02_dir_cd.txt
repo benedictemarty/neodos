@@ -1,4 +1,3 @@
- Volume in drive A is HOST0
  Directory of A:\GAMES
 A.TXT                    3
         1 file(s)          3 bytes
@@ -16,13 +15,14 @@ SUB2.BAT                33
 ARGS.BAT               201
 MANY                 <DIR>
 SUB.BAT                 56
+POKER                <DIR>
 CTRL.TXT                 9
 CALLER.BAT             187
 README.TXT              31
 CHAIN.BAT               25
 LOOP.BAT               102
        11 file(s)        940 bytes
-        3 dir(s)
+        4 dir(s)
 A:\GAMES>cd NOPE
 Invalid directory
 A:\GAMES>
@@ -77,6 +77,9 @@ MANY/F32.DAT
 MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
+POKER/
+POKER/POKER.NEO
+POKER/cards.bin
 README.TXT
 SUB.BAT
 SUB2.BAT
