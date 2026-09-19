@@ -108,7 +108,7 @@ F-61) et n'est pas utilisée.
 ## Batch
 
 Le `.BAT` est chargé entier dans `batbuf` (`batch_load` : File Stat puis
-Load File 3,2, 1 024 octets max) ; `batname` garde son chemin et `batargs`
+Load File 3,2, 768 octets max) ; `batname` garde son chemin et `batargs`
 la ligne de commande qui l'a lancé (`%0`-`%9`). `batch_next` (pile 6502
 réinitialisée à chaque ligne : `CALL`/`GOTO` y sautent) lit une ligne par
 `batch_getline` (CR, LF ou CR/LF ; `%d` remplacé par le mot `d` de `batargs`

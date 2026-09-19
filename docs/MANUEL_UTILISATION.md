@@ -86,7 +86,7 @@ liste, `PATH ;` l'efface. `PATH` est typiquement placé dans `AUTOEXEC.BAT`.
 
 ## Scripts .BAT
 
-Un fichier `.BAT` (1 024 octets maximum) contient une commande par ligne.
+Un fichier `.BAT` (768 octets maximum) contient une commande par ligne.
 `AUTOEXEC.BAT` est lancé au démarrage.
 
 ```

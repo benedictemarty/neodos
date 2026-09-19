@@ -1,6 +1,6 @@
 ; batch.asm — exécution des fichiers .BAT (AUTOEXEC.BAT au démarrage)
 ;
-; Le fichier est chargé en entier dans batbuf (1 Ko maximum) puis exécuté
+; Le fichier est chargé en entier dans batbuf (768 octets maximum) puis exécuté
 ; ligne par ligne. Les paramètres %0-%9 sont remplacés par les mots de la
 ; ligne de commande qui a lancé le script (batargs). Un programme .NEO lancé
 ; depuis un batch rend la main au batch s'il se termine par RTS (et s'il n'a
