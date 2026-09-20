@@ -12,6 +12,12 @@
 ; long préfixe commun des entrées du répertoire), F8 (DOSKEY : rappelle la
 ; commande la plus récente de l'historique qui commence par le texte tapé ;
 ; F8 à nouveau remonte plus loin).
+;
+; Suggestion automatique : quand le curseur est en fin de ligne, la suite de
+; la commande la plus récente de l'historique qui commence par la ligne est
+; affichée en gris après le curseur (show_sugg, avant chaque attente de
+; touche ; hide_sugg l'efface dès qu'une touche arrive). Droite ou Fin en fin
+; de ligne l'acceptent (_accept) ; toute autre touche la recalcule.
 
 CC_LEFT         = 1
 CC_RIGHT        = 4
@@ -31,9 +37,14 @@ CC_ESC          = 27
 readline_ed     stz     llen
                 stz     lpos
                 stz     f8len
+                stz     sglen
                 lda     hcount
                 sta     hcur
-_key            jsr     getkey
+_key            jsr     show_sugg
+                jsr     getkey
+                pha
+                jsr     hide_sugg
+                pla
                 cmp     #KEY_F8                 ; toute autre touche termine
                 beq     +                       ; la recherche F8
                 stz     f8len
@@ -74,8 +85,23 @@ _left           lda     lpos
                 jmp     _key
 _right          lda     lpos
                 cmp     llen
-                bcs     _jkey
+                bcs     _accept
                 jsr     cur_right
+                jmp     _key
+_accept         lda     sglen                   ; fin de ligne : accepte la
+                beq     _jkey                   ; suggestion s'il y en a une
+                lda     sgidx
+                jsr     hist_entry
+                ldy     llen
+-               iny
+                lda     (ptr2),y
+                phy
+                jsr     ins_char
+                ply
+                tya
+                cmp     (ptr2)
+                bne     -
+                stz     sglen
                 jmp     _key
 _home           lda     lpos
                 beq     _jkey
@@ -83,7 +109,7 @@ _home           lda     lpos
                 bra     _home
 _end            lda     lpos
                 cmp     llen
-                bcs     _jkey
+                bcs     _accept
                 jsr     cur_right
                 bra     _end
 _esc            jsr     clear_line
@@ -92,9 +118,10 @@ _up             lda     hcur
                 beq     _jkey
                 dec     hcur
                 bra     _recall
+_jkey4          jmp     _key
 _down           lda     hcur
                 cmp     hcount
-                bcs     _jkey
+                bcs     _jkey4
                 inc     hcur
                 lda     hcur
                 cmp     hcount                  ; après la dernière : ligne vide
@@ -268,6 +295,83 @@ _ins            ldx     lpos
                 inc     lpos
                 inc     llen
 _full           rts
+
+; show_sugg : curseur en fin de ligne non vide -> cherche, de la plus
+; récente à la plus ancienne, une entrée de l'historique plus longue qui
+; commence par la ligne ; affiche la suite en gris (sglen caractères) et
+; ramène le curseur (cur_left, via un lpos temporaire) ; sglen = 0 sinon.
+show_sugg       stz     sglen
+                lda     lpos
+                cmp     llen
+                bne     _rts
+                lda     llen
+                beq     _rts
+                lda     hcount
+                sta     idx
+_next           lda     idx
+                beq     _rts
+                dec     idx
+                lda     idx
+                jsr     hist_entry              ; ptr2 -> entrée
+                lda     (ptr2)
+                cmp     llen
+                beq     _next                   ; pas plus longue
+                bcc     _next
+                ldy     llen
+-               lda     (ptr2),y
+                cmp     linebuf,y
+                bne     _next
+                dey
+                bne     -
+                lda     idx
+                sta     sgidx
+                lda     (ptr2)
+                sec
+                sbc     llen
+                sta     sglen
+                lda     #7                      ; encre courante (2,18 Read
+                sta     DParams                 ; Ink/Paper ; 7 si absente)
+                #api    2,18
+                lda     DParams
+                ora     #$80
+                sta     sgink
+                lda     #INK_GHOST
+                jsr     putc
+                ldy     llen
+-               iny
+                lda     (ptr2),y
+                phy
+                jsr     putc
+                ply
+                tya
+                cmp     (ptr2)
+                bne     -
+                lda     sgink
+                jsr     putc
+                lda     (ptr2)                  ; retour du curseur
+                sta     lpos
+-               jsr     cur_left
+                lda     lpos
+                cmp     llen
+                bne     -
+_rts            rts
+
+; hide_sugg : efface la suggestion affichée (espaces puis retours arrière,
+; la console gère les passages de ligne) ; sglen est conservé pour _accept
+hide_sugg       lda     sglen
+                beq     _rts
+                sta     cnt
+-               lda     #' '
+                jsr     putc
+                dec     cnt
+                bne     -
+                lda     sglen
+                sta     cnt
+-               lda     #CC_BACKSPACE
+                jsr     putc
+                dec     cnt
+                bne     -
+_rts            rts
 
 ; getkey : attend une touche (curseur inversé pendant l'attente) ;
 ; Ctrl+Alt+Suppr pendant l'attente : redémarrage à chaud de NeoDOS

@@ -67,6 +67,15 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    d'une commande de même préfixe, puis `_recall`. Les touches de fonction
    n'ont pas de code ASCII dans le firmware : `start` déclare pour F8 un
    texte de raccourci d'un octet `KEY_F8` = `$88` (API 2,4, `f8text`).
+   **Suggestion automatique** : la boucle `_key` appelle `show_sugg` avant
+   `getkey` et `hide_sugg` après. `show_sugg` (curseur en fin de ligne non
+   vide) cherche depuis `hcount`−1 une entrée plus longue de même préfixe,
+   note `sgidx`/`sglen`, relit l'encre courante (2,18 → `sgink`), écrit la
+   suite en encre 9 puis ramène le curseur par `cur_left` (avec un `lpos`
+   temporaire, pour les passages de ligne) ; `hide_sugg` écrit `sglen`
+   espaces puis autant de retours arrière (la console gère les passages de
+   ligne) et garde `sglen` pour `_accept` (Droite/Fin en fin de ligne :
+   insertion par `ins_char` des caractères manquants).
    `execute_line` appelle d'abord `redir_setup` (voir Redirection).
 3. `parse_line` : `cmdbuf` = premier mot en majuscules (arrêt sur espace,
    `\`, `/`, `.` après la 1re lettre, `:` sauf pour `X:`) ; `argrest` = reste
@@ -113,10 +122,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$B7` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, éditeur (`lpos`, `llen`, `hcur`, `f8len`), `caps` |
-| `$B800-$DFF0` | code (≈ 10,2 Ko ; `codeend`) |
-| `$DFF1-$F239` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
-| `$F23A-$FBFF` | libre (≈ 2,5 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |
+| `$80-$BA` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `caps` |
+| `$B800-$E0AD` | code (≈ 10,4 Ko ; `codeend`) |
+| `$E0AE-$F2F6` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
+| `$F2F7-$FBFF` | libre (≈ 2,3 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.

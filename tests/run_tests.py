@@ -82,7 +82,10 @@ def run_case(name, ref):
     # séquences du typer conservées (\u \d \l \r flèches, \h \k Début/Fin, \x Suppr,
     # \b Retour arrière, \e Échap, \t Tab, \1..\8, \n) ; tout autre « \ » est un antislash DOS
     import re
-    keys = re.sub(r"\\(?![udlrhkxbze1-8nt])", r"\\\\", keys).replace("\n", "\\n") + "\\n"
+    final_enter = "\\n"
+    if keys.endswith("\\c"):                     # « \c » sur la dernière ligne : pas d'Entrée final
+        keys, final_enter = keys[:-2], ""
+    keys = re.sub(r"\\(?![udlrhkxbze1-8nt])", r"\\\\", keys).replace("\n", "\\n") + final_enter
     keys = keys.replace("\\t", "\t")             # « \t » : touche Tab (caractère tabulation)
     cycles = START_CYCLES + CYCLES_PER_KEY * nkeys + TAIL_CYCLES
     tmp = tempfile.mkdtemp(prefix="neodos-" + name + "-")

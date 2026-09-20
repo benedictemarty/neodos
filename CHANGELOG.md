@@ -3,6 +3,23 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.15.0] — 2026-09-21
+
+Sprint 15 : suggestion automatique de la saisie.
+
+### Ajouté
+- **Suggestion automatique** (façon `fish`) : quand le curseur est en fin de
+  ligne, la suite de la commande la plus récente de l'historique qui
+  commence par la ligne tapée s'affiche **en gris** (encre 9 ; gras en mode
+  Hercules) après le curseur, recalculée à chaque touche ; **→ ou Fin** en fin
+  de ligne l'acceptent, toute autre touche la fait disparaître. Historique
+  seul (en mémoire, aucun accès disque) ; l'encre du texte normal est relue
+  par 2,18 (Read Ink/Paper ; 7 si la fonction est absente). Tab (fichiers)
+  et F8 (recherche par préfixe) inchangés. `show_sugg`/`hide_sugg`/`_accept`
+  dans `lineedit.asm`, ≈ 190 octets ; page zéro `sglen`, `sgidx`, `sgink`.
+- Test `37_suggest` ; le runner accepte `\c` sur la dernière ligne (frappe
+  sans Entrée final, pour capturer une suggestion à l'écran).
+
 ## [0.14.0] — 2026-09-21
 
 Sprint 14 : base `$B800`, `ATTRIB` externalisé (ADR-004).

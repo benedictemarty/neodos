@@ -170,6 +170,13 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S67 Zone données mise à zéro au démarrage (bug `dest_path`/`dirbuf` non initialisé révélé par la nouvelle base) ; références 0.14.0 ; docs | fait |
 | S68 Trinity : reconstruire avec l'image 0.14.0 et `NEODOS_LOAD = $B800` (dépôt Trinity, livré dans Trinity 0.7.0 le 2026-09-21 ; `EXIT` relance la 0.14.0, vérifié dans `neo` et Phosphoneo) | fait |
 
+## Sprint 15 — Suggestion automatique (2026-09-21) — livré, v0.15.0
+
+| Story | État |
+|---|---|
+| S69 Suggestion en gris de la suite de la dernière commande correspondante, → / Fin pour accepter, encre relue par 2,18 | fait |
+| S70 Test 37, runner `\c` final, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -178,6 +185,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
+| B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
 | B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |

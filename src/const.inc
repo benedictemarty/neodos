@@ -64,6 +64,9 @@ lpos            = $B3           ; éditeur de ligne : curseur
 llen            = $B4           ; éditeur de ligne : longueur
 hcur            = $B5           ; historique : entrée en cours de rappel
 f8len           = $B7           ; F8 : longueur du préfixe recherché dans l'historique (0 = aucun)
+sglen           = $B8           ; suggestion automatique : caractères affichés en gris (0 = aucune)
+sgidx           = $B9           ; suggestion : entrée de l'historique proposée
+sgink           = $BA           ; suggestion : code encre ($8x) du texte normal, relu par 2,18
 caps            = $B6           ; fonctions du firmware : bit 0 volumes (3,24-26), bit 1 date/heure (1,20-21)
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
@@ -85,6 +88,7 @@ ATTR_HIDDEN     = $10
 ; Console
 CR              = 13
 CC_TAB          = 9             ; Tab : complétion des noms de fichiers
+INK_GHOST       = $89           ; console : encre 9 (gris foncé ; gras en Hercules) pour la suggestion
 KEY_F8          = $88           ; F8 (129..138 = F1..F10) : complétion depuis l'historique
 KEY_DELETE      = $4C           ; code HID de Suppr (Key Status 1,2)
 MOD_CTRL        = $11           ; bits Ctrl gauche/droit (Parameter:1 de 1,2)

@@ -12,7 +12,7 @@
 ;  (bloc de contrôle $FF00).
 ; ***************************************************************************
 
-VERSION         = "0.14.0"
+VERSION         = "0.15.0"
 
                 .include "const.inc"
                 .include "macros.inc"
@@ -20,7 +20,7 @@ VERSION         = "0.14.0"
                 * = NEODOS_BASE
                 jmp     start                   ; base+0
                 .text   "NEODOS"                ; base+3 : signature (commandes externes)
-                .byte   0, 14, 0                ; base+9 : version majeure, mineure, correctif
+                .byte   0, 15, 0                ; base+9 : version majeure, mineure, correctif
                 .word   linebuf                 ; base+12 : ligne de commande (pstring, 200 max)
                 .word   putc                    ; base+14 : sortie console de NeoDOS (A ; redirection >)
 

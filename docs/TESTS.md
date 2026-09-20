@@ -29,7 +29,8 @@ ces seuls points — régénérer avec `--ref` après avoir relu le diff.
 ## Structure
 
 - `tests/cases/NOM.keys` : texte frappé, une commande par ligne ; une ligne
-  terminée par `\c` est frappée sans Entrée (réponse à `Y/N`) ; `\u \d \l
+  terminée par `\c` est frappée sans Entrée (réponse à `Y/N` ; sur la
+  dernière ligne : la console est capturée en cours de saisie) ; `\u \d \l
   \r` (flèches), `\h` `\k` (Début/Fin), `\x` (Suppr), `\b` (Retour
   arrière), `\e` (Échap), `\t` (Tab), `\1`..`\8` (F1..F8) sont les touches
   du typer Phosphoneo (les autres antislashs sont des séparateurs DOS ;
@@ -91,6 +92,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `34_ext_redirect` | sortie de `FIND`, `SORT`, `TREE` redirigée par `>` et `>>` (vecteur `$C00E`) |
 | `35_ext_edit` | `EDIT` : déplacements, insertion, fusion et scission de lignes, sauvegarde `X`, relecture par `TYPE` (CR/LF) |
 | `35b_ext_edit_new` | `EDIT` d'un fichier absent : création, `S` puis `Q`, usage sans argument |
+| `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
 | `36_completion` | Tab : nom unique, chemin en deux Tab (`\` ajouté après un répertoire), préfixe commun (`F3`), aucune correspondance ; F8 : préfixe `ec`, F8 répété, ligne vide puis Échap |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 

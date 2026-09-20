@@ -40,6 +40,14 @@ correspondance, ou si le répertoire n'existe pas, rien ne change. Les noms
 sont comparés sans tenir compte de la casse ; ce qui est déjà tapé est
 conservé tel quel.
 
+**Suggestion automatique** : quand le curseur est en fin de ligne, NeoDOS
+affiche en gris, après le curseur, la suite de la commande la plus récente
+de l'historique qui commence par ce que vous avez tapé (`ec` → `echo hello`
+en gris). **→ (Flèche droite) ou Fin** l'acceptent ; continuez simplement à
+taper pour l'ignorer (elle se met à jour à chaque touche et disparaît si
+plus rien ne correspond). Elle ne concerne que l'historique de la session,
+pas les fichiers (Tab).
+
 **F8** (comme DOSKEY) rappelle la commande la plus récente de l'historique
 qui commence par le texte tapé jusqu'au curseur : `ec` puis F8 redonne le
 dernier `echo …` ; F8 à nouveau remonte à la commande précédente qui

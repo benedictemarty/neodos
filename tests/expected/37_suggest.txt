@@ -2,29 +2,24 @@ NeoDOS version 0.15.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>find "e p" FRUITS.TXT > F.TXT
-A:\>type F.TXT
-apple pie
-A:\>sort FRUITS.TXT > S.TXT
-A:\>type S.TXT
-Apple
-apple pie
-banana
-cherry
-pear
-Zebra
-A:\>tree GAMES >> S.TXT
-A:\>type S.TXT
-Apple
-apple pie
-banana
-cherry
-pear
-Zebra
-GAMES
-+-SUB
-|  +-DEEP
-A:\>
+A:\>echo hello
+hello
+A:\>echo help
+help
+A:\>echo help
+help
+A:\>echo hello
+hello
+A:\>echo hello
+hello
+A:\>dir *.NEO
+ Volume in drive A is HOST0
+ Directory of A:\
+HELLO.NEO               66
+SMASH.NEO               84
+        2 file(s)        150 bytes
+        0 dir(s)
+A:\>echo hello
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -44,7 +39,6 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
-F.TXT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT
@@ -95,7 +89,6 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
-S.TXT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT
