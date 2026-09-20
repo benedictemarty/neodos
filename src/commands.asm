@@ -29,8 +29,6 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_copy
                 .ptext  "MOVE"
                 .word   cmd_move
-                .ptext  "ATTRIB"
-                .word   cmd_attrib
                 .ptext  "TYPE"
                 .word   cmd_type
                 .ptext  "CLS"
@@ -660,166 +658,7 @@ file_op         jsr     WaitMessage
                 sta     DCommand
                 jmp     WaitMessage
 
-; ---------------------------------------------------------------------------
-; ATTRIB [+R -R +H -H +S -S +A -A] [fichier|motif] : affiche ou modifie
-; ---------------------------------------------------------------------------
-cmd_attrib      stz     attr_set
-                stz     attr_clr
-                stz     arg1
-                ldy     #0
-_word           jsr     ptr_arg2
-                jsr     get_word
-                lda     arg2
-                beq     _parsed
-                cmp     #2
-                bne     _path
-                lda     arg2+1
-                cmp     #'+'
-                beq     _plus
-                cmp     #'-'
-                bne     _path
-                lda     arg2+2
-                jsr     attr_bit
-                beq     _bad
-                ora     attr_clr
-                sta     attr_clr
-                bra     _word
-_plus           lda     arg2+2
-                jsr     attr_bit
-                beq     _bad
-                ora     attr_set
-                sta     attr_set
-                bra     _word
-_bad            #println "Invalid parameter"
-                jmp     errlvl1
-_path           lda     arg1
-                bne     _word
-                ldx     arg2
--               lda     arg2,x
-                sta     arg1,x
-                dex
-                bpl     -
-                bra     _word
-_parsed         lda     arg1
-                bne     +
-                lda     #1                      ; sans fichier : « * »
-                sta     arg1
-                lda     #'*'
-                sta     arg1+1
-+               jsr     ptr_arg1
-                jsr     to_apipath
-                jsr     has_wild
-                bcs     _wild
-                jsr     p0_arg1               ; un répertoire : son contenu
-                #api    3,16
-                lda     DError
-                bne     _wild
-                lda     DParams+4
-                and     #ATTR_DIR
-                beq     _wild
-                ldx     arg1
-                lda     #'/'
-                inx
-                sta     arg1,x
-                lda     #'*'
-                inx
-                sta     arg1,x
-                stx     arg1
-                bra     _wild
-_wild           jsr     split_path
-                lda     #0                      ; fichiers seulement
-                jsr     collect_matches
-                bcs     _jdone
-                lda     lcount
-                bne     +
-                jmp     err_notfound
-+               jsr     list_first
-_each           jsr     list_next
-                bcc     +
-_jdone          jmp     _done
-+               jsr     ptr_namebuf
-                jsr     build_path
-                jsr     p0_namebuf
-                #api    3,16
-                lda     DError
-                bne     _each
-                lda     attr_set
-                ora     attr_clr
-                bne     _change
-                ; affichage : A S H R  chemin
-                lda     DParams+4
-                sta     tmp
-                and     #ATTR_ARCHIVE
-                ldx     #'A'
-                jsr     attr_show
-                lda     tmp
-                and     #ATTR_SYSTEM
-                ldx     #'S'
-                jsr     attr_show
-                lda     tmp
-                and     #ATTR_HIDDEN
-                ldx     #'H'
-                jsr     attr_show
-                lda     tmp
-                and     #ATTR_READONLY
-                ldx     #'R'
-                jsr     attr_show
-                jsr     space
-                jsr     ptr_namebuf
-                jsr     putpstr_dos
-                jsr     newline
-                bra     _each
-_change         lda     DParams+4
-                and     #ATTR_DIR               ; jamais le bit répertoire
-                sta     tmp
-                lda     DParams+4
-                ora     attr_set
-                sta     flag
-                lda     attr_clr
-                eor     #$ff
-                and     flag
-                and     #~ATTR_DIR
-                ora     tmp
-                sta     DParams+2
-                jsr     p0_namebuf
-                #api    3,21
-                lda     DError
-                bne     +
-                jmp     _each
-+               sta     errsave
-                jsr     ptr_namebuf
-                jsr     putpstr_dos
-                #print  ": "
-                lda     errsave
-                jsr     err_api
-                jmp     _each
-_done           rts
-
-; attr_bit : A = lettre -> masque (0 si inconnue)
-attr_bit        jsr     upper
-                ldx     #ATTR_READONLY
-                cmp     #'R'
-                beq     _ok
-                ldx     #ATTR_HIDDEN
-                cmp     #'H'
-                beq     _ok
-                ldx     #ATTR_SYSTEM
-                cmp     #'S'
-                beq     _ok
-                ldx     #ATTR_ARCHIVE
-                cmp     #'A'
-                beq     _ok
-                lda     #0
-                rts
-_ok             txa
-                rts
-
-; attr_show : affiche X si A != 0, sinon un espace
-attr_show       cmp     #0
-                bne     +
-                ldx     #' '
-+               txa
-                jmp     putc
+; ATTRIB : commande externe BIN/ATTRIB.NEO depuis la 0.14.0 (examples/ext/ATTRIB.asm)
 
 ; copy_dest_name : iobuf = arg2 + « / » + nom de base de arg1 (après « / »)
 copy_dest_name  ldx     arg1                    ; X = dernier « / » (0 : aucun)
@@ -1455,12 +1294,12 @@ cmd_mem         jsr     newline
                 ldy     #>(PROG_TOP-PROG_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes free for programs ($0800-$BFFF)"
+                #println " bytes free for programs ($0800-$B7FF)"
                 lda     #<(NEODOS_TOP-NEODOS_BASE)
                 ldy     #>(NEODOS_TOP-NEODOS_BASE)
                 ldx     #8
                 jsr     print16
-                #println " bytes reserved for NeoDOS ($C000-$FBFF)"
+                #println " bytes reserved for NeoDOS ($B800-$FBFF)"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
@@ -1473,7 +1312,6 @@ cmd_help        jsr     newline
                 #println "DEL file|*.*      Delete files"
                 #println "REN old new       Rename files (REN *.TXT *.BAK)"
                 #println "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)"
-                                #println "ATTRIB +R -H file Show/set attributes"
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"
@@ -1482,8 +1320,9 @@ cmd_help        jsr     newline
                 #println "DATE TIME         Show/set date and time"
                 #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"
                 #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"
-                #println "EXIT              Return to NeoBASIC"
+                #println "EXIT              Reload the resident environment"
                 #println "name[.NEO]        Run a program"
+                #println "BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------

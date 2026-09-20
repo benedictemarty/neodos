@@ -1,6 +1,6 @@
 # ADR-002 — NeoDOS résident en haut de la RAM (`$D000-$FBFF`)
 
-Date : 2026-09-19. État : accepté ; amendé le 2026-09-19 (v0.2.0 : `$D000` ; v0.3.0 : `$C800` ; v0.4.0 : `$C000`).
+Date : 2026-09-19. État : accepté ; amendé le 2026-09-19 (v0.2.0 : `$D000` ; v0.3.0 : `$C800` ; v0.4.0 : `$C000`) et le 2026-09-21 (v0.14.0 : **`$B800`**, voir ADR-004).
 
 ## Contexte
 

@@ -1,6 +1,6 @@
 ; SORT.asm — commande externe NeoDOS : SORT [/R] fichier — affiche les lignes
 ; triées (ordre ASCII, majuscules/minuscules confondues ; /R : décroissant).
-; Le fichier est chargé entier en $2000 (40 Ko max), la table des lignes
+; Le fichier est chargé entier en $2000 (37 Ko max), la table des lignes
 ; (2 048 max) en $1000. Tri de Shell sur la table de pointeurs.
 ;   make examples  ->  storage/BIN/SORT.NEO
 ptr             = $80
@@ -18,7 +18,7 @@ ea              = $94
 eb              = $96
 TABLE           = $1000
 TEXT            = $2000
-TEXT_MAX        = $BF00-TEXT
+TEXT_MAX        = $B700-TEXT
                 * = $0800
                 jmp     main
                 .include "neoext.inc"
@@ -51,7 +51,7 @@ _stat           #setparam 0, filebuf
                 lda     DParams
                 cmp     #<TEXT_MAX
                 bcc     _load
-_big            #println "File too large (40 KB max)"
+_big            #println "File too large (37 KB max)"
                 rts
 _load           lda     DParams                 ; fin du texte -> ptr3
                 clc

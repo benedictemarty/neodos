@@ -60,7 +60,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `06_run` | `.NEO` (avec/sans extension, minuscules), `.BAT` (écho, `@`), reprise après programme, commande inconnue |
 | `07_echo_misc` | `ECHO` (état, ON/OFF, texte, `.`), `REM`, `X:` invalide, `CLS` |
 | `08_date_time` | `DATE`/`TIME` affichage, réglage, valeurs invalides |
-| `09_exit` | `EXIT` : 1,3 → sur Trinity, NeoDOS est relancé (bannière, `print 6*7` refusé) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
+| `09_exit` | `EXIT` : 1,3 → sur Trinity, l'image NeoDOS **embarquée dans le firmware** est relancée (sa bannière dépend de la Trinity avec laquelle Phosphoneo est compilé — 0.12.0 au 2026-09-21 ; à refaire avec `--ref` quand Trinity embarque la 0.14.0) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
 | `10_wild_dir` | `DIR *.TXT`, `DIR GAMES\*.TXT`, `DIR R*`, `DIR ?TRL.TXT`, motif sans correspondance |
 | `10b_dir_w` | `DIR /W` (racine, sous-répertoire, motif), commutateur inconnu ignoré |
 | `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |
@@ -74,12 +74,12 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `19b_redirect_dir` | `DIR > f` (résultats API préservés pendant l'écriture), `DIR` vide, `COPY > f` |
 | `20_move` | `MOVE` vers un répertoire, vers un nom, motif vers répertoire, motif vers un nom refusé, source absente |
 | `21_xcopy` | `XCOPY` d'un répertoire vers un nouveau, d'un motif vers un existant, source absente, syntaxe |
-| `22_attrib` | affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
+| `22_attrib` | `BIN/ATTRIB.NEO` (externe depuis 0.14.0, sortie identique à l'ancienne interne) : affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
 | `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
 | `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |
 | `26_run_at_0200` | programme llvm-mos réel chargé en `$0200` (`POKER.NEO`) lancé depuis NeoDOS : appels graphiques (groupe 5) observés (régression du gel 0.8.0) |
-| `27_smash_reload` | `SMASH.NEO` écrase `$C000-$FBFF` puis `RTS` : NeoDOS rechargé depuis `boot/neodos.neo`, `AUTOEXEC.BAT` rejoué, invite fonctionnelle |
+| `27_smash_reload` | `SMASH.NEO` écrase `$B800-$FBFF` puis `RTS` : NeoDOS rechargé depuis `boot/neodos.neo`, `AUTOEXEC.BAT` rejoué, invite fonctionnelle |
 | `28_ext_tree` | `TREE GAMES /F` (fichiers puis sous-répertoires, 3 niveaux), chemin invalide, `MORE` sans argument / fichier absent |
 | `29_ext_more` | `MORE LONG.TXT` (70 lignes) : pause à 28 lignes, espace = suite, `Q` = fin, retour à l'invite |
 | `30_ext_xcopy` | `XCOPY` un niveau, `/S` (3 fichiers, 2 niveaux vérifiés par `TREE /F`), sans argument, source invalide |

@@ -7,15 +7,23 @@ start           cld
                 sei
                 ldx     #$ff
                 txs
-                stz     echo_off
-                stz     bat_active
-                stz     batdepth
-                stz     errorlevel
-                stz     linebuf                 ; %0-%9 vides pour AUTOEXEC.BAT
+                ; zone données entière à zéro : aucune pstring (dirbuf,
+                ; cwdbuf…) ne doit être lue non initialisée — la RAM n'est
+                ; pas vierge (chargeur, menu de boot) ; couvre echo_off,
+                ; bat_active, batdepth, errorlevel, linebuf, pathbuf, hcount…
+                #setptr ptr, canary_lo
+-               lda     #0
+                sta     (ptr)
+                inc     ptr
+                bne     +
+                inc     ptr+1
++               lda     ptr
+                cmp     #<dataend
+                bne     -
+                lda     ptr+1
+                cmp     #>dataend
+                bne     -
                 stz     redir
-                stz     pathbuf
-                stz     hcount
-                stz     hused
                 lda     #CANARY                 ; sentinelles de la zone données
                 sta     canary_lo
                 sta     canary_hi

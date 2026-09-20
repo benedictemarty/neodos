@@ -3,6 +3,34 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.14.0] — 2026-09-21
+
+Sprint 14 : base `$B800`, `ATTRIB` externalisé (ADR-004).
+
+### Modifié
+- **Résident en `$B800-$FBFF`** (était `$C000`) : + 2 048 octets ; programmes
+  en `$0800-$B7FF` (45 056 octets, `MEM`). En-tête des commandes externes à
+  `$B803`/`$B809`/`$B80C`/`$B80E` (`neoext.inc`, `examples/args.asm`) — un
+  externe compilé pour la 0.13.0 ne reconnaît plus NeoDOS. `EDIT` : texte
+  jusqu'à `$B5FF` ; `SORT` : 37 Ko max ; `SMASH.NEO` écrase depuis `$B800`.
+- **`ATTRIB` devient `BIN/ATTRIB.NEO`** (`examples/ext/ATTRIB.asm`, ≈ 1,3 Ko,
+  sortie identique à l'octet à l'ancienne commande interne ; `IF ERRORLEVEL`
+  n'est plus significatif après lui). Nouveau `examples/ext/glob.inc`
+  (`has_wild`, `split_path`, `match_glob`) pour les externes à jokers.
+  `HELP` liste les externes ; « EXIT : Reload the resident environment ».
+- Marge du résident : 82 → **≈ 2 500 octets**. `MOVE` reste interne : il
+  partage `copy_move` avec `COPY` (gain ≈ 30 octets seulement).
+- Trinity doit être reconstruit avec l'image 0.14.0 et `NEODOS_LOAD = $B800`
+  (story T-13) ; en attendant, `EXIT` sur Trinity relance l'image embarquée
+  (0.12.0 en `$C000`) — visible dans `09_exit`.
+
+### Corrigé
+- **`start` met toute la zone données à zéro** : `dest_path` lisait la
+  longueur de `dirbuf` non initialisée — le premier `MOVE`/`COPY` vers un
+  répertoire renommait le fichier en charabia si la RAM n'était pas vierge
+  (invisible en `$C000` par chance, systématique en `$B800`, probable sur
+  carte). Le runner de tests ne plante plus sur une console non UTF-8.
+
 ## [0.13.0] — 2026-09-20
 
 Sprint 13 : complétion automatique de la saisie.

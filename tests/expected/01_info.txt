@@ -5,7 +5,6 @@ MD RD path        Make/remove directory
 DEL file|*.*      Delete files
 REN old new       Rename files (REN *.TXT *.BAK)
 COPY MOVE src dst Copy/move files (COPY *.TXT DIR)
-ATTRIB +R -H file Show/set attributes
 TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory
@@ -15,11 +14,12 @@ DATE TIME         Show/set date and time
 ECHO PAUSE REM    Batch commands (.BAT, %1-%9)
 IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :labe
 l
-EXIT              Return to NeoBASIC
+EXIT              Reload the resident environment
 name[.NEO]        Run a program
+BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT
 A:\>mem
-   47104 bytes free for programs ($0800-$BFFF)
-   15360 bytes reserved for NeoDOS ($C000-$FBFF)
+   45056 bytes free for programs ($0800-$B7FF)
+   17408 bytes reserved for NeoDOS ($B800-$FBFF)
 A:\>vol
  Volume in drive A has no label
 A:\>
@@ -28,6 +28,7 @@ ARGS.BAT
 AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
+BIN/ATTRIB.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

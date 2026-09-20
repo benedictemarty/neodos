@@ -1,8 +1,8 @@
 ; const.inc — constantes NeoDOS : adresses du noyau, bloc de contrôle API, page zéro
-; NeoDOS occupe $C000-$FBFF (le noyau 6502 est en $FC00-$FFFF, l'API en $FF00-$FF0F).
-; La zone $0800-$DFFF est laissée aux programmes lancés depuis l'invite.
+; NeoDOS occupe $B800-$FBFF (le noyau 6502 est en $FC00-$FFFF, l'API en $FF00-$FF0F).
+; La zone $0800-$B7FF est laissée aux programmes lancés depuis l'invite (ADR-004).
 
-NEODOS_BASE     = $C000
+NEODOS_BASE     = $B800
 NEODOS_TOP      = $FC00
 PROG_BASE       = $0800         ; zone programme (comme NeoBASIC)
 PROG_TOP        = NEODOS_BASE
@@ -23,7 +23,7 @@ DStatus         = ControlPort+3
 DParams         = ControlPort+4
 DExec           = ControlPort+8 ; après un Load File (3,2) : RTS ou JMP exec
 
-; Page zéro NeoDOS : $80-$AF (le noyau F-61 utilise $E0-$EF et $FC-$FF)
+; Page zéro NeoDOS : $80-$B7 (le noyau F-61 utilise $E0-$EF et $FC-$FF)
 ptr             = $80           ; pointeur générique (2)
 ptr2            = $82           ; second pointeur (2)
 tmp             = $84
@@ -59,8 +59,7 @@ cond            = $AD           ; IF : condition vraie
 preverr         = $AE           ; ERRORLEVEL de la commande précédente (lu par IF)
 redir           = $AF           ; sortie redirigée vers CH_OUT (bit 7 = active)
 opfn            = $B0           ; COPY/MOVE : fonction API (20 copie, 12 renomme)
-attr_set        = $B1           ; ATTRIB : bits à mettre / à retirer
-attr_clr        = $B2
+                                ; $B1-$B2 : libres (ATTRIB externalisé en 0.14.0)
 lpos            = $B3           ; éditeur de ligne : curseur
 llen            = $B4           ; éditeur de ligne : longueur
 hcur            = $B5           ; historique : entrée en cours de rappel

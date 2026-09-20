@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.13.0
+NeoDOS version 0.14.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -65,7 +65,6 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `DEL`, `ERASE` | supprime des fichiers (`DEL *.BAK` ; confirmation pour `*.*`) |
 | `REN`, `RENAME` | renomme (`REN *.TXT *.BAK`, substitution nom/extension) |
 | `COPY src dst`, `MOVE src dst` | copie / déplace un fichier ou un motif vers un répertoire (`COPY *.TXT SAVES`) |
-| `ATTRIB [+R -H…] [fichier]` | affiche / modifie les attributs |
 | `TYPE fichier` | affiche un fichier texte (CR, LF, CR/LF, tabulations) |
 | `X:` | change de lecteur (volume `X` − `A` du firmware, 0-3) |
 | `CLS`, `VER`, `VOL`, `MEM` | écran, versions, nom du volume, mémoire |
@@ -75,7 +74,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |
-| `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri ; leur sortie suit la redirection `>` |
+| `ATTRIB [+R -H…] [fichier]`, `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : attributs, éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri ; leur sortie suit la redirection `>` |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes ; **Tab** complète le nom de fichier ou de répertoire sous le curseur ; **F8** rappelle la dernière commande commençant par le texte tapé (DOSKEY). **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 
@@ -103,9 +102,9 @@ docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, adr/
 
 | Zone | Usage |
 |---|---|
-| `$0000-$00FF` | page zéro (NeoDOS : `$80-$B5`) |
-| `$0800-$BFFF` | programmes lancés depuis l'invite (47 104 octets) |
-| `$C000-$FBFF` | NeoDOS (code ≈ 10 Ko + tampons ≈ 5,2 Ko) |
+| `$0000-$00FF` | page zéro (NeoDOS : `$80-$B7`) |
+| `$0800-$B7FF` | programmes lancés depuis l'invite (45 056 octets) |
+| `$B800-$FBFF` | NeoDOS (code ≈ 10 Ko + tampons ≈ 4,6 Ko + ≈ 2,5 Ko de marge ; en-tête des commandes externes en `$B803`) |
 | `$FC00-$FFFF` | noyau 6502 du firmware, API `$FF00` |
 
 ## Licence

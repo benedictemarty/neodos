@@ -14,10 +14,10 @@ Invalid source directory
 A:\>dir BIN /w
  Volume in drive A has no label
  Directory of A:\BIN
-MORE.NEO     EDIT.NEO     XCOPY.NEO    ARGS.NEO
-FIND.NEO     SORT.NEO     DELTREE.NEO  TREE.NEO
-HI.NEO       TOOL.BAT
-       10 file(s)       7042 bytes
+MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
+ARGS.NEO     FIND.NEO     SORT.NEO     DELTREE.NEO
+TREE.NEO     HI.NEO       TOOL.BAT
+       11 file(s)       8378 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -29,6 +29,7 @@ ARGS.BAT
 AUTOEXEC.BAT
 BIN/
 BIN/ARGS.NEO
+BIN/ATTRIB.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

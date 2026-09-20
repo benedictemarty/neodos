@@ -1,9 +1,10 @@
 ; neoext.inc — base des commandes externes NeoDOS (programmes .NEO en $0800)
 ;
-; Contrat NeoDOS (ADR-003) : en-tête en $C000 — $C003 « NEODOS », $C009
-; version, $C00C pointeur vers la ligne de commande (pstring). Zone libre pour
-; le programme : $0800-$BFFF (ne pas écrire dans $C000-$FBFF si l'on veut
-; revenir vite à l'invite ; sinon NeoDOS se recharge). Retour par RTS.
+; Contrat NeoDOS (ADR-003, base $B800 depuis 0.14.0 / ADR-004) : en-tête en
+; NEODOS_BASE — +3 « NEODOS », +9 version, +12 pointeur vers la ligne de
+; commande (pstring), +14 vecteur putc. Zone libre pour le programme :
+; $0800-$B7FF (ne pas écrire dans $B800-$FBFF si l'on veut revenir vite à
+; l'invite ; sinon NeoDOS se recharge). Retour par RTS.
 
 ReadCharacter   = $FFEE
 WriteCharacter  = $FFF1
@@ -13,9 +14,10 @@ DCommand        = $FF00
 DFunction       = $FF01
 DError          = $FF02
 DParams         = $FF04
-NEODOS_SIG      = $C003
-NEODOS_CMDLINE  = $C00C
-NEODOS_PUTC     = $C00E
+NEODOS_BASE     = $B800
+NEODOS_SIG      = NEODOS_BASE+3
+NEODOS_CMDLINE  = NEODOS_BASE+12
+NEODOS_PUTC     = NEODOS_BASE+14
 CR              = 13
 
 api             .macro

@@ -3,7 +3,7 @@
 ;  Auteur : bmarty <bmarty@mailo.com>
 ;  Assemblage : 64tass --mw65c02 --nostart (voir Makefile)
 ;
-;  NeoDOS est un fichier .neo chargé en $C000 (exec $C000). Il remplace
+;  NeoDOS est un fichier .neo chargé en $B800 (exec $B800 ; ADR-004). Il remplace
 ;  NeoBASIC comme environnement de commande : l'utilisateur dispose d'une
 ;  invite « A:\> », des commandes internes DOS (DIR, CD, MD, RD, DEL, REN,
 ;  COPY, TYPE, CLS, VER, VOL, DATE, TIME, ECHO, PAUSE, REM, MEM, HELP, EXIT)
@@ -12,17 +12,17 @@
 ;  (bloc de contrôle $FF00).
 ; ***************************************************************************
 
-VERSION         = "0.13.0"
+VERSION         = "0.14.0"
 
                 .include "const.inc"
                 .include "macros.inc"
 
                 * = NEODOS_BASE
-                jmp     start                   ; $C000
-                .text   "NEODOS"                ; $C003 : signature (commandes externes)
-                .byte   0, 12, 0                ; $C009 : version majeure, mineure, correctif
-                .word   linebuf                 ; $C00C : ligne de commande (pstring, 200 max)
-                .word   putc                    ; $C00E : sortie console de NeoDOS (A ; redirection >)
+                jmp     start                   ; base+0
+                .text   "NEODOS"                ; base+3 : signature (commandes externes)
+                .byte   0, 14, 0                ; base+9 : version majeure, mineure, correctif
+                .word   linebuf                 ; base+12 : ligne de commande (pstring, 200 max)
+                .word   putc                    ; base+14 : sortie console de NeoDOS (A ; redirection >)
 
                 .include "shell.asm"
                 .include "commands.asm"

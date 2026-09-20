@@ -161,6 +161,15 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S63 F8 : rappel de l'historique par préfixe (DOSKEY), raccourci F8 déclaré par 2,4 | fait |
 | S64 Test 36, typer `\t`/`\8`, docs ; références alignées sur Trinity 0.5 (volumes, date/heure, `EXIT` relance NeoDOS) ; lettre de lecteur sans 3,26 corrigée | fait |
 
+## Sprint 14 — Base `$B800`, ATTRIB externe (2026-09-21) — livré, v0.14.0
+
+| Story | État |
+|---|---|
+| S65 Base du résident `$B800` (ADR-004) : `NEODOS_BASE`, Makefile, contrat des externes (`neoext.inc`, `args.asm`), `EDIT`/`SORT`/`SMASH` rebornés, `MEM` | fait |
+| S66 `BIN/ATTRIB.NEO` (`glob.inc` réutilisable), `cmd_attrib` retiré du résident, HELP | fait |
+| S67 Zone données mise à zéro au démarrage (bug `dest_path`/`dirbuf` non initialisé révélé par la nouvelle base) ; références 0.14.0 ; docs | fait |
+| S68 Trinity : reconstruire avec l'image 0.14.0 et `NEODOS_LOAD = $B800` (story T-13, dépôt Trinity) | à faire (hors dépôt) |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -169,7 +178,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
-| B12 | `MOVE`/`ATTRIB` en externes pour dégager le résident ; `HEAD`/`TAIL`, `WC` | commandes externes |
+| B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
 | B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
@@ -184,7 +193,8 @@ NeoBASIC (qui reste accessible par `EXIT`).
   Trinity 0.4.0, **NeoDOS est l'environnement résident embarqué** (1,3 le
   recharge, `EXIT` le relance ; NeoBASIC = `boot/neobasic.bin`) : les tests
   reflètent ce comportement depuis la 0.13.0.
-- Résident : ≈ 80 octets de marge après la complétion (0.13.0) ; toute
-  correction doit rester minuscule, le reste va en commandes externes (ADR-003).
-- Un programme `.NEO` qui écrit au-dessus de `$C000` détruit NeoDOS ; le
+- Résident : ≈ 2,5 Ko de marge depuis la base `$B800` (0.14.0, ADR-004) ;
+  les fonctions nouvelles restent des commandes externes (ADR-003), la marge
+  sert à l'éditeur de ligne et à l'interpréteur (`FOR`, `SHIFT`, suggestion).
+- Un programme `.NEO` qui écrit au-dessus de `$B800` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

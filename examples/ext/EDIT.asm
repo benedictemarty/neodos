@@ -1,6 +1,6 @@
 ; EDIT.asm — commande externe NeoDOS : EDIT fichier — éditeur de texte plein
 ; écran (53x30 : 1 ligne d'état, 28 lignes de texte, 1 ligne d'aide).
-; Texte en mémoire ($2000-$BDFF, lignes terminées par CR ; CR/LF converti au
+; Texte en mémoire ($2000-$B5FF, lignes terminées par CR ; CR/LF converti au
 ; chargement, réécrit à la sauvegarde). Touches : flèches, Début/Fin,
 ; PgUp/PgDn, caractères (insertion), Retour arrière, Suppr, Entrée,
 ; Échap = menu (S sauver, X sauver et quitter, Q quitter sans sauver).
@@ -20,7 +20,7 @@ key             = $93
 ptr2            = $94
 wantcol         = $96           ; colonne souhaitée (déplacements verticaux)
 TEXT            = $2000
-TEXT_END        = $BE00         ; limite (les CR/LF de sauvegarde ont besoin de marge)
+TEXT_END        = $B600         ; limite (les CR/LF de sauvegarde ont besoin de marge)
 ROWS            = 28
 COLS            = 53
 CC_LEFT         = 1

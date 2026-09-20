@@ -134,7 +134,7 @@ def run_case(name, ref):
     import difflib
     for l in difflib.unified_diff(exp.splitlines(), got.splitlines(),
                                   "attendu", "obtenu", lineterm=""):
-        print("  " + l)
+        print("  " + l.encode("utf-8", "replace").decode("utf-8"))   # console binaire : pas de plantage
     return False
 
 

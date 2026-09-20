@@ -62,7 +62,6 @@ firmware n'est pas réinitialisé (les programmes en mémoire sont perdus).
 | `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
 | `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` |
 | `MOVE source destination` | `MOVE A.TXT OLD.TXT`, `MOVE *.BAK ARCHIVE` (déplacement par renommage) |
-| `ATTRIB [+R -R +H -H +S -S +A -A] [fichier]` | `ATTRIB *.TXT` (affiche `A S H R`), `ATTRIB +R CONFIG.BAT`, `ATTRIB` seul : tout le répertoire |
 | `TYPE fichier` | `TYPE README.TXT` |
 | `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
 
@@ -89,7 +88,7 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
-Un programme peut écrire entre `$C000` et `$FBFF` (zone NeoDOS — les
+Un programme peut écrire entre `$B800` et `$FBFF` (zone NeoDOS — les
 programmes llvm-mos y placent leur pile C en `$F600`) à condition de rendre
 la main par `RTS` : NeoDOS détecte qu'il a été écrasé et se recharge depuis
 `/boot/neodos.neo` (ou `/neodos.neo` à la racine — garder l'un des deux sur
@@ -188,8 +187,9 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 | `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |
 | `DELTREE répertoire` | supprime un répertoire et tout son contenu (confirmation `Y/N`) |
 | `FIND [/I] [/N] [/C] [/V] "texte" fichier` | lignes contenant le texte (`/I` casse ignorée, `/N` numéros, `/C` compte, `/V` lignes sans le texte) |
-| `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 40 Ko, 2 048 lignes max) |
+| `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 37 Ko, 2 048 lignes max) |
 | `EDIT fichier` | éditeur plein écran (fichier créé s'il n'existe pas) |
+| `ATTRIB [+R -R +H -H +S -S +A -A] [fichier\|motif\|répertoire]` | affiche (`A S H R` puis le chemin) ou modifie les attributs ; `ATTRIB *.TXT`, `ATTRIB +R CONFIG.BAT`, `ATTRIB GAMES` (son contenu), `ATTRIB` seul : tout le répertoire courant (interne jusqu'à la 0.13.0) |
 
 ### EDIT
 

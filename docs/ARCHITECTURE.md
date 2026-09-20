@@ -8,7 +8,7 @@
                                              ▲
                                              │ SendMessage/WaitMessage ($FFF7/$FFF4)
                                     ┌────────┴─────────┐
-                                    │ NeoDOS ($C000)   │
+                                    │ NeoDOS ($B800)   │
                                     │ shell ─ commands │
                                     │   │   wildcard   │
                                     │   │      batch   │
@@ -16,7 +16,7 @@
                                     └──────────────────┘
                                              │ Load File (3,2) + JSR $FF08
                                              ▼
-                                    programme .NEO ($0800-$BFFF)
+                                    programme .NEO ($0800-$B7FF)
 ```
 
 NeoDOS ne touche pas au matériel : tout passe par le bloc de contrôle de
@@ -31,7 +31,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/const.inc` | adresses (noyau, API, page zéro), codes d'erreur, attributs |
 | `src/macros.inc` | `#api g,f`, `#print`, `#println`, `#setparam`, `#setptr` |
 | `src/shell.asm` | démarrage, boucle, invite (`PROMPT`), lecture de ligne, analyse, dispatch, lancement `.NEO` (+ `PATH`), redirection `>`, messages d'erreur |
-| `src/commands.asm` | table des commandes et leurs implémentations (`copy_move` commun à `COPY`/`MOVE`/`XCOPY` via `opfn`) |
+| `src/commands.asm` | table des commandes et leurs implémentations (`copy_move` commun à `COPY`/`MOVE` via `opfn` ; `ATTRIB` externalisé en 0.14.0) |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
 | `src/lineedit.asm` | éditeur de ligne (`readline_ed`, `ins_char`), historique (`hist_add`, `hist_entry`), complétion Tab (`_tab`) et F8 (`_f8`) |
 | `src/stub.asm` | stub de retour des programmes (`$0100`) : vérification et rechargement de NeoDOS |
@@ -77,8 +77,8 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    extension `.NEO`/`.BAT` ou en essayant `.NEO` puis `.BAT` (File Stat 3,16).
    Sans succès, chaque entrée de `PATH` (`path_next`, séparateur `;`) est
    essayée avec `build_path`. La ligne reste dans `linebuf`, dont l'adresse
-   est publiée dans l'en-tête `$C000` (`jmp start`, `NEODOS`, version,
-   pointeur en `$C00C`, vecteur `putc` en `$C00E`) : contrat des commandes externes — rien n'est écrit
+   est publiée dans l'en-tête `$B800` (`jmp start`, `NEODOS` en `$B803`, version en `$B809`,
+   pointeur en `$B80C`, vecteur `putc` en `$B80E` ; `$C0xx` jusqu'à la 0.13.0) : contrat des commandes externes — rien n'est écrit
    dans la zone programme (un programme peut se charger dès `$0200`).
    `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
    File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.
@@ -113,10 +113,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$B7` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`, `f8len`), `caps` |
-| `$C000-$E964` | code (≈ 10,6 Ko ; `codeend`) |
-| `$E965-$FBAD` | tampons : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
-| `$FBAE-$FBFF` | libre (≈ 80 octets de marge depuis la complétion 0.13.0 ; `.cerror` si `dataend > $FC00`) |
+| `$80-$B7` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, éditeur (`lpos`, `llen`, `hcur`, `f8len`), `caps` |
+| `$B800-$DFF0` | code (≈ 10,2 Ko ; `codeend`) |
+| `$DFF1-$F239` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
+| `$F23A-$FBFF` | libre (≈ 2,5 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
@@ -197,4 +197,4 @@ visités à chaque niveau, ré-énumération à la remontée.
 
 `tools/mkneo.py` : en-tête `03 'N' 'E' 'O'`, version, adresse d'exécution,
 puis blocs (contrôle, adresse de chargement, taille, commentaire ASCIIZ,
-données). NeoDOS = un bloc en `$C000`, exec `$C000`.
+données). NeoDOS = un bloc en `$B800`, exec `$B800`.

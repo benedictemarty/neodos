@@ -7,8 +7,9 @@
 ;   python3 tools/mkneo.py args.bin ARGS.NEO 0800 0800 "Args"
 WriteCharacter  = $FFF1
 WaitMessage     = $FFF4
-NEODOS_SIG      = $C003
-NEODOS_CMDLINE  = $C00C
+NEODOS_BASE     = $B800         ; ADR-004 (0.14.0)
+NEODOS_SIG      = NEODOS_BASE+3
+NEODOS_CMDLINE  = NEODOS_BASE+12
 cmd             = $80                           ; pointeur page zéro
                 * = $0800
                 lda     NEODOS_SIG              ; lancé depuis NeoDOS ?

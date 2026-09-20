@@ -11,7 +11,7 @@ WaitMessage     = $FFF4
                 jsr     WaitMessage
                 inx
                 bra     -
-+               lda     #$C0
++               lda     #$B8
                 sta     $81
                 stz     $80
                 ldy     #0
@@ -24,4 +24,4 @@ WaitMessage     = $FFF4
                 cmp     #$FC
                 bne     -
                 rts
-msg             .text   "Smashing $C000-$FBFF...", 13, 0
+msg             .text   "Smashing $B800-$FBFF...", 13, 0
