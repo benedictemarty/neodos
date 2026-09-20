@@ -25,6 +25,11 @@ Sprint 14 : base `$B800`, `ATTRIB` externalisé (ADR-004).
   tests alignées sur Trinity 0.6+/0.7 (volumes « is HOST0 » et date/heure de
   retour, bannière 0.14.0 après `EXIT`).
 
+### Ajouté
+- `docs/RECETTE_CARTE.md` : fiche de recette sur carte (Trinity 0.7+, clé
+  `make dist`) — démarrage, fichiers, édition de ligne (Tab, F8), programmes,
+  stub, volumes ; publication Prophet 0.14.0.
+
 ### Corrigé
 - **`start` met toute la zone données à zéro** : `dest_path` lisait la
   longueur de `dirbuf` non initialisée — le premier `MOVE`/`COPY` vers un

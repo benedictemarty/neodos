@@ -95,7 +95,7 @@ examples/     HELLO.NEO, args/smash (tests), ext/ (commandes externes : neoext.i
 storage/      image de stockage de démonstration (make examples)
 tests/        run_tests.py + cas (.keys) et références (expected/), fixtures
 tools/        mkneo.py (emballage .neo)
-docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, adr/
+docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, RECETTE_CARTE, adr/
 ```
 
 ## Carte mémoire

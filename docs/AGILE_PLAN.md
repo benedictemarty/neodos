@@ -101,7 +101,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S38 `make dist` : image de clé pour Trinity (`boot/neodos.neo` + `boot/auto.txt`, `AUTOEXEC.BAT` avec `PATH \BIN`, `BIN/`) | fait |
 | S39 Première commande externe `BIN/ARGS.NEO` (contrat `$0200`), chemin absolu comme commande (`\BIN\ARGS.NEO`) | fait |
 | S40 Mémo au projet firmware (`docs/MEMO-NEODOS-2026-09-19.md` sur `trinity`, story T-10) | fait |
-| S41 Validation sur carte Trinity (B9) | à faire — dépend de bmarty |
+| S41 Validation sur carte Trinity (B9) : fiche `docs/RECETTE_CARTE.md` (2026-09-21, 40 étapes en 6 sections) | fiche prête — exécution par bmarty |
 
 ## Correctif 0.8.1 (2026-09-20) — retour de test carte
 
