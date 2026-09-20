@@ -20,9 +20,10 @@ Sprint 14 : base `$B800`, `ATTRIB` externalisé (ADR-004).
   `HELP` liste les externes ; « EXIT : Reload the resident environment ».
 - Marge du résident : 82 → **≈ 2 500 octets**. `MOVE` reste interne : il
   partage `copy_move` avec `COPY` (gain ≈ 30 octets seulement).
-- Trinity doit être reconstruit avec l'image 0.14.0 et `NEODOS_LOAD = $B800`
-  (story T-13) ; en attendant, `EXIT` sur Trinity relance l'image embarquée
-  (0.12.0 en `$C000`) — visible dans `09_exit`.
+- Trinity reconstruit avec l'image 0.14.0 et `NEODOS_LOAD = $B800`
+  (Trinity 0.7.0, 2026-09-21) : `EXIT` relance la 0.14.0. Références des
+  tests alignées sur Trinity 0.6+/0.7 (volumes « is HOST0 » et date/heure de
+  retour, bannière 0.14.0 après `EXIT`).
 
 ### Corrigé
 - **`start` met toute la zone données à zéro** : `dest_path` lisait la

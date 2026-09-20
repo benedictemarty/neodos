@@ -1,7 +1,7 @@
         1 dir(s)
 A:\>cd GAMES
 A:\GAMES>dir ..
- Volume in drive A has no label
+ Volume in drive A is HOST0
  Directory of A:\GAMES\..
 boot                 <DIR>
 AUTOEXEC.BAT           151

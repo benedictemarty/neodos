@@ -17,12 +17,14 @@ Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
 `~/Phosphoneo/build/phosphoneo`), version avec les touches d'édition du
 typer (commit `ef145e3` de Phosphoneo, 2026-09-19 : `\z` = Ctrl+Alt+Suppr).
 Depuis le 2026-09-20 (commit `02da22d`), Phosphoneo est compilé contre la
-branche `trinity` du firmware : les références reflètent **Trinity 0.5**
-(pas de volumes 3,24-26 → « has no label », pas de date/heure 1,20-21 →
-« Date/time not supported by this firmware », et 1,3 recharge NeoDOS —
-Trinity l'embarque comme environnement résident — donc `EXIT` relance
-NeoDOS au lieu de NeoBASIC). Une Phosphoneo compilée contre le fork
-d'origine fait échouer une douzaine de cas sur ces seuls points.
+branche `trinity` du firmware : les références suivent **Trinity**. Au
+2026-09-21 (Trinity 0.7.0) : volumes 3,24-26 (« Volume in drive A is
+HOST0 ») et date/heure 1,20-21 sont de retour (0.6.0) ; 1,3 recharge
+l'image NeoDOS embarquée dans le firmware (0.14.0 en `$B800` depuis Trinity
+0.7.0), donc `EXIT` relance NeoDOS au lieu de NeoBASIC. Une Phosphoneo
+compilée contre une Trinity plus ancienne (0.5 : pas de volumes ni de
+date/heure, image 0.12.0 en `$C000`) fait échouer une douzaine de cas sur
+ces seuls points — régénérer avec `--ref` après avoir relu le diff.
 
 ## Structure
 
@@ -60,7 +62,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `06_run` | `.NEO` (avec/sans extension, minuscules), `.BAT` (écho, `@`), reprise après programme, commande inconnue |
 | `07_echo_misc` | `ECHO` (état, ON/OFF, texte, `.`), `REM`, `X:` invalide, `CLS` |
 | `08_date_time` | `DATE`/`TIME` affichage, réglage, valeurs invalides |
-| `09_exit` | `EXIT` : 1,3 → sur Trinity, l'image NeoDOS **embarquée dans le firmware** est relancée (sa bannière dépend de la Trinity avec laquelle Phosphoneo est compilé — 0.12.0 au 2026-09-21 ; à refaire avec `--ref` quand Trinity embarque la 0.14.0) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
+| `09_exit` | `EXIT` : 1,3 → sur Trinity, l'image NeoDOS **embarquée dans le firmware** est relancée (bannière 0.14.0 depuis Trinity 0.7.0 ; la référence dépend de la Trinity avec laquelle Phosphoneo est compilé) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
 | `10_wild_dir` | `DIR *.TXT`, `DIR GAMES\*.TXT`, `DIR R*`, `DIR ?TRL.TXT`, motif sans correspondance |
 | `10b_dir_w` | `DIR /W` (racine, sous-répertoire, motif), commutateur inconnu ignoré |
 | `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |

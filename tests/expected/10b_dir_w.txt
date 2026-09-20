@@ -3,7 +3,7 @@ SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
         8 file(s)        834 bytes
         0 dir(s)
 A:\>dir /x
- Volume in drive A has no label
+ Volume in drive A is HOST0
  Directory of A:\
 boot                 <DIR>
 AUTOEXEC.BAT           151

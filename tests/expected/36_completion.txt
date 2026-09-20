@@ -8,7 +8,7 @@ Zebra
 A:\>type GAMES\SUB\DEEP\Y.TXT
 y
 A:\>dir MANY\F3
- Volume in drive A has no label
+ Volume in drive A is HOST0
  Directory of A:\MANY
 File not found
 A:\>type XX

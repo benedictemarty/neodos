@@ -168,7 +168,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S65 Base du résident `$B800` (ADR-004) : `NEODOS_BASE`, Makefile, contrat des externes (`neoext.inc`, `args.asm`), `EDIT`/`SORT`/`SMASH` rebornés, `MEM` | fait |
 | S66 `BIN/ATTRIB.NEO` (`glob.inc` réutilisable), `cmd_attrib` retiré du résident, HELP | fait |
 | S67 Zone données mise à zéro au démarrage (bug `dest_path`/`dirbuf` non initialisé révélé par la nouvelle base) ; références 0.14.0 ; docs | fait |
-| S68 Trinity : reconstruire avec l'image 0.14.0 et `NEODOS_LOAD = $B800` (story T-13, dépôt Trinity) | à faire (hors dépôt) |
+| S68 Trinity : reconstruire avec l'image 0.14.0 et `NEODOS_LOAD = $B800` (dépôt Trinity, livré dans Trinity 0.7.0 le 2026-09-21 ; `EXIT` relance la 0.14.0, vérifié dans `neo` et Phosphoneo) | fait |
 
 ## Backlog (priorisé)
 
@@ -187,9 +187,9 @@ NeoBASIC (qui reste accessible par `EXIT`).
 - Les émulateurs (`neo`, Phosphoneo) ne normalisent pas `..` dans le
   répertoire courant (`A:\GAMES\..`) et sont sensibles à la casse des noms ;
   la carte (FatFs) n'a pas ces limites. Demandé au projet firmware (T-10).
-- **Firmware de référence = Trinity** (depuis le 2026-09-19) : pas de volumes
-  ni de date/heure tant que T-09/T-10 ne sont pas repris ; NeoDOS se dégrade
-  proprement mais `B:`, `DATE`, `TIME` restent inertes sur carte. Depuis
+- **Firmware de référence = Trinity** (depuis le 2026-09-19) : volumes et
+  date/heure repris en Trinity 0.6.0 (2026-09-20) ; NeoDOS se dégrade
+  proprement sur une Trinity plus ancienne (`B:`, `DATE`, `TIME` inertes). Depuis
   Trinity 0.4.0, **NeoDOS est l'environnement résident embarqué** (1,3 le
   recharge, `EXIT` le relance ; NeoBASIC = `boot/neobasic.bin`) : les tests
   reflètent ce comportement depuis la 0.13.0.

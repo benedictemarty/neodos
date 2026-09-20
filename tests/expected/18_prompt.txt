@@ -7,7 +7,9 @@ A>cd GAMES
 A>prompt [$p] $$
 [A:\GAMES] $cd ..
 [A:\GAMES\..] $prompt $d$_$p$g
+1970-01-01
 A:\GAMES\..>cd GAMES
+1970-01-01
 A:\GAMES\..\GAMES>prompt
 A:\GAMES\..\GAMES>echo done
 done
