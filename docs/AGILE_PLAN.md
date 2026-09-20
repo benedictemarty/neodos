@@ -153,6 +153,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S60 Navigation, insertion, Retour arrière/Suppr (fusion), Entrée (scission), menu Échap | fait |
 | S61 Tests 35/35b, docs | fait |
 
+## Sprint 13 — Complétion de la saisie (2026-09-20) — livré, v0.13.0
+
+| Story | État |
+|---|---|
+| S62 Tab : complétion du nom de fichier/répertoire sous le curseur (préfixe commun, `\` après un répertoire unique) via la machinerie des jokers | fait |
+| S63 F8 : rappel de l'historique par préfixe (DOSKEY), raccourci F8 déclaré par 2,4 | fait |
+| S64 Test 36, typer `\t`/`\8`, docs ; références alignées sur Trinity 0.5 (volumes, date/heure, `EXIT` relance NeoDOS) ; lettre de lecteur sans 3,26 corrigée | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -172,6 +180,11 @@ NeoBASIC (qui reste accessible par `EXIT`).
   la carte (FatFs) n'a pas ces limites. Demandé au projet firmware (T-10).
 - **Firmware de référence = Trinity** (depuis le 2026-09-19) : pas de volumes
   ni de date/heure tant que T-09/T-10 ne sont pas repris ; NeoDOS se dégrade
-  proprement mais `B:`, `DATE`, `TIME` restent inertes sur carte.
+  proprement mais `B:`, `DATE`, `TIME` restent inertes sur carte. Depuis
+  Trinity 0.4.0, **NeoDOS est l'environnement résident embarqué** (1,3 le
+  recharge, `EXIT` le relance ; NeoBASIC = `boot/neobasic.bin`) : les tests
+  reflètent ce comportement depuis la 0.13.0.
+- Résident : ≈ 80 octets de marge après la complétion (0.13.0) ; toute
+  correction doit rester minuscule, le reste va en commandes externes (ADR-003).
 - Un programme `.NEO` qui écrit au-dessus de `$C000` détruit NeoDOS ; le
   retour à l'invite n'est alors pas possible (reset).

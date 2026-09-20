@@ -3,6 +3,43 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.13.0] — 2026-09-20
+
+Sprint 13 : complétion automatique de la saisie.
+
+### Ajouté
+- **Tab** : complète le mot sous le curseur avec les noms du répertoire
+  (fichiers et sous-répertoires, chemins `\` ou `/` acceptés) : le plus long
+  préfixe commun des entrées qui commencent par le texte tapé est inséré
+  (`type FRU` → `type FRUITS.TXT` ; `dir MANY\F3` reste `F3` s'il y a
+  `F30`..`F35`) ; une correspondance unique qui est un répertoire reçoit un
+  `\` final pour enchaîner (`GAMES\SU` → `GAMES\SUB\`). Aucune
+  correspondance ou répertoire inexistant : la ligne ne change pas.
+  Réutilise la machinerie des jokers (`split_path`, `collect_open` /
+  `collect_loop`, `build_path`) ; `ins_char` factorise l'insertion.
+- **F8** (DOSKEY) : rappelle la commande la plus récente de l'historique
+  qui commence par le texte tapé jusqu'au curseur ; F8 à nouveau remonte à
+  la précédente ; toute autre touche termine la recherche. Le firmware ne
+  produit pas de code ASCII pour les touches de fonction : NeoDOS déclare au
+  démarrage un texte de raccourci d'un octet (`$88`) pour F8 (API 2,4).
+- Test `36_completion` ; le typer des tests accepte `\t` (Tab) et `\8` (F8).
+
+### Modifié
+- Résident : `linebuf` ramené à 201 octets (la ligne est limitée à 200),
+  `LISTBUF_SIZE` 960 → 896 ; marge restante ≈ 80 octets sous `$FC00`.
+  Exception assumée à l'ADR-003 (la complétion ne peut pas être une commande
+  externe : elle vit dans l'éditeur de ligne).
+- Références des tests alignées sur **Trinity 0.5** (Phosphoneo recompilé
+  contre la branche `trinity`) : « Volume in drive A has no label »,
+  « Date/time not supported by this firmware », et `EXIT` relance NeoDOS
+  (Trinity embarque NeoDOS comme environnement résident : 1,3 le recharge ;
+  NeoBASIC est `boot/neobasic.bin`).
+
+### Corrigé
+- `DIR` / `VOL` sans fonction 3,26 (Trinity) : la lettre de lecteur était
+  `'A' + résidu de DParams` (« drive a ») ; `DParams` est mis à 0 avant
+  l'appel.
+
 ## [0.12.0] — 2026-09-20
 
 Sprint 12 : `EDIT`, l'éditeur plein écran.

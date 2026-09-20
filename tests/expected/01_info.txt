@@ -21,7 +21,7 @@ A:\>mem
    47104 bytes free for programs ($0800-$BFFF)
    15360 bytes reserved for NeoDOS ($C000-$FBFF)
 A:\>vol
- Volume in drive A is HOST0
+ Volume in drive A has no label
 A:\>
 --- files ---
 ARGS.BAT

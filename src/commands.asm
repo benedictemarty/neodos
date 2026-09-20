@@ -110,6 +110,7 @@ _open           #setparam 0, dirbuf
 +               stz     dirlines
                 stz     dircol
                 #print  " Volume in drive "
+                stz     DParams                 ; sans 3,26 (Trinity) : A
                 #api    3,26
                 lda     DParams
                 clc
@@ -973,6 +974,7 @@ cmd_ver         jsr     newline
 ; VOL : volume courant
 ; ---------------------------------------------------------------------------
 cmd_vol         #print  " Volume in drive "
+                stz     DParams                 ; sans 3,26 (Trinity) : A
                 #api    3,26
                 lda     DParams
                 clc

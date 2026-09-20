@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.12.0
+NeoDOS version 0.13.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -77,10 +77,10 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `HELP` | aide en ligne |
 | `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri ; leur sortie suit la redirection `>` |
 
-Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes. **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
+Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes ; **Tab** complète le nom de fichier ou de répertoire sous le curseur ; **F8** rappelle la dernière commande commençant par le texte tapé (DOSKEY). **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud.
 
 Un programme qui écrase la zone de NeoDOS (pile C de llvm-mos en `$F600`, gros programme) et rend la main par `RTS` revient quand même à l'invite : un stub en `$0100` vérifie NeoDOS et le **recharge depuis `/boot/neodos.neo`** (ou `/neodos.neo`) — comme le firmware recharge NeoBASIC depuis la flash.
-| `EXIT`, `BASIC` | retour à NeoBASIC |
+| `EXIT`, `BASIC` | recharge l'environnement résident du firmware (1,3 : NeoBASIC sur le firmware d'origine, NeoDOS lui-même sur Trinity) |
 | `nom[.NEO]`, `nom[.BAT]` | lance un programme ou un script (ligne de commande : pointeur en `$C00C`) |
 
 Les chemins acceptent `\` ou `/` ; les jokers `*` et `?` s'appliquent à

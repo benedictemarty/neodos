@@ -4,7 +4,7 @@ SUB                  <DIR>
 A:\>move GAMES\README.TXT R2.TXT
         1 file(s) moved
 A:\>dir *.TXT
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\
 R2.TXT                  31
 CTRL.TXT                 9
@@ -15,7 +15,7 @@ FRUITS.TXT              41
 A:\>move *.TXT GAMES
         4 file(s) moved
 A:\>dir GAMES /w
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\GAMES
 FRUITS.TXT   LONG.TXT     CTRL.TXT     R2.TXT
 A.TXT        [SUB]

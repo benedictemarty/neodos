@@ -6,7 +6,7 @@ echo_off        .fill   1               ; 1 = ECHO OFF (batch)
 bat_active      .fill   1               ; 1 = un batch est en cours
 promptbuf       .fill   92              ; invite « A:\chemin> » (pstring)
 cwdbuf          .fill   82              ; répertoire courant (pstring)
-linebuf         .fill   256             ; ligne de commande sans l'invite
+linebuf         .fill   201             ; ligne de commande sans l'invite (200 max)
 cmdbuf          .fill   17              ; mot de commande en majuscules
 arg1            .fill   129             ; premier argument
 arg2            .fill   129             ; second argument

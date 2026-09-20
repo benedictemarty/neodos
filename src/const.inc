@@ -64,6 +64,7 @@ attr_clr        = $B2
 lpos            = $B3           ; éditeur de ligne : curseur
 llen            = $B4           ; éditeur de ligne : longueur
 hcur            = $B5           ; historique : entrée en cours de rappel
+f8len           = $B7           ; F8 : longueur du préfixe recherché dans l'historique (0 = aucun)
 caps            = $B6           ; fonctions du firmware : bit 0 volumes (3,24-26), bit 1 date/heure (1,20-21)
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
@@ -84,6 +85,8 @@ ATTR_HIDDEN     = $10
 
 ; Console
 CR              = 13
+CC_TAB          = 9             ; Tab : complétion des noms de fichiers
+KEY_F8          = $88           ; F8 (129..138 = F1..F10) : complétion depuis l'historique
 KEY_DELETE      = $4C           ; code HID de Suppr (Key Status 1,2)
 MOD_CTRL        = $11           ; bits Ctrl gauche/droit (Parameter:1 de 1,2)
 MOD_ALT         = $44           ; bits Alt / AltGr
@@ -99,7 +102,7 @@ STUB_BASE       = $0100         ; stub de retour des programmes (bas de la page 
 CANARY          = $A5           ; sentinelle des données NeoDOS (vérifiée par le stub)
 
 BATBUF_SIZE     = 768           ; taille maximale d'un fichier .BAT
-LISTBUF_SIZE    = 960           ; noms collectés par les jokers (pstrings)
+LISTBUF_SIZE    = 896           ; noms collectés par les jokers (pstrings)
 DIR_PAGE_LINES  = 28            ; DIR /P : lignes par page (écran de 30)
 BAT_NAME_SIZE   = 64            ; chemin d'un fichier batch (pstring)
 BAT_ARGS_SIZE   = 96            ; ligne de commande d'un batch (pstring, %0-%9)

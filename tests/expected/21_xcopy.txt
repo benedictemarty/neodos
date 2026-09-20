@@ -4,7 +4,7 @@ Type HELP for the list of commands
 A:\>xcopy GAMES NEWDIR
 1 file(s) copied
 A:\>dir NEWDIR
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\NEWDIR
 A.TXT                    3
         1 file(s)          3 bytes
@@ -12,7 +12,7 @@ A.TXT                    3
 A:\>xcopy GAMES\A.* BIN
 Invalid source directory
 A:\>dir BIN /w
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\BIN
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ARGS.NEO
 FIND.NEO     SORT.NEO     DELTREE.NEO  TREE.NEO

@@ -1,10 +1,10 @@
-NeoDOS version 0.12.0
+NeoDOS version 0.13.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>dir GAMES > D.TXT
 A:\>type D.TXT
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\GAMES
 A.TXT                    3
 SUB                  <DIR>
@@ -12,7 +12,7 @@ SUB                  <DIR>
         1 dir(s)
 A:\>dir *.NOPE > F.TXT
 A:\>type F.TXT
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\
 File not found
 A:\>copy README.TXT GAMES > G.TXT

@@ -33,7 +33,7 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
 | `src/shell.asm` | démarrage, boucle, invite (`PROMPT`), lecture de ligne, analyse, dispatch, lancement `.NEO` (+ `PATH`), redirection `>`, messages d'erreur |
 | `src/commands.asm` | table des commandes et leurs implémentations (`copy_move` commun à `COPY`/`MOVE`/`XCOPY` via `opfn`) |
 | `src/wildcard.asm` | `has_wild`, `match_glob`, `split_path`, `collect_matches`/`list_next`, `build_path`, `apply_pattern` (REN) |
-| `src/lineedit.asm` | éditeur de ligne (`readline_ed`), historique (`hist_add`, `hist_entry`) |
+| `src/lineedit.asm` | éditeur de ligne (`readline_ed`, `ins_char`), historique (`hist_add`, `hist_entry`), complétion Tab (`_tab`) et F8 (`_f8`) |
 | `src/stub.asm` | stub de retour des programmes (`$0100`) : vérification et rechargement de NeoDOS |
 | `src/batch.asm` | `AUTOEXEC.BAT`, exécution d'un `.BAT` depuis `batbuf`, `%n`, `GOTO`, `CALL`, pile des niveaux |
 | `src/console.asm` | `putc`, `puts` (texte inline), pstrings, décimal 32 bits |
@@ -54,6 +54,19 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    `warm_restart` (attend le relâchement, 8,1, `CD /`, 2,12, `jmp start`).
    Haut/Bas rappellent une entrée de `histbuf` (pstrings consécutives,
    `hcount`/`hused` ; la plus ancienne est retirée quand la place manque).
+   **Tab** : le mot sous le curseur (depuis l'espace précédent) + `*` est
+   copié dans `arg1`, converti (`to_apipath`), découpé (`split_path` →
+   `dirbuf`/`patbuf`) ; `collect_open` (silencieux si le répertoire n'existe
+   pas) puis `collect_loop` collectent les entrées correspondantes dans
+   `listbuf` ; le plus long préfixe commun (`cnt`, casse ignorée) est inséré
+   par `ins_char` au-delà de ce qui est tapé (`patbuf` − 1) ; pour une
+   correspondance unique, `build_path` + `stat_namebuf` (3,16) ajoutent `\`
+   si c'est un répertoire. **F8** : `f8len` = longueur du préfixe (la ligne
+   jusqu'au curseur à la première pression, remise à 0 par toute autre
+   touche) ; recherche depuis `hcur` vers les entrées plus anciennes (`idx`)
+   d'une commande de même préfixe, puis `_recall`. Les touches de fonction
+   n'ont pas de code ASCII dans le firmware : `start` déclare pour F8 un
+   texte de raccourci d'un octet `KEY_F8` = `$88` (API 2,4, `f8text`).
    `execute_line` appelle d'abord `redir_setup` (voir Redirection).
 3. `parse_line` : `cmdbuf` = premier mot en majuscules (arrêt sur espace,
    `\`, `/`, `.` après la 1re lettre, `:` sauf pour `X:`) ; `argrest` = reste
@@ -100,10 +113,10 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$B5` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`), `caps` |
-| `$C000-$E83F` | code (≈ 10,3 Ko ; `codeend`) |
-| `$E840-$FB3D` | tampons : `promptbuf`, `cwdbuf`, `linebuf`, `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (1 024), `dirbuf`, `patbuf`, `newname`, `listbuf` (1 024), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
-| `$FB3E-$FBFF` | libre (≈ 190 octets de marge ; `batbuf` ramené à 768 ; `.cerror` si `dataend > $FC00`) |
+| `$80-$B7` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `attr_set`/`attr_clr`, éditeur (`lpos`, `llen`, `hcur`, `f8len`), `caps` |
+| `$C000-$E964` | code (≈ 10,6 Ko ; `codeend`) |
+| `$E965-$FBAD` | tampons : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200) |
+| `$FBAE-$FBFF` | libre (≈ 80 octets de marge depuis la complétion 0.13.0 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.

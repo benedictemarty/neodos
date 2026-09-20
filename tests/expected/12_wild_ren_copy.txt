@@ -3,7 +3,7 @@ CTRL.BAK                 9
         0 dir(s)
 A:\>ren C?RL.BAK X?RL.OLD
 A:\>dir *.OLD
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\
 XTRL.OLD                 9
         1 file(s)          9 bytes
@@ -11,7 +11,7 @@ XTRL.OLD                 9
 A:\>copy README.BAK GAMES
         1 file(s) copied
 A:\>dir GAMES
- Volume in drive A is HOST0
+ Volume in drive A has no label
  Directory of A:\GAMES
 README.BAK              31
 A.TXT                    3

@@ -8,7 +8,10 @@
 ;
 ; Touches : caractères imprimables (insertion), Retour arrière, Suppr,
 ; Gauche/Droite, Début/Fin (Home/End), Haut/Bas (historique), Échap (efface
-; la ligne), Entrée.
+; la ligne), Entrée, Tab (complétion du nom de fichier sous le curseur : plus
+; long préfixe commun des entrées du répertoire), F8 (DOSKEY : rappelle la
+; commande la plus récente de l'historique qui commence par le texte tapé ;
+; F8 à nouveau remonte plus loin).
 
 CC_LEFT         = 1
 CC_RIGHT        = 4
@@ -27,10 +30,14 @@ CC_ESC          = 27
 ; ---------------------------------------------------------------------------
 readline_ed     stz     llen
                 stz     lpos
+                stz     f8len
                 lda     hcount
                 sta     hcur
 _key            jsr     getkey
-                ldx     #0
+                cmp     #KEY_F8                 ; toute autre touche termine
+                beq     +                       ; la recherche F8
+                stz     f8len
++               ldx     #0
 -               ldy     keytab,x
                 beq     _print
                 cmp     keytab,x
@@ -45,27 +52,7 @@ _print          cmp     #' '
                 bcc     _key                    ; autres codes de contrôle
                 cmp     #127
                 bcs     _key
-                ; insertion d'un caractère
-                ldx     llen
-                cpx     #200
-                bcs     _key
-                sta     tmp
-                cpx     lpos                    ; décale la fin de ligne
-                beq     _ins
--               lda     linebuf,x               ; linebuf+1+(x-1) -> +1+x
-                sta     linebuf+1,x
-                dex
-                cpx     lpos
-                bne     -
-                lda     #CC_INSERT              ; écran : insère un espace
-                jsr     putc
-_ins            ldx     lpos
-                lda     tmp
-                sta     linebuf+1,x
-                jsr     putc
-                inc     lpos
-                inc     llen
-                jmp     _key
+                jsr     ins_char
 _jkey           jmp     _key
 _bs             lda     lpos
                 beq     _jkey
@@ -144,11 +131,143 @@ _enter          lda     lpos                    ; curseur en fin de ligne
                 sta     linebuf
                 jsr     newline
                 jmp     hist_add
+; F8 : recherche dans l'historique, de la plus récente à la plus ancienne
+; (avant hcur), une commande dont les f8len premiers caractères sont ceux
+; de la ligne ; la première fois, le préfixe est la ligne jusqu'au curseur.
+_f8             lda     f8len
+                bne     +
+                lda     lpos
+                sta     f8len
++               lda     hcur
+                sta     idx
+_f8next         lda     idx
+                beq     _jkey2                  ; plus rien : ligne inchangée
+                dec     idx
+                lda     idx
+                jsr     hist_entry              ; ptr2 -> entrée
+                lda     (ptr2)
+                cmp     f8len
+                bcc     _f8next                 ; trop courte
+                ldy     f8len
+-               beq     +                       ; préfixe entier comparé
+                lda     (ptr2),y
+                cmp     linebuf,y
+                bne     _f8next
+                dey
+                bra     -
++               lda     idx
+                sta     hcur
+                bra     _recall
+_jkey2          jmp     _key
+; Tab : le mot sous le curseur (depuis l'espace précédent) + « * » est un
+; motif ; les entrées du répertoire qui y correspondent sont collectées dans
+; listbuf, et leur plus long préfixe commun est inséré au-delà de ce qui est
+; déjà tapé. Aucune correspondance (ou répertoire inexistant) : rien.
+_tab            ldx     lpos                    ; X = début du mot (index de
+-               beq     +                       ; l'espace précédent, 0 = début)
+                lda     linebuf,x
+                cmp     #' '
+                beq     +
+                dex
+                bra     -
++               ldy     #0                      ; arg1 = mot + « * »
+-               cpx     lpos
+                beq     +
+                lda     linebuf+1,x
+                iny
+                sta     arg1,y
+                inx
+                bra     -
++               iny
+                lda     #'*'
+                sta     arg1,y
+                sty     arg1
+                jsr     ptr_arg1
+                jsr     to_apipath
+                jsr     split_path              ; dirbuf + patbuf
+                lda     #1                      ; fichiers et répertoires
+                sta     flag
+                jsr     collect_open
+                bne     _jkey2
+                jsr     collect_loop
+                lda     lcount
+                beq     _jkey2
+                ; cnt = longueur du préfixe commun (sans tenir compte de la casse)
+                jsr     list_first
+                lda     listbuf
+                sta     cnt
+_tcmp           jsr     list_next               ; ptr2 -> entrée suivante
+                bcs     _tins
+                lda     (ptr2)
+                cmp     cnt
+                bcs     +
+                sta     cnt                     ; entrée plus courte
++               ldy     #1
+-               cpy     cnt
+                beq     +
+                bcs     _tcmp                   ; Y > cnt : entrée conforme
++               lda     (ptr2),y
+                jsr     upper
+                sta     tmp
+                lda     listbuf,y
+                jsr     upper
+                cmp     tmp
+                bne     +
+                iny
+                bra     -
++               dey                             ; divergence en Y : préfixe = Y-1
+                sty     cnt
+                bra     _tcmp
+_tins           ldy     patbuf                  ; déjà tapé : patbuf sans « * »
+                dey
+-               cpy     cnt
+                bcs     _tdir
+                iny
+                lda     listbuf,y
+                jsr     ins_char
+                bra     -
+_tdir           lda     lcount                  ; correspondance unique et
+                cmp     #1                      ; répertoire : « \ » ajouté
+                bne     _jkey3
+                jsr     list_first              ; ptr2 -> l'entrée
+                jsr     ptr_namebuf
+                jsr     build_path              ; namebuf = dirbuf/nom
+                jsr     stat_namebuf
+                bne     _jkey3
+                lda     DParams+4
+                and     #ATTR_DIR
+                beq     _jkey3
+                lda     #'\'
+                jsr     ins_char
+_jkey3          jmp     _key
 
 keytab          .byte   CR, CC_BACKSPACE, CC_DELETE, CC_LEFT, CC_RIGHT, CC_HOME
-                .byte   CC_END, CC_UP, CC_DOWN, CC_ESC, 0
+                .byte   CC_END, CC_UP, CC_DOWN, CC_ESC, CC_TAB, KEY_F8, 0
 handlers        .word   _enter, _bs, _del, _left, _right, _home
-                .word   _end, _up, _down, _esc
+                .word   _end, _up, _down, _esc, _tab, _f8
+
+; ins_char : insère A dans linebuf au curseur (écran compris) ; rien si la
+; ligne est pleine (200)
+ins_char        ldx     llen
+                cpx     #200
+                bcs     _full
+                sta     tmp
+                cpx     lpos                    ; décale la fin de ligne
+                beq     _ins
+-               lda     linebuf,x               ; linebuf+1+(x-1) -> +1+x
+                sta     linebuf+1,x
+                dex
+                cpx     lpos
+                bne     -
+                lda     #CC_INSERT              ; écran : insère un espace
+                jsr     putc
+_ins            ldx     lpos
+                lda     tmp
+                sta     linebuf+1,x
+                jsr     putc
+                inc     lpos
+                inc     llen
+_full           rts
 
 ; getkey : attend une touche (curseur inversé pendant l'attente) ;
 ; Ctrl+Alt+Suppr pendant l'attente : redémarrage à chaud de NeoDOS

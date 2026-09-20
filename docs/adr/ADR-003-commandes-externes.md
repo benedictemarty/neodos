@@ -30,6 +30,10 @@ par `RTS` ; `%ERRORLEVEL` non transmis (limite connue).
 
 ## Conséquences
 
+- Exception (0.13.0) : la complétion de la saisie (Tab, F8) fait partie de
+  l'éditeur de ligne et ne peut pas être externalisée ; elle a été payée
+  par `linebuf` (256 → 201) et `listbuf` (960 → 896), marge ≈ 80 octets.
+
 - Les commandes externes n'ont pas accès aux routines internes de NeoDOS
   (analyse de ligne, jokers). Contrat (v0.8.1 ; la copie en `$0200` de la
   0.8.0 écrasait les programmes llvm-mos chargés à cette adresse) : en-tête

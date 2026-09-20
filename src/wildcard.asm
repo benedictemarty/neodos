@@ -142,16 +142,22 @@ _end            sty     patbuf
 ; nom correspond à patbuf. A à l'entrée : 0 = fichiers seulement, 1 = tout.
 ; Sortie : lcount = nombre de noms ; C=1 si erreur (message déjà affiché).
 ; ---------------------------------------------------------------------------
+; collect_open / collect_loop : les deux moitiés (ouverture du répertoire,
+; puis parcours) sont aussi appelées séparément par la complétion (Tab), qui
+; ne doit rien afficher en cas d'échec de l'ouverture.
 collect_matches sta     flag
-                stz     lcount
+                jsr     collect_open
+                beq     collect_loop
+                jsr     err_api
+                sec
+                rts
+collect_open    stz     lcount
                 #setptr lptr, listbuf
                 #setparam 0, dirbuf
                 #api    3,17
                 lda     DError
-                beq     _next
-                jsr     err_api
-                sec
                 rts
+collect_loop
 _next           lda     #100
                 sta     namebuf
                 jsr     p0_namebuf

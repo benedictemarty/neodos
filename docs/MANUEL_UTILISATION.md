@@ -29,6 +29,23 @@ efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
 dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
 dernière entrée redonne une ligne vide.
 
+**Tab** complète le mot sous le curseur avec les noms du répertoire visé
+(fichiers et sous-répertoires, `\` ou `/`) : NeoDOS insère le plus long
+préfixe commun des entrées qui commencent par ce qui est tapé — `TYPE FRU`
+puis Tab donne `TYPE FRUITS.TXT` ; si `MANY\` contient `F30`…`F35`,
+`DIR MANY\F` puis Tab donne `DIR MANY\F3` et il faut préciser. Une
+correspondance unique qui est un répertoire reçoit un `\` final, pour
+enchaîner (`CD GA` → `CD GAMES\`, Tab encore pour son contenu). Sans
+correspondance, ou si le répertoire n'existe pas, rien ne change. Les noms
+sont comparés sans tenir compte de la casse ; ce qui est déjà tapé est
+conservé tel quel.
+
+**F8** (comme DOSKEY) rappelle la commande la plus récente de l'historique
+qui commence par le texte tapé jusqu'au curseur : `ec` puis F8 redonne le
+dernier `echo …` ; F8 à nouveau remonte à la commande précédente qui
+commence de même ; sur une ligne vide, F8 parcourt tout l'historique. Toute
+autre touche (y compris Entrée) termine la recherche.
+
 **Ctrl+Alt+Suppr** (à l'invite) redémarre NeoDOS à chaud : fichiers fermés,
 son coupé, retour à la racine, écran effacé, `AUTOEXEC.BAT` rejoué. Le
 firmware n'est pas réinitialisé (les programmes en mémoire sont perdus).

@@ -16,14 +16,22 @@ python3 tests/run_tests.py --ref     # régénère les références (à relire !
 Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
 `~/Phosphoneo/build/phosphoneo`), version avec les touches d'édition du
 typer (commit `ef145e3` de Phosphoneo, 2026-09-19 : `\z` = Ctrl+Alt+Suppr).
+Depuis le 2026-09-20 (commit `02da22d`), Phosphoneo est compilé contre la
+branche `trinity` du firmware : les références reflètent **Trinity 0.5**
+(pas de volumes 3,24-26 → « has no label », pas de date/heure 1,20-21 →
+« Date/time not supported by this firmware », et 1,3 recharge NeoDOS —
+Trinity l'embarque comme environnement résident — donc `EXIT` relance
+NeoDOS au lieu de NeoBASIC). Une Phosphoneo compilée contre le fork
+d'origine fait échouer une douzaine de cas sur ces seuls points.
 
 ## Structure
 
 - `tests/cases/NOM.keys` : texte frappé, une commande par ligne ; une ligne
   terminée par `\c` est frappée sans Entrée (réponse à `Y/N`) ; `\u \d \l
   \r` (flèches), `\h` `\k` (Début/Fin), `\x` (Suppr), `\b` (Retour
-  arrière), `\e` (Échap) sont les touches d'édition du typer Phosphoneo (les
-  autres antislashs sont des séparateurs DOS ; éviter `\d`… en début de nom).
+  arrière), `\e` (Échap), `\t` (Tab), `\1`..`\8` (F1..F8) sont les touches
+  du typer Phosphoneo (les autres antislashs sont des séparateurs DOS ;
+  éviter `\d`, `\t`… en début de nom en minuscules).
 - `tests/cases/NOM.api` (facultatif) : groupes API à journaliser ; la
   référence contient alors une section `--- api ---` avec les fonctions
   distinctes appelées (vérifie qu'un programme graphique a bien tourné).
@@ -52,7 +60,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `06_run` | `.NEO` (avec/sans extension, minuscules), `.BAT` (écho, `@`), reprise après programme, commande inconnue |
 | `07_echo_misc` | `ECHO` (état, ON/OFF, texte, `.`), `REM`, `X:` invalide, `CLS` |
 | `08_date_time` | `DATE`/`TIME` affichage, réglage, valeurs invalides |
-| `09_exit` | `EXIT` : retour à NeoBASIC (`print 6*7` → 42) |
+| `09_exit` | `EXIT` : 1,3 → sur Trinity, NeoDOS est relancé (bannière, `print 6*7` refusé) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
 | `10_wild_dir` | `DIR *.TXT`, `DIR GAMES\*.TXT`, `DIR R*`, `DIR ?TRL.TXT`, motif sans correspondance |
 | `10b_dir_w` | `DIR /W` (racine, sous-répertoire, motif), commutateur inconnu ignoré |
 | `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |
@@ -81,6 +89,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `34_ext_redirect` | sortie de `FIND`, `SORT`, `TREE` redirigée par `>` et `>>` (vecteur `$C00E`) |
 | `35_ext_edit` | `EDIT` : déplacements, insertion, fusion et scission de lignes, sauvegarde `X`, relecture par `TYPE` (CR/LF) |
 | `35b_ext_edit_new` | `EDIT` d'un fichier absent : création, `S` puis `Q`, usage sans argument |
+| `36_completion` | Tab : nom unique, chemin en deux Tab (`\` ajouté après un répertoire), préfixe commun (`F3`), aucune correspondance ; F8 : préfixe `ec`, F8 répété, ligne vide puis Échap |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 
 `AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).

@@ -20,6 +20,10 @@ start           cld
                 sta     canary_lo
                 sta     canary_hi
                 jsr     detect_caps
+                lda     #8                      ; F8 -> code KEY_F8 dans la file
+                sta     DParams                 ; clavier (texte de raccourci 2,4 :
+                #setparam 2, f8text             ; le firmware n'a pas d'ASCII pour
+                #api    2,4                     ; les touches de fonction)
                 ldx     #4                      ; PROMPT $p$g
 -               lda     default_prompt,x
                 sta     promptfmt,x
@@ -733,6 +737,7 @@ _exist          #println "File already exists"
                 rts
 
 default_prompt  .ptext  "$p$g"
+f8text          .byte   1, KEY_F8
 
 ; ---------------------------------------------------------------------------
 ; Redirection de la sortie : « commande > fichier » ou « >> fichier »
