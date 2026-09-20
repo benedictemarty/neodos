@@ -1,4 +1,4 @@
-# Recette NeoDOS sur carte Neo6502 — v0.14.0
+# Recette NeoDOS sur carte Neo6502 — v0.15.0
 
 Fiche pas à pas pour valider NeoDOS sur la carte réelle (rien n'y a été
 validé depuis la 0.8.1 : seul le gel de `poker.neo`, corrigé, avait été
@@ -6,7 +6,7 @@ constaté). Chaque étape indique ce que l'écran doit montrer ; noter toute
 différence, même mineure (texte, casse, ligne en trop), et me la dicter.
 
 Prérequis : firmware **Trinity 0.7.0 ou plus** (`~/neo-carte/trinity-0.7.x-…-USB.uf2`),
-qui embarque NeoDOS 0.14.0 en `$B800` ; une clé USB FAT32 ; le clavier USB.
+qui embarque NeoDOS 0.14.0 en `$B800` (la clé `boot/neodos.neo` apporte la 0.15.0 ; `VER` doit dire 0.15.0 au démarrage) ; une clé USB FAT32 ; le clavier USB.
 
 ## 0. Préparer la clé
 
@@ -24,8 +24,8 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | # | Action | Attendu |
 |---|---|---|
 | 1.1 | Flasher (BOOTSEL → `RPI-RP2` → copier l'UF2), alimenter, clé + clavier branchés | bannière `Trinity Firmware: v0.7.x`, menu `Boot : 1 NeoDOS 2 neodos.neo …` puis `-> NeoDOS` (auto.txt) |
-| 1.2 | Lecture de la bannière | `NeoDOS version 0.14.0`, `(C) 2026 bmarty…`, puis les lignes d'`AUTOEXEC.BAT` (Welcome…, `DIR`, `HELLO`), invite `A:\>` |
-| 1.3 | `VER` | `NeoDOS version 0.14.0` / `Neo6502 firmware 0.7.x` |
+| 1.2 | Lecture de la bannière | `NeoDOS version 0.15.0`, `(C) 2026 bmarty…`, puis les lignes d'`AUTOEXEC.BAT` (Welcome…, `DIR`, `HELLO`), invite `A:\>` |
+| 1.3 | `VER` | `NeoDOS version 0.15.0` / `Neo6502 firmware 0.7.x` |
 | 1.4 | `MEM` | `45056 bytes free for programs ($0800-$B7FF)` / `17408 bytes reserved for NeoDOS ($B800-$FBFF)` |
 | 1.5 | `VOL` | `Volume in drive A is …` (nom du volume de la clé) ou `has no label` |
 | 1.6 | `DATE` puis `TIME` | une date et une heure (PCF8563) ou `Date/time not supported…` — noter lequel |
@@ -55,6 +55,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 3.4 | Taper `DIR GA` puis **Tab**, Tab encore | `DIR GAMES\` puis le nom du fichier dedans |
 | 3.5 | Taper `EC` puis **F8** | `ECHO abcd` (dernière commande commençant par `EC`) ; F8 encore → `ECHO abc` |
 | 3.6 | Échap sur une ligne à moitié tapée | ligne effacée |
+| 3.8 | Taper `EC` (sans Entrée) | la suite `HO abcd` apparaît **en gris** après le curseur (suggestion) ; → l'accepte, la ligne devient `ECHO abcd` en couleur normale ; Échap pour annuler |
 | 3.7 | Une ligne de plus de 53 caractères, Début (Home), Fin (End) | le curseur passe d'une ligne d'écran à l'autre sans décaler le texte |
 
 ## 4. Programmes et scripts (10 min)
@@ -69,7 +70,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.6 | `poker.neo` (si présent) : `POKER` | le jeu tourne (chargé en `$0200`), pas de gel (régression 0.8.0) |
 | 4.7 | Quitter le programme par sa sortie normale | retour à `A:\>` (stub `$0100` : NeoDOS intact ou rechargé depuis `boot/neodos.neo`) |
 | 4.8 | `SMASH` (fourni dans les tests, à copier sur la clé si voulu) | `Smashing $B800-$FBFF…` puis NeoDOS **rechargé** : bannière, AUTOEXEC rejoué, invite |
-| 4.9 | `EXIT` | NeoDOS relancé par le firmware (bannière 0.14.0 — Trinity l'embarque) |
+| 4.9 | `EXIT` | NeoDOS relancé par le firmware (bannière **0.14.0** : c'est l'image embarquée dans Trinity 0.7.x, pas celle de la clé) |
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
 
 ## 5. Volumes (si deux clés / SD)
