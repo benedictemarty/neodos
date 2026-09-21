@@ -15,7 +15,7 @@ make dist
 ```
 Copier le contenu de `build/dist/` à la racine de la clé :
 `boot/neodos.neo`, `boot/auto.txt`, `AUTOEXEC.BAT`, `DEMO.BAT`, `HELLO.NEO`,
-`BIN/` (ATTRIB, DELTREE, EDIT, FIND, MORE, SORT, TREE, XCOPY, ARGS). Ajouter
+`BIN/` (ATTRIB, DELTREE, EDIT, FIND, MORE, SORT, TREE, XCOPY, REBOOT, ARGS). Ajouter
 quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 `GAMES/` avec un fichier dedans, `poker.neo` si disponible.
 
@@ -74,6 +74,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
 | 4.11 | `PAUSE` puis **Ctrl+Alt+Suppr** | redémarrage à chaud (pas de simple levée de la pause) |
 | 4.12 | `FOREVER` (script `@ECHO OFF` / `:TOP` / `GOTO TOP`, à créer avec `EDIT`) puis **Ctrl+Alt+Suppr** | le script en boucle est interrompu, redémarrage à chaud |
+| 4.13 | `REBOOT` | `Resetting.` puis reset matériel complet : logo du firmware, menu de boot / `boot/auto.txt`, NeoDOS relancé depuis la clé |
 
 ## 5. Volumes (si deux clés / SD)
 

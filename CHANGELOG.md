@@ -3,6 +3,23 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.18.0] — 2026-09-21
+
+Sprint 18 : `REBOOT` (reset matériel complet, B13).
+
+### Ajouté
+- **`REBOOT`** (commande externe `BIN/REBOOT.NEO`, `examples/ext/REBOOT.asm`) :
+  reset matériel complet par la fonction 1,7 — le RP2040 redémarre par son
+  watchdog et le 65C02 avec lui (Trinity affiche `Resetting.`). Complément
+  « à froid » de Ctrl+Alt+Suppr, qui ne relance que NeoDOS. `REBOOT /?` (ou
+  tout argument) affiche l'usage. Si 1,7 rend la main (émulateur sans reset
+  matériel) : `Hardware reset not available.`, `ERRORLEVEL 1`.
+- Test `41_ext_reboot` (usage, appel, `IF ERRORLEVEL 1` — sur Phosphoneo 1,7
+  n'imprime que `Hardware reset.` sur stdout et revient).
+
+### Modifié
+- Références des tests régénérées (`BIN/REBOOT.NEO` dans les listes).
+
 ## [0.17.0] — 2026-09-21
 
 Sprint 17 : Ctrl+Alt+Suppr généralisé (redémarrage à chaud partout).

@@ -15,9 +15,9 @@ A:\>dir BIN /w
  Volume in drive A is HOST0
  Directory of A:\BIN
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
-ARGS.NEO     FIND.NEO     SORT.NEO     DELTREE.NEO
-TREE.NEO     HI.NEO       TOOL.BAT
-       11 file(s)       8642 bytes
+REBOOT.NEO   ARGS.NEO     FIND.NEO     SORT.NEO
+DELTREE.NEO  TREE.NEO     HI.NEO       TOOL.BAT
+       12 file(s)       9017 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -35,6 +35,7 @@ BIN/EDIT.NEO
 BIN/FIND.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
+BIN/REBOOT.NEO
 BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO

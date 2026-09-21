@@ -80,6 +80,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `22_attrib` | `BIN/ATTRIB.NEO` (externe depuis 0.14.0, sortie identique à l'ancienne interne) : affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
 | `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
+| `41_ext_reboot` | `BIN/REBOOT.NEO` : `REBOOT /?` (usage), `REBOOT` (1,7 revient sur Phosphoneo → `Hardware reset not available.`), `IF ERRORLEVEL 1` |
 | `40_cad_batch_pause` | Ctrl+Alt+Suppr pendant un script en boucle (`FOREVER.BAT`) puis pendant `PAUSE` : deux redémarrages à chaud |
 | `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |
 | `26_run_at_0200` | programme llvm-mos réel chargé en `$0200` (`POKER.NEO`) lancé depuis NeoDOS : appels graphiques (groupe 5) observés (régression du gel 0.8.0) |

@@ -229,6 +229,7 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 | `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 37 Ko, 2 048 lignes max) |
 | `EDIT fichier` | éditeur plein écran (fichier créé s'il n'existe pas) |
 | `ATTRIB [+R -R +H -H +S -S +A -A] [fichier\|motif\|répertoire]` | affiche (`A S H R` puis le chemin) ou modifie les attributs ; `ATTRIB *.TXT`, `ATTRIB +R CONFIG.BAT`, `ATTRIB GAMES` (son contenu), `ATTRIB` seul : tout le répertoire courant (interne jusqu'à la 0.13.0) |
+| `REBOOT` | reset matériel complet du Neo6502 (fonction 1,7 : le firmware redémarre, tout est perdu) ; Ctrl+Alt+Suppr ne relance que NeoDOS. Sur un émulateur sans reset matériel : `Hardware reset not available.` et `ERRORLEVEL 1` |
 
 ### EDIT
 

@@ -49,7 +49,7 @@ clean:
 	rm -rf $(BUILD)
 
 # Exemples : programmes HELLO.NEO, BIN/ARGS.NEO et scripts .BAT copiés dans storage/
-EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/BIN/MORE.NEO storage/BIN/TREE.NEO storage/BIN/XCOPY.NEO storage/BIN/DELTREE.NEO storage/BIN/FIND.NEO storage/BIN/SORT.NEO storage/BIN/EDIT.NEO storage/BIN/ATTRIB.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
+EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/BIN/MORE.NEO storage/BIN/TREE.NEO storage/BIN/XCOPY.NEO storage/BIN/DELTREE.NEO storage/BIN/FIND.NEO storage/BIN/SORT.NEO storage/BIN/EDIT.NEO storage/BIN/ATTRIB.NEO storage/BIN/REBOOT.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
 
 examples: $(EXAMPLES)
 

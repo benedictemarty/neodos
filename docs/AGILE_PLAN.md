@@ -194,6 +194,13 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S76 Contrôle en tête de `batch_next` : un script en boucle peut être interrompu | fait |
 | S77 Test `40_cad_batch_pause` (fixture `FOREVER.BAT`), références régénérées, docs | fait |
 
+## Sprint 18 — REBOOT (2026-09-21) — livré, v0.18.0
+
+| Story | État |
+|---|---|
+| S78 `BIN/REBOOT.NEO` : reset matériel complet (1,7), usage sur argument, repli `ERRORLEVEL 1` si 1,7 revient (B13, décision bmarty du 2026-09-21) | fait |
+| S79 Test `41_ext_reboot`, références régénérées, docs, recette 4.13 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -205,7 +212,6 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
-| B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts
