@@ -18,6 +18,11 @@ Sprint 18 : `REBOOT` (reset matériel complet, B13).
   n'imprime que `Hardware reset.` sur stdout et revient).
 
 ### Modifié
+- `HELP` : la ligne des commandes de `BIN\` rappelle le chemin de recherche
+  (`PATH \BIN`) et liste `REBOOT` ; `name[.NEO]` précise l'ordre (répertoire
+  courant, puis `PATH`).
+- Manuel : adresses de l'en-tête des commandes externes corrigées (`$B803`…,
+  et non plus `$C003`…), octet `ERRORLEVEL` `$B810` mentionné.
 - Références des tests régénérées (`BIN/REBOOT.NEO` dans les listes).
 
 ## [0.17.0] — 2026-09-21

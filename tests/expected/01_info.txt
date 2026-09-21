@@ -1,4 +1,3 @@
-A:\>help
 DIR [path] [/P /W] List directory (wildcards)
 CD [path]         Change/show directory
 MD RD path        Make/remove directory
@@ -16,8 +15,9 @@ IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :labe
 l
 FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT
 EXIT              Reload the resident environment
-name[.NEO]        Run a program
-BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT
+name[.NEO]        Run a program (here, then PATH)
+BIN\ (PATH \BIN): ATTRIB DELTREE EDIT FIND MORE
+                  REBOOT SORT TREE XCOPY
 A:\>mem
    45056 bytes free for programs ($0800-$B7FF)
    17408 bytes reserved for NeoDOS ($B800-$FBFF)

@@ -1319,8 +1319,9 @@ cmd_help        jsr     newline
                 #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"
                 #println "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT"
                 #println "EXIT              Reload the resident environment"
-                #println "name[.NEO]        Run a program"
-                #println "BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT"
+                #println "name[.NEO]        Run a program (here, then PATH)"
+                #println "BIN\ (PATH \BIN): ATTRIB DELTREE EDIT FIND MORE"
+                #println "                  REBOOT SORT TREE XCOPY"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------

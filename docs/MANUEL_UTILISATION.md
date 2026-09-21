@@ -106,9 +106,10 @@ la main par `RTS` : NeoDOS détecte qu'il a été écrasé et se recharge depuis
 la clé), avec `AUTOEXEC.BAT` rejoué ; s'il est intact, l'invite (ou le
 script en cours) reprend directement. Un
 programme trouve sa ligne de commande complète via l'en-tête de NeoDOS :
-`$C003` = `NEODOS`, `$C009` = version, `$C00C` = adresse de la ligne (octet de
-longueur puis les caractères), `$C00E` = adresse de la routine d'affichage
-d'un caractère (respecte `>`) : c'est le contrat des **commandes externes**
+`$B803` = `NEODOS`, `$B809` = version, `$B80C` = adresse de la ligne (octet de
+longueur puis les caractères), `$B80E` = adresse de la routine d'affichage
+d'un caractère (respecte `>`), `$B810` = code de retour (`ERRORLEVEL`) :
+c'est le contrat des **commandes externes** (adresses `$C0xx` jusqu'à la 0.13.0)
 (`BIN\ARGS.NEO` l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
 de partout.
 
