@@ -1,4 +1,3 @@
-A:\GAMES>dir ..
  Volume in drive A is HOST0
  Directory of A:\GAMES\..
 boot                 <DIR>
@@ -22,7 +21,8 @@ CHAIN.BAT               25
 FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
-       16 file(s)       3259 bytes
+FOREVER.BAT             41
+       17 file(s)       3300 bytes
         5 dir(s)
 A:\GAMES>cd NOPE
 Invalid directory
@@ -47,6 +47,7 @@ CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 ERRLVL.BAT
+FOREVER.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT

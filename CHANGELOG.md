@@ -3,6 +3,27 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.17.0] — 2026-09-21
+
+Sprint 17 : Ctrl+Alt+Suppr généralisé (redémarrage à chaud partout).
+
+### Ajouté
+- **Ctrl+Alt+Suppr** n'est plus limité à l'invite : il redémarre NeoDOS à
+  chaud aussi pendant `PAUSE`, `DIR /P` (« Press any key »), les questions
+  `Y/N` (`DEL *.*`, `DELTREE`) et **entre deux lignes d'un script `.BAT`**
+  — un script en boucle (`:TOP` / `GOTO TOP`) peut ainsi être interrompu.
+- Routines communes `check_cad` (état de Suppr + Ctrl + Alt par 1,2 →
+  `warm_restart`) et `wait_key` (attente d'une touche avec ce contrôle) ;
+  `getkey` s'appuie dessus.
+- Test `40_cad_batch_pause` (fixture `FOREVER.BAT`) : script infini puis
+  `PAUSE`, chacun interrompu par `\z`.
+
+### Modifié
+- Références des tests régénérées (`FOREVER.BAT` apparaît dans les listes).
+- Hors attente clavier (affichage d'un `TYPE` long, programme `.NEO` en
+  cours), la combinaison n'est toujours pas vue : un programme externe
+  garde le clavier.
+
 ## [0.16.0] — 2026-09-21
 
 Sprint 16 : scripts .BAT — FOR, SHIFT, ERRORLEVEL des commandes externes.

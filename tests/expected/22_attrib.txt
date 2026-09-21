@@ -1,4 +1,3 @@
-A:\>attrib -r +a README.TXT
 A:\>attrib *.TXT
      CTRL.TXT
      README.TXT
@@ -27,6 +26,7 @@ A:\>attrib
      FRUITS.TXT
      SMASH.NEO
      LOOP.BAT
+     FOREVER.BAT
 A:\>
 --- files ---
 ARGS.BAT
@@ -48,6 +48,7 @@ CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 ERRLVL.BAT
+FOREVER.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT

@@ -186,6 +186,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S73 `ERRORLEVEL` des commandes externes (octet `$B810` de l'en-tête, `fail`/`exit_code` de `neoext.inc`, somme du stub à partir de `$B811`) | fait |
 | S74 Tests 38/39, correctif suggestion débordante, docs | fait |
 
+## Sprint 17 — Ctrl+Alt+Suppr généralisé (2026-09-21) — livré, v0.17.0
+
+| Story | État |
+|---|---|
+| S75 `check_cad` / `wait_key` : détection commune de Ctrl+Alt+Suppr dans toutes les attentes clavier (`getkey`, `PAUSE`, `DIR /P`, `Y/N`) | fait |
+| S76 Contrôle en tête de `batch_next` : un script en boucle peut être interrompu | fait |
+| S77 Test `40_cad_batch_pause` (fixture `FOREVER.BAT`), références régénérées, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

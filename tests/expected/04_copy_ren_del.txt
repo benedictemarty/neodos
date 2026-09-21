@@ -1,4 +1,3 @@
-HELLO.NEO               66
 GAMES                <DIR>
 BIN                  <DIR>
 SUB2.BAT                33
@@ -16,7 +15,8 @@ CHAIN.BAT               25
 FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
-       17 file(s)       3290 bytes
+FOREVER.BAT             41
+       18 file(s)       3331 bytes
         5 dir(s)
 A:\>del C.TXT
 A:\>del NOPE
@@ -48,6 +48,7 @@ CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
 ERRLVL.BAT
+FOREVER.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT

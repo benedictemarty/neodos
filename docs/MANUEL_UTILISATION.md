@@ -54,9 +54,12 @@ dernier `echo …` ; F8 à nouveau remonte à la commande précédente qui
 commence de même ; sur une ligne vide, F8 parcourt tout l'historique. Toute
 autre touche (y compris Entrée) termine la recherche.
 
-**Ctrl+Alt+Suppr** (à l'invite) redémarre NeoDOS à chaud : fichiers fermés,
-son coupé, retour à la racine, écran effacé, `AUTOEXEC.BAT` rejoué. Le
-firmware n'est pas réinitialisé (les programmes en mémoire sont perdus).
+**Ctrl+Alt+Suppr** redémarre NeoDOS à chaud : fichiers fermés, son coupé,
+retour à la racine, écran effacé, `AUTOEXEC.BAT` rejoué. La combinaison est
+prise en compte à l'invite, pendant `PAUSE`, `DIR /P` et les questions `Y/N`,
+et entre deux lignes d'un script `.BAT` (un script qui boucle sur `GOTO` peut
+être interrompu). Le firmware n'est pas réinitialisé (les programmes en
+mémoire sont perdus) ; un programme `.NEO` en cours garde le clavier.
 
 ## Fichiers et répertoires
 

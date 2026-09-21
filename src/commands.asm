@@ -293,9 +293,7 @@ dir_newline     jsr     newline
                 bcc     _done
                 stz     dirlines
                 #print  "Press any key to continue . . ."
--               #api    2,1
-                lda     DParams
-                beq     -
+                jsr     wait_key
                 jmp     newline
 _done           rts
 
@@ -484,9 +482,7 @@ _each           jsr     list_next
 _wdone          rts
 
 ; ask_yn : attend Y ou N ; C=0 pour Y (affiche la réponse et un retour)
-ask_yn          #api    2,1
-                lda     DParams
-                beq     ask_yn
+ask_yn          jsr     wait_key
                 jsr     upper
                 cmp     #'Y'
                 beq     _yes
@@ -1129,10 +1125,7 @@ _no             ply
 
 ; PAUSE : attend une touche
 cmd_pause       #println "Press any key to continue . . ."
-_wait           #api    2,1
-                lda     DParams
-                beq     _wait
-                rts
+                jmp     wait_key
 
 ; ---------------------------------------------------------------------------
 ; DATE [aaaa-mm-jj] / TIME [hh:mm[:ss]]

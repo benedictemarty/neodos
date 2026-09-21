@@ -50,8 +50,11 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    miroir par les codes de contrôle de la console (insertion 5, suppression
    26, retour arrière 8, gauche/droite 1/4 ; `column` = (`promptskip` +
    `lpos`) mod 53 pour passer d'une ligne d'écran à l'autre avec 23/19).
-   `getkey` interroge aussi Key Status (1,2) sur Suppr : avec Ctrl et Alt →
-   `warm_restart` (attend le relâchement, 8,1, `CD /`, 2,12, `jmp start`).
+   `check_cad` interroge Key Status (1,2) sur Suppr : avec Ctrl et Alt →
+   `warm_restart` (attend le relâchement, 8,1, `CD /`, 2,12, `jmp start`) ;
+   `wait_key` = attente d'une touche avec ce contrôle, utilisée par `getkey`,
+   `PAUSE`, `DIR /P` et `ask_yn` ; `batch_next` appelle aussi `check_cad`
+   avant chaque ligne de script.
    Haut/Bas rappellent une entrée de `histbuf` (pstrings consécutives,
    `hcount`/`hused` ; la plus ancienne est retirée quand la place manque).
    **Tab** : le mot sous le curseur (depuis l'espace précédent) + `*` est

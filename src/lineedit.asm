@@ -388,11 +388,10 @@ sugg_back       lda     llen
                 bne     -
                 rts
 
-; getkey : attend une touche (curseur inversé pendant l'attente) ;
-; Ctrl+Alt+Suppr pendant l'attente : redémarrage à chaud de NeoDOS
-getkey          lda     #CC_REVERSE
-                jsr     putc
--               lda     #KEY_DELETE
+; check_cad : Ctrl+Alt+Suppr enfoncés ? -> redémarrage à chaud de NeoDOS
+; (ne revient pas) ; sinon retour sans effet. Appelé par toutes les attentes
+; clavier et entre deux lignes de script.
+check_cad       lda     #KEY_DELETE
                 sta     DParams
                 #api    1,2                     ; état de Suppr + modificateurs
                 lda     DParams
@@ -403,9 +402,20 @@ getkey          lda     #CC_REVERSE
                 bit     #MOD_ALT
                 beq     +
                 jmp     warm_restart
-+               #api    2,1
++               rts
+
+; wait_key : attend une touche (A = code) ; Ctrl+Alt+Suppr pendant l'attente
+; redémarre NeoDOS
+wait_key        jsr     check_cad
+                #api    2,1
                 lda     DParams
-                beq     -
+                beq     wait_key
+                rts
+
+; getkey : wait_key avec le curseur inversé pendant l'attente
+getkey          lda     #CC_REVERSE
+                jsr     putc
+                jsr     wait_key
                 pha
                 lda     #CC_REVERSE
                 jsr     putc

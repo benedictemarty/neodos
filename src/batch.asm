@@ -103,7 +103,8 @@ _load           jsr     p0_namebuf
 batch_next      ldx     #$ff                    ; boucle de haut niveau : pile
                 txs                             ; propre (CALL/GOTO y sautent)
                 cli
-                lda     bptr                    ; fin du tampon ?
+                jsr     check_cad               ; Ctrl+Alt+Suppr : sort d'un
+                lda     bptr                    ; script en boucle ; fin du tampon ?
                 cmp     blen
                 lda     bptr+1
                 sbc     blen+1

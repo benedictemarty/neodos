@@ -72,6 +72,8 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.8 | `SMASH` (fourni dans les tests, à copier sur la clé si voulu) | `Smashing $B800-$FBFF…` puis NeoDOS **rechargé** : bannière, AUTOEXEC rejoué, invite |
 | 4.9 | `EXIT` | NeoDOS relancé par le firmware (bannière **0.14.0** : c'est l'image embarquée dans Trinity 0.7.x, pas celle de la clé) |
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
+| 4.11 | `PAUSE` puis **Ctrl+Alt+Suppr** | redémarrage à chaud (pas de simple levée de la pause) |
+| 4.12 | `FOREVER` (script `@ECHO OFF` / `:TOP` / `GOTO TOP`, à créer avec `EDIT`) puis **Ctrl+Alt+Suppr** | le script en boucle est interrompu, redémarrage à chaud |
 
 ## 5. Volumes (si deux clés / SD)
 
