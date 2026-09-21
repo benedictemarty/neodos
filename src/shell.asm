@@ -734,6 +734,8 @@ err_api         jsr     errlvl1
                 beq     err_denied
                 cmp     #ERR_EXIST
                 beq     _exist
+                cmp     #ERR_INVALID_NAME
+                beq     _name
                 sta     errsave
                 #print  "Error "
                 lda     errsave
@@ -745,6 +747,8 @@ _path           #println "Path not found"
 _drive          #println "Invalid drive specification"
                 rts
 _exist          #println "File already exists"
+                rts
+_name           #println "Invalid file name"
                 rts
 
 default_prompt  .ptext  "$p$g"

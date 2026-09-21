@@ -52,6 +52,8 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    `lpos`) mod 53 pour passer d'une ligne d'écran à l'autre avec 23/19).
    `check_cad` interroge Key Status (1,2) sur Suppr : avec Ctrl et Alt →
    `warm_restart` (attend le relâchement, 8,1, `CD /`, 2,12, `jmp start`) ;
+   `EXIT` copie le stub en `$0100` et saute à `stub_exit` (1,3 puis
+   `jmp (0)`) : 1,3 recharge l'image résidente par-dessus `$B800-$FBFF` ;
    `wait_key` = attente d'une touche avec ce contrôle, utilisée par `getkey`,
    `PAUSE`, `DIR /P` et `ask_yn` ; `batch_next` appelle aussi `check_cad`
    avant chaque ligne de script.

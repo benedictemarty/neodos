@@ -17,7 +17,7 @@ A:\>dir BIN /w
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
 REBOOT.NEO   ARGS.NEO     FIND.NEO     SORT.NEO
 DELTREE.NEO  TREE.NEO     HI.NEO       TOOL.BAT
-       12 file(s)       9017 bytes
+       12 file(s)       9231 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory

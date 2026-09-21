@@ -80,7 +80,7 @@ _parsed         lda     pathbuf
                 jsr     has_wild
                 bcs     _wild
                 #setparam 0, argbuf             ; un répertoire : son contenu
-                #api    3,16
+                jsr     stat_path
                 lda     DError
                 bne     _wild
                 lda     DParams+4

@@ -36,7 +36,7 @@ main            stz     recurse
                 #println "Usage: XCOPY source destination [/S]"
                 rts
 +               #setparam 0, pathbuf            ; source : un répertoire
-                #api    3,16
+                jsr     stat_path
                 lda     DError
                 bne     _bad
                 lda     DParams+4
@@ -87,7 +87,7 @@ _r              rts
 
 ; ensure_dst : crée dstpath s'il n'existe pas ; C=1 si impossible
 ensure_dst      #setparam 0, dstpath
-                #api    3,16
+                jsr     stat_path
                 lda     DError
                 beq     _ok
                 #setparam 0, dstpath

@@ -3,6 +3,36 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.19.0] — 2026-09-21
+
+Sprint 19 : retour carte — `COPY … .` (`Error 20`) et `EXIT` fiabilisé.
+
+### Corrigé
+- **`COPY fichier .` répondait `Error 20` sur la carte** (rapport bmarty :
+  `COPY \PROPHETGUI\PROPHETGUI\PROPHETGUI.NEO .`). Cause : NeoDOS fait un
+  Stat (3,16) de la destination pour savoir si c'est un répertoire ; FatFs
+  (`f_stat`) renvoie `FR_INVALID_NAME` ($14 = 20) pour le répertoire
+  d'origine (`.`, `\`, `..` remontant à l'origine). L'erreur était ignorée,
+  la destination prise pour un *fichier* nommé `.`, et `f_open(".")`
+  échouait avec le même code. `copy_move` (COPY et MOVE) traite désormais
+  cette réponse comme « répertoire ». Invisible sur Phosphoneo (le `stat(".")`
+  de l'hôte réussit) : à valider sur carte (recette 2.11).
+- Même défaut dans les externes : `TREE` sans argument (défaut `.`), `XCOPY`
+  (source ou destination `.`), `ATTRIB .` — routine commune `stat_path` de
+  `neoext.inc`.
+- `Error 20` s'affiche désormais `Invalid file name` (table `err_api`).
+- **`EXIT`** : `cmd_exit` faisait `1,3` puis `jmp (0)` depuis le code de
+  NeoDOS — or 1,3 charge l'image résidente **par-dessus `$B800-$FBFF`**, donc
+  au retour de `WaitMessage` le CPU reprenait dans la nouvelle image à une
+  adresse quelconque (ça marchait par chance ; avec le décalage de 35 octets
+  de cette version, l'image embarquée affichait `Access denied` et sautait sa
+  bannière). `EXIT` passe maintenant par le stub en `$0100` (`stub_exit` :
+  `1,3` + `jmp (0)` hors de la zone écrasée). Référence `09_exit` : la
+  bannière de l'image embarquée suit directement `A:\>exit`.
+
+### Modifié
+- Références des tests régénérées (tailles des externes).
+
 ## [0.18.0] — 2026-09-21
 
 Sprint 18 : `REBOOT` (reset matériel complet, B13).

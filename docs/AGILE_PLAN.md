@@ -201,6 +201,15 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S78 `BIN/REBOOT.NEO` : reset matériel complet (1,7), usage sur argument, repli `ERRORLEVEL 1` si 1,7 revient (B13, décision bmarty du 2026-09-21) | fait |
 | S79 Test `41_ext_reboot`, références régénérées, docs, recette 4.13 | fait |
 
+## Sprint 19 — Retour carte : `COPY … .`, `EXIT` (2026-09-21) — livré, v0.19.0
+
+| Story | État |
+|---|---|
+| S80 `COPY`/`MOVE` vers `.`/`\` : Stat `INVALID_NAME` de FatFs = répertoire d'origine (`copy_move`) ; `Invalid file name` dans `err_api` | fait |
+| S81 Externes : `stat_path` (`neoext.inc`) pour `TREE` (défaut `.`), `XCOPY`, `ATTRIB` | fait |
+| S82 `EXIT` via le stub `$0100` (`stub_exit`) : 1,3 écrase le code de NeoDOS, le `jmp (0)` ne peut pas s'exécuter depuis `$B800+` | fait |
+| S83 Recette 2.11 (`COPY … .` sur carte), docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

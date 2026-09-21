@@ -11,6 +11,11 @@
 ; /boot/neodos.neo puis /neodos.neo (3,2 + $FF08) ; en dernier recours,
 ; retour à NeoBASIC (1,3).
 
+; EXIT emprunte aussi ce stub (stub_exit) : 1,3 charge l'image résidente
+; par-dessus $B800-$FBFF, donc l'appel et le jmp (0) qui suit ne peuvent pas
+; s'exécuter depuis le code de NeoDOS lui-même (au retour de WaitMessage, le
+; CPU reprendrait dans la nouvelle image, à une adresse quelconque).
+
 ; install_stub : copie le stub en $0100 et y inscrit la somme de contrôle du
 ; code ($C000..codeend-1), calculée par la routine du stub lui-même.
 install_stub    ldx     #0                      ; (stub_len > 128 : pas de bpl)
@@ -65,8 +70,8 @@ _try            lda     stub_names,x
                 inx
                 cpx     #4
                 bne     _try
-                lda     #3                      ; échec : NeoBASIC (1,3)
-                sta     $FF01
+_exit           lda     #3                      ; échec : environnement résident
+                sta     $FF01                   ; (1,3) — aussi le chemin de EXIT
                 lda     #1
                 sta     $FF00
 -               lda     $FF00
@@ -108,3 +113,4 @@ name_root       .ptext  "/neodos.neo"
 stub_end
                 .here
 stub_len        = stub_end-stub_start
+stub_exit       = stub_start._exit          ; entrée de EXIT (1,3 + jmp (0))

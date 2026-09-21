@@ -78,6 +78,8 @@ ERR_EOF         = 2
 ERR_NO_FILE     = $11
 ERR_NO_PATH     = $12
 ERR_INVALID_DRIVE = $13
+ERR_INVALID_NAME = $14          ; FatFs FR_INVALID_NAME : nom mal formé, ou
+                                ; Stat sur le répertoire d'origine (« . », « \ »)
 ERR_DENIED      = $21
 ERR_EXIST       = $22
 

@@ -120,6 +120,20 @@ getkey          #api    2,1
                 beq     getkey
                 rts
 
+; stat_path : Stat (3,16) du chemin déjà placé dans Parameter:0 ; sur la
+; carte, FatFs répond FR_INVALID_NAME ($14) pour le répertoire d'origine
+; (« . », « / ») : on le convertit en « répertoire existant » (DError = 0,
+; attribut répertoire) ; Z=1 si pas d'erreur
+stat_path       #api    3,16
+                lda     DError
+                cmp     #$14
+                bne     _done
+                stz     DError
+                lda     #1                      ; attribut répertoire
+                sta     DParams+4
+                lda     #0
+_done           rts
+
 ; cmd_arg : copie le mot n° A (0 = nom du programme) de la ligne de commande
 ; NeoDOS dans argbuf (pstring) ; argbuf vide si absent ou hors NeoDOS
 cmd_arg         sta     cnt

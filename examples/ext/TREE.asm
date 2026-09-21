@@ -31,7 +31,7 @@ main            stz     showfiles
                 lda     #'.'
                 sta     pathbuf+1
 +               #setparam 0, pathbuf
-                #api    3,16
+                jsr     stat_path
                 lda     DError
                 bne     _nf
                 lda     DParams+4

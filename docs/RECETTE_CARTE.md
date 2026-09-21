@@ -43,6 +43,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 2.7 | **`MOVE README.TXT ESSAI\R2.TXT`** — `DIR ESSAI` | `1 file(s) moved` ; `R2.TXT` avec un **nom lisible** (bug `dirbuf` corrigé en 0.14.0 : avant, le premier MOVE vers un répertoire pouvait produire un nom en charabia) |
 | 2.8 | `REN ESSAI\R2.TXT README.TXT` — `COPY ESSAI\*.* .` | fichier renommé ; copie de retour `1 file(s) copied` |
 | 2.9 | `DEL ESSAI\*.*` (répondre `Y`) — `RD ESSAI` — `DIR` | question `Y/N`, suppression, répertoire disparu |
+| 2.11 | `CD GAMES` — `COPY \README.TXT .` — `DIR` — `CD \` — `TREE` | `1 file(s) copied`, `README.TXT` dans `GAMES` (0.18.0 et avant : `Error 20`, FatFs refuse `Stat(".")`) ; `TREE` sans argument liste l'arborescence (même cause) |
 | 2.10 | `ATTRIB README.TXT` — `ATTRIB +R README.TXT` — `ATTRIB README.TXT` — `DEL README.TXT` | `     README.TXT` puis `   R README.TXT` ; `Access denied` sur le DEL (lecture seule) ; `ATTRIB -R README.TXT` pour finir |
 
 ## 3. Édition de ligne (5 min)

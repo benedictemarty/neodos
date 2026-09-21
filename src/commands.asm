@@ -580,10 +580,14 @@ _syn            jmp     err_syntax
                 #setparam 0, arg2
                 #api    3,16
                 lda     DError
-                bne     +
-                lda     DParams+4
+                beq     _stat
+                cmp     #ERR_INVALID_NAME       ; FatFs : Stat(« . »/« \ ») =
+                bne     +                       ; répertoire d'origine -> c'est
+                lda     #ATTR_DIR               ; bien un répertoire
+                bra     _isdir
+_stat           lda     DParams+4
                 and     #ATTR_DIR
-                sta     wflag
+_isdir          sta     wflag
 +               stz     nfiles
                 jsr     ptr_arg1
                 jsr     has_wild
@@ -1325,10 +1329,11 @@ cmd_help        jsr     newline
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
-; EXIT : retour à NeoBASIC (recharge BASIC en $0800)
+; EXIT : relance l'environnement résident du firmware (1,3), depuis le stub
+; en $0100 — 1,3 écrase $B800-$FBFF, ce code ne peut pas y survivre
 ; ---------------------------------------------------------------------------
-cmd_exit        #api    1,3
-                jmp     (0)
+cmd_exit        jsr     install_stub
+                jmp     STUB_BASE+(stub_exit-stub_start)
 
 ; ---------------------------------------------------------------------------
 ; X: : changement de lecteur (cmdbuf = « X: »)

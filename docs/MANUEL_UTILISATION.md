@@ -270,6 +270,7 @@ La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 |---|---|
 | `Bad command or file name` | commande inconnue, ni `.NEO` ni `.BAT` trouvé |
 | `File not found` / `Path not found` | fichier ou chemin inexistant |
+| `Invalid file name` | nom mal formé pour le système de fichiers (caractère interdit, composant vide) ; code 20 du firmware |
 | `Invalid directory` | `CD` vers un répertoire inexistant |
 | `Access denied` | `DEL` sur un répertoire, volume en lecture seule |
 | `Syntax error` | argument manquant |
