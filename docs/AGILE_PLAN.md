@@ -210,6 +210,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S82 `EXIT` via le stub `$0100` (`stub_exit`) : 1,3 écrase le code de NeoDOS, le `jmp (0)` ne peut pas s'exécuter depuis `$B800+` | fait |
 | S83 Recette 2.11 (`COPY … .` sur carte), docs | fait |
 
+## Sprint 20 — Chargement par-dessus NeoDOS (2026-09-21) — livré, v0.20.0
+
+| Story | État |
+|---|---|
+| S84 `stub_run` : 3,2 + `JMP $FF08` exécutés depuis `$0100` (retour carte ProphetGui/`legacy.neo`) ; `load_error` si échec avec NeoDOS intact | fait |
+| S85 Stub factorisé (`load`, `intact`), `stub_critical`, budget de pile documenté | fait |
+| S86 Fixture `BIG.NEO` (`make fixtures`), test 42, docs, recette 4.14 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -237,5 +245,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 - Résident : ≈ 2,5 Ko de marge depuis la base `$B800` (0.14.0, ADR-004) ;
   les fonctions nouvelles restent des commandes externes (ADR-003), la marge
   sert à l'éditeur de ligne et à l'interpréteur (`FOR`, `SHIFT`, suggestion).
-- Un programme `.NEO` qui écrit au-dessus de `$B800` détruit NeoDOS ; le
-  retour à l'invite n'est alors pas possible (reset).
+- Un programme `.NEO` qui recouvre `$B800-$FBFF` (au chargement ou à
+  l'exécution) détruit NeoDOS : le stub `$0100` le recharge à la sortie du
+  programme, à condition que celui-ci rende la main par `RTS` et n'écrase
+  pas `$0100-$01C5` (pile matérielle : 58 octets garantis).

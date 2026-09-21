@@ -585,27 +585,28 @@ _run            jsr     redir_flush             ; la redirection reste ouverte
                 sta     DParams
                 #api    3,5
                 #api    3,19
+                jsr     install_stub            ; stub de retour en $0100
+                stz     hdr_errlvl              ; ERRORLEVEL du programme (base+16)
                 jsr     p0_namebuf
                 stz     DParams+2               ; adresse : donnée par l'en-tête
                 stz     DParams+3
-                #api    3,2
-                lda     DError
-                bne     _loaderr
-                jsr     install_stub            ; stub de retour en $0100
-                stz     hdr_errlvl              ; ERRORLEVEL du programme (base+16)
                 lda     #>(STUB_BASE-1)         ; le RTS du programme y revient
                 pha
                 lda     #<(STUB_BASE-1)
                 pha
-                jmp     DExec                   ; JMP exec (ou RTS) ; la ligne de
-                                                ; commande reste dans linebuf
-                                                ; (pointeur en $C00C)
-_loaderr        jsr     err_api
-                jmp     neodos_back
+                jmp     stub_run                ; 3,2 + JMP exec depuis $0100 : le
+                                                ; programme peut recouvrir NeoDOS
+                                                ; pendant le chargement ; la ligne
+                                                ; de commande reste dans linebuf
+                                                ; (pointeur en base+12)
 _bat            jsr     stat_namebuf
                 bne     _none
 _runbat         jmp     run_batch
 _none           rts
+
+; load_error : le stub a échoué à charger (A = erreur, NeoDOS intact)
+load_error      jsr     err_api
+                jmp     neodos_back
 
 ; neodos_back : retour d'un programme (depuis le stub, NeoDOS intact) ou
 ; échec de chargement : pile réinitialisée, reprise du batch ou invite

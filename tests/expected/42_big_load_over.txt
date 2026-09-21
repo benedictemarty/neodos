@@ -1,30 +1,16 @@
-SUB                  <DIR>
-        2 file(s)         34 bytes
-        1 dir(s)
-A:\>move GAMES\README.TXT R2.TXT
-        1 file(s) moved
-A:\>dir *.TXT
- Volume in drive A is HOST0
- Directory of A:\
-R2.TXT                  31
-CTRL.TXT                 9
-LONG.TXT              1820
-FRUITS.TXT              41
-        4 file(s)       1901 bytes
-        0 dir(s)
-A:\>move *.TXT GAMES
-        4 file(s) moved
-A:\>dir GAMES /w
- Volume in drive A is HOST0
- Directory of A:\GAMES
-FRUITS.TXT   LONG.TXT     CTRL.TXT     R2.TXT
-A.TXT        [SUB]
-        5 file(s)       1904 bytes
-        1 dir(s)
-A:\>move *.BAT X.TXT
-Destination must be a directory
-A:\>move NOPE GAMES
-File not found
+NeoDOS version 0.20.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>path \
+A:\>big
+Big program loaded over NeoDOS...
+NeoDOS version 0.20.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>echo after big
+after big
 A:\>
 --- files ---
 ARGS.BAT
@@ -45,20 +31,19 @@ BIN/TREE.NEO
 BIN/XCOPY.NEO
 CALLER.BAT
 CHAIN.BAT
+CTRL.TXT
 DEMO.BAT
 ERRLVL.BAT
 FOREVER.BAT
+FRUITS.TXT
 GAMES/
 GAMES/A.TXT
-GAMES/CTRL.TXT
-GAMES/FRUITS.TXT
-GAMES/LONG.TXT
-GAMES/R2.TXT
 GAMES/SUB/
 GAMES/SUB/DEEP/
 GAMES/SUB/DEEP/Y.TXT
 GAMES/SUB/X.TXT
 HELLO.NEO
+LONG.TXT
 LOOP.BAT
 MANY/
 MANY/F01.DAT
@@ -99,6 +84,7 @@ MANY/F35.DAT
 POKER/
 POKER/POKER.NEO
 POKER/cards.bin
+README.TXT
 SHIFT.BAT
 SMASH.NEO
 SUB.BAT

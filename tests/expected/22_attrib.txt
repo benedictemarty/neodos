@@ -1,4 +1,3 @@
-A:\>attrib *.TXT
      CTRL.TXT
      README.TXT
      LONG.TXT
@@ -19,6 +18,7 @@ A:\>attrib
      SUB.BAT
      CTRL.TXT
      CALLER.BAT
+     BIG.NEO
      SHIFT.BAT
      README.TXT
      LONG.TXT
@@ -31,6 +31,7 @@ A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
+BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO

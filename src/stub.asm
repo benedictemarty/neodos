@@ -36,20 +36,8 @@ stub_image
                 .logical STUB_BASE
 stub_start      ldx     #$ff
                 txs
-                ; sentinelles des données
-                lda     canary_lo
-                cmp     #CANARY
-                bne     _reload
-                lda     canary_hi
-                cmp     #CANARY
-                bne     _reload
-                jsr     sum_code                ; somme de contrôle du code
-                lda     $82
-                cmp     stub_sum
-                bne     _reload
-                lda     $83
-                cmp     stub_sum+1
-                bne     _reload
+                jsr     intact
+                bcc     _reload
                 jmp     neodos_back             ; NeoDOS intact : reprise
 _reload         ldx     #0                      ; recharge depuis le disque
 _try            lda     stub_names,x
@@ -58,13 +46,7 @@ _try            lda     stub_names,x
                 sta     $FF05
                 stz     $FF06
                 stz     $FF07
-                lda     #2                      ; 3,2 Load File
-                sta     $FF01
-                lda     #3
-                sta     $FF00
--               lda     $FF00
-                bne     -
-                lda     $FF02
+                jsr     load                    ; 3,2 Load File
                 beq     _go
                 inx
                 inx
@@ -78,6 +60,33 @@ _exit           lda     #3                      ; échec : environnement réside
                 bne     -
                 jmp     (0)
 _go             jmp     $FF08                   ; JMP exec de NeoDOS rechargé
+; load : 3,2 Load File avec les paramètres déjà en $FF04-$FF07 ; A = erreur, Z
+load            lda     #2
+                sta     $FF01
+                lda     #3
+                sta     $FF00
+-               lda     $FF00
+                bne     -
+                lda     $FF02
+                rts
+; intact : C=1 si NeoDOS est intact (sentinelles des données, somme du code)
+intact          lda     canary_lo
+                cmp     #CANARY
+                bne     _no
+                lda     canary_hi
+                cmp     #CANARY
+                bne     _no
+                jsr     sum_code                ; somme de contrôle du code
+                lda     $82
+                cmp     stub_sum
+                bne     _no
+                lda     $83
+                cmp     stub_sum+1
+                bne     _no
+                sec
+                rts
+_no             clc
+                rts
 ; sum_code : somme 16 bits de sum_start..codeend-1 -> $82/$83 (page zéro
 ; NeoDOS : ptr et ptr2, libres à ce moment). Commence après l'en-tête
 ; (jmp/signature/version/pointeurs) : hdr_errlvl (base+16) est écrit par les
@@ -107,9 +116,29 @@ _sum            lda     ($80),y
                 bne     _sum
                 rts
 stub_sum        .word   0
+stub_err        .byte   0
 stub_names      .word   name_boot, name_root
 name_boot       .ptext  "/boot/neodos.neo"
 name_root       .ptext  "/neodos.neo"
+stub_critical                                   ; fin de la partie à préserver
+; --- lancement d'un programme (try_run) : NeoDOS a rempli $FF04-$FF07 et
+; poussé l'adresse de retour ; le chargement peut recouvrir NeoDOS lui-même
+; ($B800-$FBFF), d'où l'exécution depuis $0100. Placé en queue du stub, donc
+; au plus près de la pile matérielle (qui descend depuis $01FF) : ce bloc ne
+; sert que pendant le chargement, la pile du programme peut ensuite
+; l'écraser sans dommage ; le reste du stub (retour, contrôle, rechargement)
+; se termine à stub_critical.
+stub_run        jsr     load
+                bne     +
+                jmp     $FF08                   ; JMP exec du programme
++               sta     stub_err
+                jsr     intact                  ; chargement raté : NeoDOS
+                bcs     +                       ; abîmé -> rechargé, sinon
+                jmp     stub_start._reload      ; message d'erreur (adresse
++               pla                             ; de retour dépilée)
+                pla
+                lda     stub_err
+                jmp     load_error
 stub_end
                 .here
 stub_len        = stub_end-stub_start

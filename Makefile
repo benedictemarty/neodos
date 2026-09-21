@@ -23,7 +23,7 @@ LBL     = $(BUILD)/neodos.lbl
 
 SRC     = $(wildcard src/*.asm src/*.inc)
 
-.PHONY: all run run-neo test dist clean
+.PHONY: fixtures all run run-neo test dist clean
 
 all: $(NEO) examples
 
@@ -67,6 +67,12 @@ storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.
 	mkdir -p storage/BIN
 	$(AS) --mw65c02 --nostart --quiet --case-sensitive -I examples/ext -o $(BUILD)/$*.bin $<
 	python3 tools/mkneo.py $(BUILD)/$*.bin $@ 0800 0800 "$*"
+
+# Fixtures de test binaires (non livrées) : BIG.NEO se charge par-dessus NeoDOS
+fixtures: tests/fixtures/BIG.NEO
+tests/fixtures/BIG.NEO: examples/big.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/big.bin examples/big.asm
+	python3 tools/mkneo.py $(BUILD)/big.bin $@ B000 B000 "Big"
 
 storage/%.BAT: examples/%.BAT
 	cp $< $@

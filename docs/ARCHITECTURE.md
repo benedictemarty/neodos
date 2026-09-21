@@ -162,14 +162,22 @@ Le résident peut être écrasé par un programme (pile C llvm-mos en `$F600`).
 `install_stub` copie avant chaque lancement `stub_image` (assemblée en
 `.logical $0100`) en bas de la page pile et y inscrit la somme de contrôle
 16 bits du code (`sum_code`, routine du stub appelée en place) ; `try_run`
-pousse `STUB_BASE-1` comme adresse de retour puis `JMP $FF08`. Au `RTS` du
+pousse `STUB_BASE-1` comme adresse de retour, place le nom en `$FF04-$FF07`
+et saute à **`stub_run`** (queue du stub) qui fait le Load File (3,2) puis
+`JMP $FF08` : le chargement peut recouvrir `$B800-$FBFF` (programme de
+`$A000` à `$FBE6` par exemple), NeoDOS ne doit exécuter aucune instruction
+entre le 3,2 et le saut. Chargement raté : `intact` → message (`load_error`)
+ou rechargement. Au `RTS` du
 programme, le stub vérifie les sentinelles `canary_lo`/`canary_hi` (`$A5`,
 premier et dernier octets des données) et la somme du code : intact →
 `jmp neodos_back` (pile réinitialisée, batch ou invite) ; sinon Load File
 (3,2) de `/boot/neodos.neo` puis `/neodos.neo` et `JMP $FF08` (→ `start`) ;
-si les deux manquent, 1,3 + `jmp (0)` (NeoBASIC). Limite : un programme qui
-utilise plus de 240 octets de pile matérielle ou écrit en `$0100-$01A0`
-détruit le stub (reset ; Trinity relance NeoDOS via `boot/auto.txt`).
+si les deux manquent, 1,3 + `jmp (0)` (`stub_exit`, aussi le chemin de
+`EXIT`). Le stub occupe `$0100-$01E0` ; la partie à préserver après le
+lancement s'arrête à `stub_critical` (`$01C5`), la queue (`stub_run`) ne
+sert que pendant le chargement. Limite : un programme qui utilise plus de
+58 octets de pile matérielle ou écrit en `$0100-$01C5` détruit le stub
+(reset ; Trinity relance NeoDOS via `boot/auto.txt`).
 
 ## Fonctions du firmware absentes
 

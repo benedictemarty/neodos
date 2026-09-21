@@ -3,6 +3,32 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.20.0] — 2026-09-21
+
+Sprint 20 : lancement des programmes qui recouvrent NeoDOS (`legacy.neo`).
+
+### Corrigé
+- **Un `.NEO` dont l'image recouvre `$B800-$FBFF` ne démarrait pas** (retour
+  carte via ProphetGui : `legacy.neo`, `$A000-$FBE6`). `try_run` faisait le
+  Load File (3,2) puis exécutait encore son propre code (`lda DError`,
+  `install_stub`, `jmp DExec`) — code qui n'existait plus, écrasé par le
+  chargement. La séquence 3,2 + `JMP $FF08` est déplacée dans le stub en
+  `$0100` (**`stub_run`**, placé en queue : il ne sert que pendant le
+  chargement, la pile du programme peut l'écraser ensuite) ; NeoDOS
+  installe le stub, pousse l'adresse de retour et remplit `$FF04-$FF07`
+  avant de sauter. Chargement raté : `intact` (sentinelles + somme) →
+  message d'erreur habituel (`load_error`) si NeoDOS est entier, sinon
+  rechargement depuis `/boot/neodos.neo`.
+- Stub factorisé (`load`, `intact`) : 224 octets, partie à préserver
+  jusqu'à `stub_critical` (`$01C5`) ; 58 octets de pile matérielle
+  garantis au programme (72 avant).
+- Test `42_big_load_over` (fixture `BIG.NEO`, `examples/big.asm`, `make
+  fixtures` : image `$B000-$C100`) — avec la 0.19.0 le programme ne
+  s'exécutait jamais.
+
+### Modifié
+- Références des tests régénérées (`BIG.NEO` dans les listes).
+
 ## [0.19.0] — 2026-09-21
 
 Sprint 19 : retour carte — `COPY … .` (`Error 20`) et `EXIT` fiabilisé.

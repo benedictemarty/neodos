@@ -1,4 +1,3 @@
-        0 dir(s)
 A:\>dir /x
  Volume in drive A is HOST0
  Directory of A:\
@@ -16,6 +15,7 @@ SUB.BAT                 56
 POKER                <DIR>
 CTRL.TXT                 9
 CALLER.BAT             187
+BIG.NEO               4369
 SHIFT.BAT               99
 README.TXT              31
 LONG.TXT              1820
@@ -24,12 +24,13 @@ FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
 FOREVER.BAT             41
-       17 file(s)       3300 bytes
+       18 file(s)       7669 bytes
         5 dir(s)
 A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
+BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO

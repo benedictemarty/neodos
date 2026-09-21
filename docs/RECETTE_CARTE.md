@@ -75,6 +75,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
 | 4.11 | `PAUSE` puis **Ctrl+Alt+Suppr** | redémarrage à chaud (pas de simple levée de la pause) |
 | 4.12 | `FOREVER` (script `@ECHO OFF` / `:TOP` / `GOTO TOP`, à créer avec `EDIT`) puis **Ctrl+Alt+Suppr** | le script en boucle est interrompu, redémarrage à chaud |
+| 4.14 | Programme dont l'image dépasse `$B800` (ProphetGui `legacy.neo`, `$A000-$FBE6`) lancé à l'invite | le programme démarre (0.19.0 et avant : plantage au chargement) ; à sa sortie NeoDOS est rechargé depuis `boot/neodos.neo` |
 | 4.13 | `REBOOT` | `Resetting.` puis reset matériel complet : logo du firmware, menu de boot / `boot/auto.txt`, NeoDOS relancé depuis la clé |
 
 ## 5. Volumes (si deux clés / SD)
