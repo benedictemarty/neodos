@@ -1,10 +1,31 @@
-A:\>type FRUITS.TXT
-peaXXrApple
-bananYa
-NEW LINE
-cherry
-apple pie
-Zebra
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>for %f in (*.TXT) do echo [%f]
+[CTRL.TXT]
+[README.TXT]
+[LONG.TXT]
+[FRUITS.TXT]
+A:\>for %f in (GAMES\*.TXT CTRL.TXT nope) do echo %f
+GAMES\A.TXT
+CTRL.TXT
+nope
+A:\>for %F in (A B C) do echo %f%f
+AA
+BB
+CC
+A:\>for %f in (CTRL.TXT NOPE.TXT) do if exist %f echo
+ ok %f
+ok CTRL.TXT
+A:\>for x in (a) do echo bad
+Syntax error
+A:\>for %f in (a b) do
+Syntax error
+A:\>for %f in (a b) echo x
+Syntax error
+A:\>SHIFT UN DEUX TROIS
+A:\>shift
+A:\>echo fin
+fin
 A:\>
 --- files ---
 ARGS.BAT

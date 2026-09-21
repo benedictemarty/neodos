@@ -165,6 +165,34 @@ ECHO %1 not found
 - `CALL script [args]` exécute un autre `.BAT` puis reprend à la ligne
   suivante (3 niveaux d'imbrication, chaque niveau garde ses `%n`).
 
+### Boucles et décalage
+
+```
+FOR %f IN (*.TXT config.sys a) DO TYPE %f
+```
+
+- `FOR %v IN (ensemble) DO commande` répète la commande pour chaque élément
+  de l'ensemble, avec `%v` remplacé par l'élément. Dans un `.BAT`, écrire
+  `%%v` (DOS double le `%`) ; au clavier, `%v` suffit. Un élément qui
+  contient `*` ou `?` est remplacé par les fichiers correspondants (aucun :
+  l'élément est ignoré) ; les autres sont pris tels quels. Pas de `FOR`
+  imbriqué ; un programme `.NEO` dans `DO` ne rend pas la main à la boucle.
+- `SHIFT` décale les paramètres : `%0` prend la valeur de `%1`, `%1` celle de
+  `%2`, etc. — pour traiter une liste d'arguments de longueur variable :
+
+```
+:BOUCLE
+IF "%1"=="" GOTO FIN
+ECHO argument : %1
+SHIFT
+GOTO BOUCLE
+:FIN
+```
+
+Le niveau d'erreur (`IF ERRORLEVEL`) est aussi renseigné par les **commandes
+externes** (`BIN\*.NEO`) : `FIND` renvoie 1 si le texte est absent, les
+autres renvoient 1 en cas d'erreur (fichier introuvable, mauvais usage…).
+
 ## Redirection
 
 `commande > fichier` écrit la sortie de la commande dans le fichier (créé ou

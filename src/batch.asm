@@ -418,3 +418,252 @@ call_try        jsr     stat_namebuf
                 rts
 _found          clc
                 rts
+
+; ---------------------------------------------------------------------------
+; SHIFT : décale les paramètres du script (%0 <- %1, %1 <- %2…) en retirant
+; le premier mot de batargs ; sans effet hors d'un script ou sans paramètre.
+; ---------------------------------------------------------------------------
+cmd_shift       lda     bat_active
+                beq     _done
+                ldy     #0
+_skip           cpy     batargs                 ; espaces de tête
+                bcs     _empty
+                lda     batargs+1,y
+                cmp     #' '
+                bne     _word
+                iny
+                bra     _skip
+_word           cpy     batargs                 ; le mot
+                bcs     _empty
+                lda     batargs+1,y
+                cmp     #' '
+                beq     _move
+                iny
+                bra     _word
+_move           ldx     #0                      ; batargs = reste (dès l'espace)
+-               cpy     batargs
+                bcs     _end
+                lda     batargs+1,y
+                inx
+                sta     batargs,x
+                iny
+                bra     -
+_end            stx     batargs
+_done           rts
+_empty          stz     batargs
+                rts
+
+; ---------------------------------------------------------------------------
+; FOR %v IN (élément…) DO commande : pour chaque élément (un motif est
+; remplacé par les fichiers correspondants, un autre mot est pris tel quel),
+; la commande est exécutée avec %v (ou %%v, forme .BAT de DOS) remplacé.
+; L'ensemble et le modèle sont copiés dans forset/fortpl (la commande
+; réutilise argrest, arg1, listbuf…) ; les correspondances sont relues à
+; chaque tour (formatch = rang) pour la même raison. Un programme .NEO dans
+; DO ne revient pas dans la boucle ; pas de FOR imbriqué.
+; ---------------------------------------------------------------------------
+cmd_for         ldy     #0
+                bra     _start
+_jsyn           jmp     err_syntax
+_start
+                jsr     for_spaces
+                lda     argrest+1,y             ; %v ou %%v
+                cmp     #'%'
+                bne     _jsyn
+                iny
+                lda     argrest+1,y
+                cmp     #'%'
+                bne     +
+                iny
+                lda     argrest+1,y
++               jsr     upper
+                sta     forvar
+                iny
+                jsr     for_spaces
+                lda     argrest+1,y             ; IN
+                jsr     upper
+                cmp     #'I'
+                bne     _jsyn
+                iny
+                lda     argrest+1,y
+                jsr     upper
+                cmp     #'N'
+                bne     _jsyn
+                iny
+                jsr     for_spaces
+                lda     argrest+1,y             ; (ensemble)
+                cmp     #'('
+                bne     _jsyn
+                iny
+                ldx     #0
+_set            cpy     argrest
+                bcs     _jsyn                   ; « ) » manquante
+                lda     argrest+1,y
+                iny
+                cmp     #')'
+                beq     _setend
+                cpx     #FORSET_SIZE
+                bcs     _set
+                inx
+                sta     forset,x
+                bra     _set
+_setend         stx     forset
+                jsr     for_spaces
+                lda     argrest+1,y             ; DO
+                jsr     upper
+                cmp     #'D'
+                bne     _jsyn
+                iny
+                lda     argrest+1,y
+                jsr     upper
+                cmp     #'O'
+                bne     _jsyn
+                iny
+                jsr     for_spaces
+                ldx     #0
+_tpl            cpy     argrest
+                bcs     _tplend
+                lda     argrest+1,y
+                iny
+                cpx     #FORTPL_SIZE
+                bcs     _tpl
+                inx
+                sta     fortpl,x
+                bra     _tpl
+_tplend         stx     fortpl
+                txa
+                bne     +
+                jmp     err_syntax
++               stz     foritem
+_item           lda     foritem                 ; arg1 = élément n° foritem
+                jsr     for_item
+                lda     arg1
+                beq     _done
+                inc     foritem
+                jsr     ptr_arg1
+                jsr     to_apipath
+                jsr     has_wild
+                bcs     _wild
+                ldx     arg1                    ; mot : tel quel
+-               lda     arg1,x
+                sta     namebuf,x
+                dex
+                bpl     -
+                jsr     for_exec
+                bra     _item
+_wild           stz     formatch
+_match          lda     foritem                 ; arg1 relu (écrasé par la
+                dec     a                       ; commande)
+                jsr     for_item
+                jsr     ptr_arg1
+                jsr     to_apipath
+                jsr     split_path
+                lda     #0                      ; fichiers seulement
+                jsr     collect_matches
+                bcs     _item
+                lda     formatch
+                cmp     lcount
+                bcs     _item                   ; épuisé
+                jsr     list_first
+                ldx     formatch
+                inx
+-               jsr     list_next               ; ptr2 -> n° formatch
+                dex
+                bne     -
+                inc     formatch
+                jsr     ptr_namebuf
+                jsr     build_path              ; namebuf = dirbuf/nom
+                jsr     for_exec
+                bra     _match
+_done           rts
+_syntax         jmp     err_syntax
+
+; for_spaces : avance Y sur argrest (0-based) tant que c'est un espace
+for_spaces      cpy     argrest
+                bcs     _done
+                lda     argrest+1,y
+                cmp     #' '
+                bne     _done
+                iny
+                bra     for_spaces
+_done           rts
+
+; for_item : arg1 = mot n° A de forset (pstring ; vide si absent)
+for_item        sta     cnt
+                stz     arg1
+                ldy     #0
+_skip           cpy     forset
+                bcs     _done
+                lda     forset+1,y
+                cmp     #' '
+                bne     _word
+                iny
+                bra     _skip
+_word           lda     cnt
+                beq     _copy
+                dec     cnt
+-               cpy     forset
+                bcs     _done
+                lda     forset+1,y
+                cmp     #' '
+                beq     _skip
+                iny
+                bra     -
+_copy           ldx     #0
+-               cpy     forset
+                bcs     _end
+                lda     forset+1,y
+                cmp     #' '
+                beq     _end
+                inx
+                sta     arg1,x
+                iny
+                cpx     #100
+                bne     -
+_end            stx     arg1
+_done           rts
+
+; for_exec : linebuf = fortpl avec %v / %%v remplacés par namebuf (« / »
+; rendus en « \ »), puis exécution
+for_exec        ldy     #0
+                ldx     #0
+_copy           cpy     fortpl
+                bcs     _run
+                lda     fortpl+1,y
+                iny
+                cmp     #'%'
+                bne     _store
+                lda     fortpl+1,y              ; « %% » : un seul compte
+                cmp     #'%'
+                bne     +
+                iny
+                lda     fortpl+1,y
++               jsr     upper
+                cmp     forvar
+                bne     _pct
+                iny                             ; %v -> namebuf
+                phy
+                ldy     #1
+-               cpy     namebuf
+                beq     +
+                bcs     _sub
++               lda     namebuf,y
+                cmp     #'/'
+                bne     +
+                lda     #'\'
++               cpx     #200
+                bcs     _sub
+                inx
+                sta     linebuf,x
+                iny
+                bra     -
+_sub            ply
+                bra     _copy
+_pct            lda     #'%'
+_store          cpx     #200
+                bcs     _copy
+                inx
+                sta     linebuf,x
+                bra     _copy
+_run            stx     linebuf
+                jmp     execute_line

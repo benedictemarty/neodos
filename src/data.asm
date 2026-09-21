@@ -34,5 +34,7 @@ dpsave          .fill   9               ; sauvegarde DParams/DError pendant redi
 hcount          .fill   1               ; historique : nombre d'entrées
 hused           .fill   1               ; historique : octets utilisés
 histbuf         .fill   HIST_SIZE       ; historique : pstrings consécutives
+forset          .fill   FORSET_SIZE+1   ; FOR : ensemble (…)
+fortpl          .fill   FORTPL_SIZE+1   ; FOR : commande modèle
 canary_hi       .fill   1               ; sentinelle haute (fin des données)
 dataend

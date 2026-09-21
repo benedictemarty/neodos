@@ -1,10 +1,15 @@
-A:\>type FRUITS.TXT
-peaXXrApple
-bananYa
-NEW LINE
-cherry
-apple pie
-Zebra
+NeoDOS version 0.16.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>ERRLVL
+find failed as expected
+pear
+find ok
+File not found
+attrib failed as expected
+Usage: MORE file
+more usage
 A:\>
 --- files ---
 ARGS.BAT

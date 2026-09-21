@@ -1,0 +1,10 @@
+@ECHO OFF
+FIND "zzz" FRUITS.TXT
+IF ERRORLEVEL 1 ECHO find failed as expected
+FIND "pear" FRUITS.TXT
+IF ERRORLEVEL 1 ECHO unexpected
+IF NOT ERRORLEVEL 1 ECHO find ok
+ATTRIB NOPE.XYZ
+IF ERRORLEVEL 1 ECHO attrib failed as expected
+MORE
+IF ERRORLEVEL 1 ECHO more usage

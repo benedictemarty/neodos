@@ -32,6 +32,7 @@ main            stz     recurse
                 jsr     take_arg
                 lda     dstpath
                 bne     +
+                jsr     fail
                 #println "Usage: XCOPY source destination [/S]"
                 rts
 +               #setparam 0, pathbuf            ; source : un répertoire
@@ -41,7 +42,8 @@ main            stz     recurse
                 lda     DParams+4
                 and     #1
                 bne     _ok
-_bad            #println "Invalid source directory"
+_bad            jsr     fail
+                #println "Invalid source directory"
                 rts
 _ok             jsr     ensure_dst
                 bcs     _done
@@ -97,6 +99,7 @@ ensure_dst      #setparam 0, dstpath
                 lda     #>dstpath
                 sta     ptr+1
                 jsr     putpstr
+                jsr     fail
                 #println ": unable to create directory"
                 sec
                 rts

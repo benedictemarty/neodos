@@ -1,4 +1,4 @@
-NeoDOS version 0.15.0
+NeoDOS version 0.16.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -48,6 +48,7 @@ COPY2/SUB/DEEP/Y.TXT
 COPY2/SUB/X.TXT
 CTRL.TXT
 DEMO.BAT
+ERRLVL.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT
@@ -98,6 +99,7 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT

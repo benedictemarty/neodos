@@ -18,6 +18,7 @@ main            lda     #1
                 jsr     cmd_arg
                 lda     argbuf
                 bne     +
+                jsr     fail
                 #println "Usage: DELTREE directory"
                 rts
 +               ldx     argbuf                  ; pathbuf = argument
@@ -32,7 +33,8 @@ main            lda     #1
                 lda     DParams+4
                 and     #1
                 bne     _ask
-_bad            #println "Invalid path"
+_bad            jsr     fail
+                #println "Invalid path"
                 rts
 _ask            #print  "Delete directory "
                 lda     #<pathbuf

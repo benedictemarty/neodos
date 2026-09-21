@@ -17,7 +17,7 @@ A:\>dir BIN /w
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
 ARGS.NEO     FIND.NEO     SORT.NEO     DELTREE.NEO
 TREE.NEO     HI.NEO       TOOL.BAT
-       11 file(s)       8378 bytes
+       11 file(s)       8642 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -43,6 +43,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+ERRLVL.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT
@@ -95,6 +96,7 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT

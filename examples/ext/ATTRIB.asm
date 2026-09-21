@@ -51,7 +51,8 @@ _plus           lda     argbuf+2
                 ora     attr_set
                 sta     attr_set
                 bra     _word
-_bad            #println "Invalid parameter"
+_bad            jsr     fail
+                #println "Invalid parameter"
                 rts
 _path           lda     pathbuf                 ; premier chemin seulement
                 bne     _word
@@ -100,6 +101,7 @@ _wild           jsr     split_path
 +                lda     count
                 ora     count+1
                 bne     +
+                jsr     fail
                 #println "File not found"
                 rts
 +               lda     #<LIST
@@ -211,6 +213,7 @@ _next           lda     #100
                 inc     count+1
                 bra     _next
 _full           #api    3,19
+                jsr     fail
                 #println "Too many files"
                 sec
                 rts
@@ -324,11 +327,14 @@ err_api         cmp     #$11
                 pla
                 jsr     print8
                 jmp     newline
-_nf             #println "File not found"
+_nf             jsr     fail
+                #println "File not found"
                 rts
-_path           #println "Path not found"
+_path           jsr     fail
+                #println "Path not found"
                 rts
-_denied         #println "Access denied"
+_denied         jsr     fail
+                #println "Access denied"
                 rts
 
 ; print8 : A en décimal

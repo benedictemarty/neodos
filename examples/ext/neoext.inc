@@ -2,7 +2,8 @@
 ;
 ; Contrat NeoDOS (ADR-003, base $B800 depuis 0.14.0 / ADR-004) : en-tête en
 ; NEODOS_BASE — +3 « NEODOS », +9 version, +12 pointeur vers la ligne de
-; commande (pstring), +14 vecteur putc. Zone libre pour le programme :
+; commande (pstring), +14 vecteur putc, +16 code de retour (fail/exit_code).
+; Zone libre pour le programme :
 ; $0800-$B7FF (ne pas écrire dans $B800-$FBFF si l'on veut revenir vite à
 ; l'invite ; sinon NeoDOS se recharge). Retour par RTS.
 
@@ -18,6 +19,7 @@ NEODOS_BASE     = $B800
 NEODOS_SIG      = NEODOS_BASE+3
 NEODOS_CMDLINE  = NEODOS_BASE+12
 NEODOS_PUTC     = NEODOS_BASE+14
+NEODOS_ERRLVL   = NEODOS_BASE+16 ; code de retour lu par NeoDOS (IF ERRORLEVEL), 0.16.0
 CR              = 13
 
 api             .macro
@@ -94,6 +96,22 @@ _loop           lda     (ptr),y
                 dec     cnt
                 bne     _loop
 _done           ply
+                rts
+
+; fail : ERRORLEVEL 1 pour NeoDOS (IF ERRORLEVEL 1 après la commande) ;
+; sans NeoDOS : rien. exit_code : A -> ERRORLEVEL.
+fail            lda     #1
+exit_code       pha
+                lda     NEODOS_SIG
+                cmp     #'N'
+                bne     _no
+                lda     NEODOS_SIG+1
+                cmp     #'E'
+                bne     _no
+                pla
+                sta     NEODOS_ERRLVL
+                rts
+_no             pla
                 rts
 
 ; getkey : attend une touche -> A

@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.15.0
+NeoDOS version 0.16.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -71,6 +71,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `DATE [aaaa-mm-jj]`, `TIME [hh:mm[:ss]]` | affiche / règle l'horloge (fonctions 1,20 / 1,21) |
 | `ECHO [ON\|OFF\|texte\|.]`, `PAUSE`, `REM` | commandes de script |
 | `IF [NOT] EXIST f \| a==b \| ERRORLEVEL n cmd`, `GOTO label`, `CALL script` | scripts : conditions, sauts, imbrication ; paramètres `%0`-`%9` |
+| `FOR %v IN (jeu) DO cmd`, `SHIFT` | boucle sur un jeu (jokers développés) ; décalage des paramètres `%1`… |
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
 | `HELP` | aide en ligne |

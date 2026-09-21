@@ -177,6 +177,15 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S69 Suggestion en gris de la suite de la dernière commande correspondante, → / Fin pour accepter, encre relue par 2,18 | fait |
 | S70 Test 37, runner `\c` final, docs | fait |
 
+## Sprint 16 — Scripts .BAT : FOR, SHIFT, ERRORLEVEL externe (2026-09-21) — livré, v0.16.0
+
+| Story | État |
+|---|---|
+| S71 `FOR %v IN (jeu) DO cmd` (jokers développés via `collect_matches`, `%%v`) | fait |
+| S72 `SHIFT` (décalage des `%n`) | fait |
+| S73 `ERRORLEVEL` des commandes externes (octet `$B810` de l'en-tête, `fail`/`exit_code` de `neoext.inc`, somme du stub à partir de `$B811`) | fait |
+| S74 Tests 38/39, correctif suggestion débordante, docs | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -186,6 +195,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
+| B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
 | B13 | Commande `REBOOT` (reset matériel complet, fonction 1,7) | à confirmer |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |

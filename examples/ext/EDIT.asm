@@ -43,6 +43,7 @@ main            lda     #1
                 jsr     cmd_arg
                 lda     argbuf
                 bne     +
+                jsr     fail
                 #println "Usage: EDIT file"
                 rts
 +               ldx     argbuf
@@ -108,7 +109,8 @@ load_file       lda     #<TEXT
                 jsr     strip_lf
 _new            clc
                 rts
-_big            #println "File too large or unreadable"
+_big            jsr     fail
+                #println "File too large or unreadable"
                 sec
                 rts
 

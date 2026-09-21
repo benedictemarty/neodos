@@ -67,6 +67,9 @@ f8len           = $B7           ; F8 : longueur du préfixe recherché dans l'hi
 sglen           = $B8           ; suggestion automatique : caractères affichés en gris (0 = aucune)
 sgidx           = $B9           ; suggestion : entrée de l'historique proposée
 sgink           = $BA           ; suggestion : code encre ($8x) du texte normal, relu par 2,18
+forvar          = $BB           ; FOR : lettre de la variable (majuscule)
+foritem         = $BC           ; FOR : rang de l'élément en cours dans forset
+formatch        = $BD           ; FOR : rang de la correspondance en cours (motif)
 caps            = $B6           ; fonctions du firmware : bit 0 volumes (3,24-26), bit 1 date/heure (1,20-21)
 
 ; Codes d'erreur de l'API fichiers (firmware filesystem.h)
@@ -115,3 +118,5 @@ OUTBUF_SIZE     = 128           ; tampon de la redirection
 HIST_SIZE       = 200           ; historique de commandes (octets, pstrings)
 PATH_SIZE       = 128           ; PATH (pstring, entrées séparées par « ; »)
 PROMPT_SIZE     = 48            ; format de PROMPT (pstring)
+FORSET_SIZE     = 100           ; FOR : ensemble entre parenthèses (pstring)
+FORTPL_SIZE     = 160           ; FOR : modèle de commande après DO (pstring)

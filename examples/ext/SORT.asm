@@ -33,12 +33,14 @@ main            stz     reverse
                 jsr     take_arg
                 lda     filebuf
                 bne     _stat
+                jsr     fail
                 #println "Usage: SORT [/R] file"
                 rts
 _stat           #setparam 0, filebuf
                 #api    3,16
                 lda     DError
                 beq     +
+                jsr     fail
                 #println "File not found"
                 rts
 +               lda     DParams+2               ; taille > 40 Ko ?
@@ -51,7 +53,8 @@ _stat           #setparam 0, filebuf
                 lda     DParams
                 cmp     #<TEXT_MAX
                 bcc     _load
-_big            #println "File too large (37 KB max)"
+_big            jsr     fail
+                #println "File too large (37 KB max)"
                 rts
 _load           lda     DParams                 ; fin du texte -> ptr3
                 clc

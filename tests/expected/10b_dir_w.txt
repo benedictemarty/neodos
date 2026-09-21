@@ -1,6 +1,4 @@
-AUTOEXEC.BAT DEMO.BAT     SUB2.BAT     ARGS.BAT
-SUB.BAT      CALLER.BAT   CHAIN.BAT    LOOP.BAT
-        8 file(s)        834 bytes
+       10 file(s)       1208 bytes
         0 dir(s)
 A:\>dir /x
  Volume in drive A is HOST0
@@ -13,18 +11,20 @@ GAMES                <DIR>
 BIN                  <DIR>
 SUB2.BAT                33
 ARGS.BAT               201
+ERRLVL.BAT             275
 MANY                 <DIR>
 SUB.BAT                 56
 POKER                <DIR>
 CTRL.TXT                 9
 CALLER.BAT             187
+SHIFT.BAT               99
 README.TXT              31
 LONG.TXT              1820
 CHAIN.BAT               25
 FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
-       14 file(s)       2885 bytes
+       16 file(s)       3259 bytes
         5 dir(s)
 A:\>
 --- files ---
@@ -46,6 +46,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+ERRLVL.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT
@@ -96,6 +97,7 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT

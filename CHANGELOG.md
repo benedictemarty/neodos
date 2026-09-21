@@ -3,6 +3,40 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.16.0] — 2026-09-21
+
+Sprint 16 : scripts .BAT — FOR, SHIFT, ERRORLEVEL des commandes externes.
+
+### Ajouté
+- **`FOR %v IN (ensemble) DO commande`** : pour chaque élément, la commande
+  est exécutée avec `%v` (ou `%%v`, forme .BAT de DOS) remplacé. Un élément
+  contenant des jokers (`*.TXT`, `GAMES\*.C`) est développé en fichiers ;
+  les autres sont pris littéralement. `FOR %f IN (*.TXT a b) DO TYPE %f`. Pas
+  de FOR imbriqué ; un `.NEO` dans `DO` ne revient pas dans la boucle.
+- **`SHIFT`** : décale les paramètres du script (`%0←%1`, `%1←%2`…) ; sans
+  effet hors d'un script. Boucle classique `:LOOP / IF "%1"=="" GOTO END /
+  … / SHIFT / GOTO LOOP`.
+- **`ERRORLEVEL` renvoyé par les commandes externes** : l'en-tête gagne un
+  octet en `base+16` (`$B810`) que le programme écrit avant de rendre la
+  main ; NeoDOS le relit dans `errorlevel`, donc `IF ERRORLEVEL 1` est
+  significatif après `FIND`, `ATTRIB`, `SORT`, `MORE`… `neoext.inc` fournit
+  `fail` (code 1) et `exit_code` ; les commandes externes signalent leurs
+  erreurs (usage, fichier absent…) et `FIND` renvoie 1 si aucune ligne ne
+  correspond (comme DOS).
+- Tests `38_for_shift`, `39_ext_errorlevel` (fixtures `SHIFT.BAT`, `ERRLVL.BAT`).
+
+### Modifié
+- Somme de contrôle du stub : calculée à partir de `base+17` (après l'en-tête)
+  au lieu de `base` — l'octet `ERRORLEVEL` mutable de l'en-tête ne doit pas la
+  fausser (sinon NeoDOS se rechargeait après chaque commande externe).
+
+### Corrigé
+- **Suggestion automatique bornée à la ligne d'écran** : la boucle
+  d'affichage dessinait la suite complète de l'entrée d'historique (jusqu'à
+  `(ptr2)`), pas `sglen` ; une suggestion qui débordait passait à la ligne,
+  faisait défiler l'écran et laissait des résidus. Elle est maintenant
+  tronquée à la fin de la ligne d'écran courante (aucun défilement).
+
 ## [0.15.0] — 2026-09-21
 
 Sprint 15 : suggestion automatique de la saisie.

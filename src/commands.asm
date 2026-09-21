@@ -29,6 +29,10 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_copy
                 .ptext  "MOVE"
                 .word   cmd_move
+                .ptext  "FOR"
+                .word   cmd_for
+                .ptext  "SHIFT"
+                .word   cmd_shift
                 .ptext  "TYPE"
                 .word   cmd_type
                 .ptext  "CLS"
@@ -1320,6 +1324,7 @@ cmd_help        jsr     newline
                 #println "DATE TIME         Show/set date and time"
                 #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"
                 #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"
+                #println "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT"
                 #println "EXIT              Reload the resident environment"
                 #println "name[.NEO]        Run a program"
                 #println "BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT"

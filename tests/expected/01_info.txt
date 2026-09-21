@@ -14,6 +14,7 @@ DATE TIME         Show/set date and time
 ECHO PAUSE REM    Batch commands (.BAT, %1-%9)
 IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :labe
 l
+FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT
 EXIT              Reload the resident environment
 name[.NEO]        Run a program
 BIN\: ATTRIB EDIT MORE TREE XCOPY DELTREE FIND SORT
@@ -42,6 +43,7 @@ CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+ERRLVL.BAT
 FRUITS.TXT
 GAMES/
 GAMES/A.TXT
@@ -92,6 +94,7 @@ POKER/
 POKER/POKER.NEO
 POKER/cards.bin
 README.TXT
+SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT

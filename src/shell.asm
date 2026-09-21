@@ -592,6 +592,7 @@ _run            jsr     redir_flush             ; la redirection reste ouverte
                 lda     DError
                 bne     _loaderr
                 jsr     install_stub            ; stub de retour en $0100
+                stz     hdr_errlvl              ; ERRORLEVEL du programme (base+16)
                 lda     #>(STUB_BASE-1)         ; le RTS du programme y revient
                 pha
                 lda     #<(STUB_BASE-1)
@@ -610,6 +611,8 @@ _none           rts
 ; échec de chargement : pile réinitialisée, reprise du batch ou invite
 neodos_back     ldx     #$ff
                 txs
+                lda     hdr_errlvl              ; code de retour du programme
+                sta     errorlevel              ; (IF ERRORLEVEL à la ligne suivante)
                 lda     bat_active              ; un batch reprend après le
                 beq     +                       ; programme (comme MS-DOS)
                 jmp     batch_next

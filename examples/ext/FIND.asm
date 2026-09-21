@@ -25,7 +25,8 @@ main            stz     flags
                 beq     _usage
                 lda     filebuf
                 bne     _open
-_usage          #println "Usage: FIND [/I] [/N] [/C] [/V] 'text' file"
+_usage          jsr     fail
+                #println "Usage: FIND [/I] [/N] [/C] [/V] 'text' file"
                 rts
 _open           stz     DParams
                 #setparam 1, filebuf
@@ -33,6 +34,7 @@ _open           stz     DParams
                 #api    3,4
                 lda     DError
                 beq     +
+                jsr     fail
                 #println "File not found"
                 rts
 +               stz     lineno
@@ -82,7 +84,11 @@ _eof            lda     llen                    ; dernière ligne sans CR
                 jsr     end_line
 +               stz     DParams
                 #api    3,5
-                lda     flags
+                lda     matches                 ; aucune ligne retenue :
+                ora     matches+1               ; ERRORLEVEL 1 (comme DOS)
+                bne     +
+                jsr     fail
++               lda     flags
                 and     #4
                 beq     _done
                 lda     matches

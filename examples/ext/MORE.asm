@@ -15,6 +15,7 @@ main            lda     #1
                 jsr     cmd_arg                 ; argbuf = fichier
                 lda     argbuf
                 bne     _open
+                jsr     fail
                 #println "Usage: MORE file"
                 rts
 _open           stz     DParams                 ; canal 0, lecture seule
@@ -23,6 +24,7 @@ _open           stz     DParams                 ; canal 0, lecture seule
                 #api    3,4
                 lda     DError
                 beq     +
+                jsr     fail
                 #println "File not found"
                 rts
 +               stz     lines

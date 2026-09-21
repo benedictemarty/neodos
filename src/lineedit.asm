@@ -329,7 +329,17 @@ _next           lda     idx
                 sec
                 sbc     llen
                 sta     sglen
-                lda     #7                      ; encre courante (2,18 Read
+                jsr     column                  ; borne à la fin de la ligne
+                sta     tmp                     ; d'écran : une suggestion qui
+                lda     #SCREEN_COLS-1          ; passerait à la ligne ferait
+                sec                             ; défiler l'écran (résidus)
+                sbc     tmp
+                beq     _none                   ; curseur au bord : rien
+                bcc     _none
+                cmp     sglen
+                bcs     +
+                sta     sglen                   ; tronque à la place restante
++               lda     #7                      ; encre courante (2,18 Read
                 sta     DParams                 ; Ink/Paper ; 7 si absente)
                 #api    2,18
                 lda     DParams
@@ -337,41 +347,46 @@ _next           lda     idx
                 sta     sgink
                 lda     #INK_GHOST
                 jsr     putc
+                lda     llen                    ; fin de l'affichage = llen+sglen
+                clc                             ; (sglen a pu être borné à la
+                adc     sglen                   ; ligne d'écran)
+                sta     cnt
                 ldy     llen
 -               iny
                 lda     (ptr2),y
                 phy
                 jsr     putc
                 ply
-                tya
-                cmp     (ptr2)
+                cpy     cnt
                 bne     -
                 lda     sgink
                 jsr     putc
-                lda     (ptr2)                  ; retour du curseur
-                sta     lpos
--               jsr     cur_left
-                lda     lpos
-                cmp     llen
-                bne     -
+                bra     sugg_back
+_none           stz     sglen
 _rts            rts
+sugg_rts        rts
 
-; hide_sugg : efface la suggestion affichée (espaces puis retours arrière,
-; la console gère les passages de ligne) ; sglen est conservé pour _accept
+; hide_sugg : efface la suggestion affichée (espaces, puis retour du
+; curseur) ; sglen est conservé pour _accept
 hide_sugg       lda     sglen
-                beq     _rts
+                beq     sugg_rts
                 sta     cnt
 -               lda     #' '
                 jsr     putc
                 dec     cnt
                 bne     -
-                lda     sglen
-                sta     cnt
--               lda     #CC_BACKSPACE
-                jsr     putc
-                dec     cnt
+; sugg_back : ramène le curseur de sglen positions (cur_left avec un lpos
+; temporaire : les passages de ligne sont calculés, sans dépendre de
+; l'indicateur « ligne prolongée » de la console, faux après un défilement)
+sugg_back       lda     llen
+                clc
+                adc     sglen
+                sta     lpos
+-               jsr     cur_left
+                lda     lpos
+                cmp     llen
                 bne     -
-_rts            rts
+                rts
 
 ; getkey : attend une touche (curseur inversé pendant l'attente) ;
 ; Ctrl+Alt+Suppr pendant l'attente : redémarrage à chaud de NeoDOS

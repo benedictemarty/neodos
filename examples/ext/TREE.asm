@@ -37,7 +37,8 @@ main            stz     showfiles
                 lda     DParams+4
                 and     #1
                 bne     _ok
-_nf             #println "Invalid path"
+_nf             jsr     fail
+                #println "Invalid path"
                 rts
 _ok             lda     #<pathbuf
                 sta     ptr

@@ -73,10 +73,14 @@ _try            lda     stub_names,x
                 bne     -
                 jmp     (0)
 _go             jmp     $FF08                   ; JMP exec de NeoDOS rechargé
-; sum_code : somme 16 bits de NEODOS_BASE..codeend-1 -> $82/$83 (page zéro
-; NeoDOS : ptr et ptr2, libres à ce moment)
-sum_code        stz     $80
-                lda     #>NEODOS_BASE
+; sum_code : somme 16 bits de sum_start..codeend-1 -> $82/$83 (page zéro
+; NeoDOS : ptr et ptr2, libres à ce moment). Commence après l'en-tête
+; (jmp/signature/version/pointeurs) : hdr_errlvl (base+16) est écrit par les
+; programmes et ne doit pas fausser la somme.
+sum_start       = NEODOS_BASE+17
+sum_code        lda     #<sum_start
+                sta     $80
+                lda     #>sum_start
                 sta     $81
                 stz     $82
                 stz     $83
