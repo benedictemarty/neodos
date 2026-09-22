@@ -1,4 +1,3 @@
-(C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>xcopy GAMES NEWDIR
@@ -16,8 +15,9 @@ A:\>dir BIN /w
  Directory of A:\BIN
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
 REBOOT.NEO   ARGS.NEO     FIND.NEO     SORT.NEO
-DELTREE.NEO  TREE.NEO     HI.NEO       TOOL.BAT
-       12 file(s)       9231 bytes
+DELTREE.NEO  COLOR.NEO    TREE.NEO     HI.NEO
+TOOL.BAT
+       13 file(s)       9772 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -31,6 +31,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/COLOR.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

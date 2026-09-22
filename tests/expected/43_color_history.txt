@@ -2,16 +2,21 @@ NeoDOS version 0.21.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
-A:\>type README.TXT
-Hello from NeoDOS
-Second line
-A:\>type CTRL.TXT
- Tab
-AB
-A:\>type NOPE.TXT
-File not found
-A:\>type
-Syntax error
+A:\>
+A:\>echo one
+one
+A:\>color zz
+Usage: COLOR [fe]  (hex: f=background e=foreground)
+COLOR 1F = bright white on blue; COLOR = 07.
+A:\>if errorlevel 1 echo bad
+bad
+A:\>color 33
+Same foreground and background color.
+A:\>if errorlevel 1 echo same
+same
+A:\>color 7
+Usage: COLOR [fe]  (hex: f=background e=foreground)
+COLOR 1F = bright white on blue; COLOR = 07.
 A:\>
 --- files ---
 ARGS.BAT

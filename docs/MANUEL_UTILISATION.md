@@ -27,7 +27,11 @@ Gauche/Droite déplacent le curseur, les caractères tapés s'insèrent, Retour
 arrière et Suppr effacent, Début/Fin (Home/End) vont aux extrémités, Échap
 efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
 dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
-dernière entrée redonne une ligne vide.
+dernière entrée redonne une ligne vide. L'historique **survit aux
+redémarrages** (Ctrl+Alt+Suppr, `REBOOT`, coupure) : il est écrit à chaque
+commande dans `boot\neodos.his` (202 octets, à côté de `neodos.neo`) et relu
+au démarrage ; sans dossier `boot\` ou sur un support en lecture seule, il
+reste celui de la session. Effacer le fichier vide l'historique.
 
 **Tab** complète le mot sous le curseur avec les noms du répertoire visé
 (fichiers et sous-répertoires, `\` ou `/`) : NeoDOS insère le plus long
@@ -230,6 +234,7 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 | `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 37 Ko, 2 048 lignes max) |
 | `EDIT fichier` | éditeur plein écran (fichier créé s'il n'existe pas) |
 | `ATTRIB [+R -R +H -H +S -S +A -A] [fichier\|motif\|répertoire]` | affiche (`A S H R` puis le chemin) ou modifie les attributs ; `ATTRIB *.TXT`, `ATTRIB +R CONFIG.BAT`, `ATTRIB GAMES` (son contenu), `ATTRIB` seul : tout le répertoire courant (interne jusqu'à la 0.13.0) |
+| `COLOR [fe]` | couleurs de la console, syntaxe DOS : deux chiffres hexadécimaux, **fond puis encre** (`COLOR 1F` = blanc brillant sur bleu, `COLOR 07` ou `COLOR` seul = défaut) ; l'écran est effacé. Fond = encre refusé (`ERRORLEVEL 1`). Pour les garder d'un démarrage à l'autre : `COLOR 1F` dans `AUTOEXEC.BAT` (ligne `REM` d'exemple fournie). Sur un écran monochrome (Hercules), encre 8-15 = gras, fond 1-7 = inverse |
 | `REBOOT` | reset matériel complet du Neo6502 (fonction 1,7 : le firmware redémarre, tout est perdu) ; Ctrl+Alt+Suppr ne relance que NeoDOS. Sur un émulateur sans reset matériel : `Hardware reset not available.` et `ERRORLEVEL 1` |
 
 ### EDIT

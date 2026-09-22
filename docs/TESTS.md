@@ -81,6 +81,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
 | `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
 | `41_ext_reboot` | `BIN/REBOOT.NEO` : `REBOOT /?` (usage), `REBOOT` (1,7 revient sur Phosphoneo → `Hardware reset not available.`), `IF ERRORLEVEL 1` |
+| `43_color_history` | historique persistant : `echo one`, Ctrl+Alt+Suppr, Haut×3 + Entrée rejoue `echo one` (RAM remise à zéro, relu de `boot/neodos.his`) ; `COLOR 1F`, `COLOR` (codes `$91`/`$8F` puis CLS, vérifiés au journal API), `COLOR zz` et `COLOR 7` (usage, `ERRORLEVEL 1`), `COLOR 33` (fond = encre refusé) |
 | `42_big_load_over` | `BIG.NEO` (`$B000-$C100`) recouvre NeoDOS pendant le chargement : message du programme, puis NeoDOS rechargé (`stub_run`) ; avec la 0.19.0 le programme ne démarrait pas |
 | `40_cad_batch_pause` | Ctrl+Alt+Suppr pendant un script en boucle (`FOREVER.BAT`) puis pendant `PAUSE` : deux redémarrages à chaud |
 | `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |

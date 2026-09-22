@@ -16,8 +16,8 @@ l
 FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT
 EXIT              Reload the resident environment
 name[.NEO]        Run a program (here, then PATH)
-BIN\ (PATH \BIN): ATTRIB DELTREE EDIT FIND MORE
-                  REBOOT SORT TREE XCOPY
+BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND
+                  MORE REBOOT SORT TREE XCOPY
 A:\>mem
    45056 bytes free for programs ($0800-$B7FF)
    17408 bytes reserved for NeoDOS ($B800-$FBFF)
@@ -31,6 +31,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/COLOR.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

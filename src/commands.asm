@@ -1324,8 +1324,8 @@ cmd_help        jsr     newline
                 #println "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT"
                 #println "EXIT              Reload the resident environment"
                 #println "name[.NEO]        Run a program (here, then PATH)"
-                #println "BIN\ (PATH \BIN): ATTRIB DELTREE EDIT FIND MORE"
-                #println "                  REBOOT SORT TREE XCOPY"
+                #println "BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND"
+                #println "                  MORE REBOOT SORT TREE XCOPY"
                 jmp     newline
 
 ; ---------------------------------------------------------------------------

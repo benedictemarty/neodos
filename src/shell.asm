@@ -41,7 +41,8 @@ start           cld
                 sta     DParams
                 #api    3,5
                 #api    3,19
-                jsr     newline
+                jsr     hist_load               ; historique de la session
+                jsr     newline                 ; précédente (/boot/neodos.his)
                 #println "NeoDOS version " .. VERSION
                 #println "(C) 2026 bmarty - Neo6502 disk operating system"
                 jsr     newline

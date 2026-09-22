@@ -16,7 +16,7 @@ FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
 FOREVER.BAT             41
-       19 file(s)       7700 bytes
+       19 file(s)       7764 bytes
         5 dir(s)
 A:\>del C.TXT
 A:\>del NOPE
@@ -35,6 +35,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/COLOR.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

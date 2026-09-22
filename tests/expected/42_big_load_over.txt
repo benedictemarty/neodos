@@ -1,11 +1,11 @@
-NeoDOS version 0.20.0
+NeoDOS version 0.21.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>path \
 A:\>big
 Big program loaded over NeoDOS...
-NeoDOS version 0.20.0
+NeoDOS version 0.21.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -19,6 +19,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/COLOR.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

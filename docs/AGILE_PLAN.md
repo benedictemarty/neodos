@@ -218,6 +218,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S85 Stub factorisé (`load`, `intact`), `stub_critical`, budget de pile documenté | fait |
 | S86 Fixture `BIG.NEO` (`make fixtures`), test 42, docs, recette 4.14 | fait |
 
+## Sprint 21 — Historique persistant, COLOR (2026-09-22) — livré, v0.21.0
+
+| Story | État |
+|---|---|
+| S87 `hist_save`/`hist_load` : `/boot/neodos.his` (image brute 202 o, Stat de la taille, cohérence des pstrings) | fait |
+| S88 `BIN/COLOR.NEO` : `COLOR fe` (DOS), `$90+fond`/`$80+encre` + CLS, fond = encre refusé ; `REM COLOR 1F` dans AUTOEXEC.BAT | fait |
+| S89 Test 43, `HELP`, docs, recette 4.15 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

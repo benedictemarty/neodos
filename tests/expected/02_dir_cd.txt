@@ -1,6 +1,6 @@
  Directory of A:\GAMES\..
 boot                 <DIR>
-AUTOEXEC.BAT           151
+AUTOEXEC.BAT           215
 DEMO.BAT                79
 HELLO.NEO               66
 GAMES                <DIR>
@@ -22,7 +22,7 @@ FRUITS.TXT              41
 SMASH.NEO               84
 LOOP.BAT               102
 FOREVER.BAT             41
-       18 file(s)       7669 bytes
+       18 file(s)       7733 bytes
         5 dir(s)
 A:\GAMES>cd NOPE
 Invalid directory
@@ -34,6 +34,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/COLOR.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO

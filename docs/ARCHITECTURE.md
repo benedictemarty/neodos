@@ -59,6 +59,11 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    avant chaque ligne de script.
    Haut/Bas rappellent une entrée de `histbuf` (pstrings consécutives,
    `hcount`/`hused` ; la plus ancienne est retirée quand la place manque).
+   `hist_add` termine par `hist_save` : Store File (3,3) de l'image brute
+   `hcount`/`hused`/`histbuf` (202 octets) dans `/boot/neodos.his`, erreurs
+   ignorées ; `start` appelle `hist_load` (Stat de la taille exacte, Load
+   File, puis parcours des pstrings : longueurs 1-254 totalisant `hused`
+   en `hcount` entrées, sinon historique vide).
    **Tab** : le mot sous le curseur (depuis l'espace précédent) + `*` est
    copié dans `arg1`, converti (`to_apipath`), découpé (`split_path` →
    `dirbuf`/`patbuf`) ; `collect_open` (silencieux si le répertoire n'existe

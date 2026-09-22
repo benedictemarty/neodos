@@ -3,6 +3,29 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.21.0] — 2026-09-22
+
+Sprint 21 : historique persistant, `COLOR`.
+
+### Ajouté
+- **Historique des commandes conservé d'un démarrage à l'autre** : à chaque
+  commande ajoutée, `hist_save` écrit l'image brute `hcount`/`hused`/`histbuf`
+  (202 octets) dans `/boot/neodos.his` (Store File 3,3, erreurs ignorées :
+  pas de `boot/`, support en lecture seule) ; `start` la relit (`hist_load`)
+  après un Stat de la taille exacte et une vérification des pstrings
+  (sinon historique vide). Vaut pour Ctrl+Alt+Suppr, `REBOOT`, coupure.
+- **`COLOR [fe]`** (commande externe `BIN/COLOR.NEO`, `examples/ext/COLOR.asm`) :
+  couleurs de la console à la façon DOS — deux chiffres hexadécimaux, fond
+  puis encre (`COLOR 1F`), `COLOR` seul = `07` ; codes de contrôle `$90+fond`
+  et `$80+encre` puis CLS ; fond = encre refusé (`ERRORLEVEL 1`) ; usage sur
+  argument invalide. Persistance entre deux démarrages : `COLOR` dans
+  `AUTOEXEC.BAT` (ligne `REM COLOR 1F` d'exemple ajoutée).
+- `HELP` liste `COLOR` ; test `43_color_history`.
+
+### Modifié
+- Références des tests régénérées (`BIN/COLOR.NEO`, `AUTOEXEC.BAT`).
+- Résident : 11 329 octets, marge ≈ 1,1 Ko.
+
 ## [0.20.0] — 2026-09-21
 
 Sprint 20 : lancement des programmes qui recouvrent NeoDOS (`legacy.neo`).

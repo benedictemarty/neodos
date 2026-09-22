@@ -536,7 +536,71 @@ _append         ldx     hused
                 bcc     -
                 stx     hused
                 inc     hcount
+                jmp     hist_save
 _done           rts
+
+; ---------------------------------------------------------------------------
+; Historique persistant : image brute hcount/hused/histbuf (HIST_SIZE+2
+; octets) dans /boot/neodos.his, écrite à chaque ajout, relue au démarrage.
+; ---------------------------------------------------------------------------
+; hist_save : Store File (3,3) ; erreurs ignorées (pas de boot/, support en
+; lecture seule…) : l'historique reste alors celui de la session
+hist_save
+                #setparam 0, hist_name
+                #setparam 2, hcount
+                #setparam 4, HIST_SIZE+2
+                #api    3,3
+                rts
+
+; hist_load : recharge le fichier s'il a exactement la bonne taille (Stat),
+; puis vérifie la cohérence des pstrings ; sinon historique vide
+hist_load
+                #setparam 0, hist_name
+                #api    3,16                    ; Stat : taille en Parameter:0-3
+                lda     DError
+                bne     _done
+                lda     DParams
+                cmp     #<(HIST_SIZE+2)
+                bne     _done
+                lda     DParams+1
+                cmp     #>(HIST_SIZE+2)
+                bne     _done
+                lda     DParams+2
+                ora     DParams+3
+                bne     _done
+                #setparam 0, hist_name
+                #setparam 2, hcount
+                #api    3,2                     ; Load File -> hcount..histbuf
+                lda     DError
+                bne     _reset
+                lda     hused
+                cmp     #HIST_SIZE+1
+                bcs     _reset
+                ldx     #0                      ; X = offset, Y = entrées restantes
+                ldy     hcount
+_walk           cpx     hused
+                beq     _end
+                bcs     _reset                  ; dépasse hused
+                cpy     #0
+                beq     _reset                  ; octets sans entrée
+                lda     histbuf,x
+                beq     _reset                  ; entrée vide
+                inc     a
+                beq     _reset                  ; longueur 255
+                sta     tmp
+                txa
+                clc
+                adc     tmp
+                bcs     _reset
+                tax
+                dey
+                bra     _walk
+_end            cpy     #0
+                beq     _done
+_reset          stz     hcount
+                stz     hused
+_done           rts
+hist_name       .ptext  "/boot/neodos.his"
 
 ; hist_entry : ptr2 -> entrée n° A (0 = la plus ancienne)
 hist_entry      tax
