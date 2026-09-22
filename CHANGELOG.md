@@ -21,6 +21,11 @@ Sprint 22 : heure réglée par le modem à la demande (proposition Trinity T-25)
 - Référence `08_date_time` : `(clock not set)` (Phosphoneo : 1,23 répond OK
   sans régler l'horloge, pas de modem émulé).
 
+### Publié
+- 2026-09-22 : Prophet, `en-developpement/neodos` 0.22.0 (neodos.neo,
+  AUTOEXEC.BAT, HELLO.NEO, BIN/ dont REBOOT.NEO et COLOR.NEO ; commit
+  `72efefd`), SHA-256 `02cfbfecda392d0e…`.
+
 ## [0.21.1] — 2026-09-22
 
 Correctif : retour carte — les touches tapées dans un jeu ressortaient à l'invite.
