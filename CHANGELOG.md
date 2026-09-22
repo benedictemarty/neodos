@@ -29,6 +29,11 @@ Sprint 20 : lancement des programmes qui recouvrent NeoDOS (`legacy.neo`).
 ### Modifié
 - Références des tests régénérées (`BIG.NEO` dans les listes).
 
+### Publié
+- 2026-09-22 : Prophet, `en-developpement/neodos` 0.20.0 (neodos.neo,
+  AUTOEXEC.BAT, HELLO.NEO, BIN/ dont REBOOT.NEO ; commit `807fed4`),
+  SHA-256 `fa9c410a41a4d0f6…`.
+
 ## [0.19.0] — 2026-09-21
 
 Sprint 19 : retour carte — `COPY … .` (`Error 20`) et `EXIT` fiabilisé.
