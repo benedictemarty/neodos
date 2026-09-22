@@ -3,6 +3,30 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.23.0] — 2026-09-22
+
+Sprint 23 : B16 (rouverte) — moins d'accès disque pendant la frappe.
+
+### Modifié
+- **L'historique n'est plus écrit à chaque commande.** `hist_add` marque
+  seulement `histdirty` ; `hist_flush` écrit `/boot/neodos.his` aux moments
+  où un accès disque ne gêne pas : avant de lancer un programme (`try_run`),
+  à Ctrl+Alt+Suppr (`warm_restart`) et à `EXIT`. Mesuré sur Phosphoneo
+  (journal API, 5 commandes dont un `DIR`) : **4 écritures (3,3) → 0**.
+  Motif : sur carte, chaque accès FatFs fait perdre des lignes au rendu DVI
+  du firmware (traits rouges, Trinity T-31) et retarde le clavier.
+  Contrepartie : une coupure sèche (ou `REBOOT` tapé à l'invite, qui est un
+  programme, donc sauvé avant lancement) perd les commandes tapées depuis le
+  dernier de ces moments ; Ctrl+Alt+Suppr et `EXIT` ne perdent rien.
+- Test `45_hist_flush_prog` : `echo one` puis `SMASH` (écrase NeoDOS, donc
+  rechargement complet depuis le disque) ; Haut×2 redonne `echo one`, donc
+  l'historique était bien écrit avant le lancement.
+
+### Corrigé
+- Références des tests : l'image NeoDOS embarquée dans Trinity v0.9.10 est
+  désormais la 0.22.0 (et non plus la 0.15.0), ce que `09_exit` reflète.
+  Échec indépendant de ce sprint, constaté en le démarrant.
+
 ## [0.22.0] — 2026-09-22
 
 Sprint 22 : heure réglée par le modem à la demande (proposition Trinity T-25).

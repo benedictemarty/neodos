@@ -1352,7 +1352,8 @@ cmd_help        jsr     newline
 ; EXIT : relance l'environnement résident du firmware (1,3), depuis le stub
 ; en $0100 — 1,3 écrase $B800-$FBFF, ce code ne peut pas y survivre
 ; ---------------------------------------------------------------------------
-cmd_exit        jsr     install_stub
+cmd_exit        jsr     hist_flush
+                jsr     install_stub
                 jmp     STUB_BASE+(stub_exit-stub_start)
 
 ; ---------------------------------------------------------------------------

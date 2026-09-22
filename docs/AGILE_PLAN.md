@@ -239,6 +239,14 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S91 `clock_read` : 1,20 → source 0 → 1,23 → relecture ; `clock_note` « (clock not set) » (proposition Trinity T-25) | fait |
 | S92 Référence 08, docs, recette 4.17 | fait |
 
+## Sprint 23 — B16 : moins d'accès disque (2026-09-22) — livré, v0.23.0
+
+| Story | État |
+|---|---|
+| S93 `histdirty`/`hist_flush` : écriture de l'historique avant un programme, à Ctrl+Alt+Suppr et à `EXIT` (4 écritures → 0 pour 5 commandes) | fait |
+| S94 Test `45_hist_flush_prog` (SMASH = rechargement complet), références (image embarquée Trinity 0.22.0), docs | fait |
+| S95 Cache du catalogue pour Tab (B16, suite) | à faire |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -250,7 +258,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
-| B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31, connues depuis 0.3.0 : leur nombre suit les accès FatFs) : `hist_save` aux moments calmes plutôt qu'à chaque commande, cache du catalogue pour la complétion Tab | **décision bmarty 2026-09-22 : rien pour l'instant** (traité côté Trinity) |
+| B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : **cache du catalogue pour la complétion Tab** (piste (c) de T-31) — reste à faire ; l'écriture d'historique est traitée (0.23.0) | rouverte le 2026-09-22 (demande bmarty) |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts

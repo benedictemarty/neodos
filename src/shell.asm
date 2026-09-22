@@ -65,6 +65,7 @@ mainloop        ldx     #$ff                    ; pile propre après un programm
 ; réinitialisé) : fichiers fermés, son coupé, écran effacé, NeoDOS relancé
 warm_restart    ldx     #$ff
                 txs
+                jsr     hist_flush              ; historique de la session
 -               lda     #KEY_DELETE             ; attend le relâchement de Suppr
                 sta     DParams                 ; (sinon redémarrages en boucle)
                 #api    1,2
@@ -562,8 +563,9 @@ try_run         jsr     ptr_namebuf
                 cmp     #1
                 beq     _neo
                 cmp     #2
-                beq     _bat
-                ; sans extension : essayer .NEO puis .BAT
+                bne     +
+                jmp     _bat
++               ; sans extension : essayer .NEO puis .BAT
                 #setptr ptr2, ext_neo
                 jsr     append_ext
                 jsr     stat_namebuf
@@ -579,7 +581,8 @@ try_run         jsr     ptr_namebuf
                 rts
 _neo            jsr     stat_namebuf
                 bne     _none
-_run            jsr     redir_flush             ; la redirection reste ouverte
+_run            jsr     hist_flush              ; historique écrit ici plutôt qu'à
+                jsr     redir_flush             ; chaque commande ; la redirection reste ouverte
                 stz     DParams                 ; (un programme écrivant via
                 #api    3,5                     ; $C00E y participe) ; canaux
                 lda     #CH_BAT                 ; 0 et 7 et répertoire fermés

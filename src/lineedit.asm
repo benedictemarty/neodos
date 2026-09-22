@@ -536,13 +536,26 @@ _append         ldx     hused
                 bcc     -
                 stx     hused
                 inc     hcount
-                jmp     hist_save
+                lda     #1                      ; écriture différée (hist_flush)
+                sta     histdirty
 _done           rts
 
 ; ---------------------------------------------------------------------------
 ; Historique persistant : image brute hcount/hused/histbuf (HIST_SIZE+2
 ; octets) dans /boot/neodos.his, écrite à chaque ajout, relue au démarrage.
 ; ---------------------------------------------------------------------------
+; hist_flush : écrit l'historique s'il a changé. Appelé aux moments où un
+; accès disque ne gêne pas (avant de lancer un programme, Ctrl+Alt+Suppr,
+; EXIT) et non à chaque commande : sur carte, chaque accès FatFs fait perdre
+; des lignes au rendu DVI du firmware (traits rouges, Trinity T-31) et
+; retarde le clavier. Contrepartie : une coupure sèche perd les commandes
+; tapées depuis le dernier de ces moments.
+hist_flush      lda     histdirty
+                beq     _none
+                stz     histdirty
+                bra     hist_save
+_none           rts
+
 ; hist_save : Store File (3,3) ; erreurs ignorées (pas de boot/, support en
 ; lecture seule…) : l'historique reste alors celui de la session
 hist_save

@@ -29,9 +29,12 @@ arrière et Suppr effacent, Début/Fin (Home/End) vont aux extrémités, Échap
 efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
 dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
 dernière entrée redonne une ligne vide. L'historique **survit aux
-redémarrages** (Ctrl+Alt+Suppr, `REBOOT`, coupure) : il est écrit à chaque
-commande dans `boot\neodos.his` (202 octets, à côté de `neodos.neo`) et relu
-au démarrage ; sans dossier `boot\` ou sur un support en lecture seule, il
+redémarrages** (Ctrl+Alt+Suppr, `REBOOT`) : il est écrit à
+**Ctrl+Alt+Suppr**, par `EXIT` et avant le lancement d'un programme dans
+`boot\neodos.his` (202 octets, à côté de `neodos.neo`), et relu
+au démarrage (il n'est pas écrit à chaque commande : sur carte, les accès
+disque perturbent l'affichage et le clavier — une coupure de courant perd
+donc les dernières commandes) ; sans dossier `boot\` ou sur un support en lecture seule, il
 reste celui de la session. Effacer le fichier vide l'historique.
 
 **Tab** complète le mot sous le curseur avec les noms du répertoire visé
