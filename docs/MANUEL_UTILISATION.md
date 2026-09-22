@@ -9,8 +9,9 @@
   `BIN/`) : NeoDOS démarre automatiquement (Échap au démarrage = menu du
   firmware). Autre firmware : dans NeoBASIC, `run "neodos.neo"`.
 
-Sur Trinity, le lecteur est toujours `A:` et `DATE`/`TIME` répondent « not
-supported by this firmware » (fonctions du fork non reprises).
+Sur une Trinity antérieure à la 0.6.0, `DATE`/`TIME` répondent « not
+supported by this firmware » ; depuis, l'heure vient de l'horloge logicielle,
+d'une horloge PCF8563 sur UEXT ou du modem USB (SNTP, voir `DATE`).
 
 Au démarrage, NeoDOS affiche sa bannière, exécute `AUTOEXEC.BAT` s'il existe
 dans le répertoire courant, puis affiche l'invite `A:\>`.
@@ -267,8 +268,8 @@ La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `VER` | versions de NeoDOS et du firmware |
 | `VOL` | nom du volume courant |
 | `MEM` | mémoire disponible pour les programmes |
-| `DATE [aaaa-mm-jj]` | affiche ou règle la date |
-| `TIME [hh:mm[:ss]]` | affiche ou règle l'heure |
+| `DATE [aaaa-mm-jj]` | affiche ou règle la date. Si l'horloge n'a jamais été réglée (source 0 de 1,20 : `1970-01-01` + temps écoulé), `DATE`/`TIME` demandent d'abord l'heure SNTP au modem USB (fonction 1,23, 2 s au plus ; rien sans modem) ; à défaut la valeur est suivie de `(clock not set)` |
+| `TIME [hh:mm[:ss]]` | affiche ou règle l'heure (même synchronisation par le modem que `DATE`) |
 | `PATH [rép;rép]` | répertoires de recherche des programmes |
 | `PROMPT [texte]` | format de l'invite |
 | `HELP` | liste des commandes |

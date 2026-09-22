@@ -3,6 +3,24 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.22.0] — 2026-09-22
+
+Sprint 22 : heure réglée par le modem à la demande (proposition Trinity T-25).
+
+### Ajouté
+- **`DATE`/`TIME` synchronisent l'horloge par le modem quand elle n'est pas
+  réglée** : `clock_read` lit 1,20 ; si la source (Parameter:7) est 0 —
+  horloge jamais réglée, `1970-01-01` + temps depuis la mise sous tension —
+  appel de 1,23 (Sync Clock From Modem : heure SNTP du Pico W, 2 s au plus,
+  erreur immédiate sans modem ; Trinity ne fait plus rien d'automatique
+  depuis 0.9.8) puis relecture. Si la source reste 0, la valeur affichée est
+  suivie de ` (clock not set)`. Les formes `DATE x`/`TIME x` ne synchronisent
+  pas (réglage manuel).
+
+### Modifié
+- Référence `08_date_time` : `(clock not set)` (Phosphoneo : 1,23 répond OK
+  sans régler l'horloge, pas de modem émulé).
+
 ## [0.21.1] — 2026-09-22
 
 Correctif : retour carte — les touches tapées dans un jeu ressortaient à l'invite.

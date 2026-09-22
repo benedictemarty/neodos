@@ -232,6 +232,13 @@ NeoBASIC (qui reste accessible par `EXIT`).
 |---|---|
 | S90 `kbd_flush` au retour d'un programme ayant tourné ≥ 2 s (`runtick`, timer 1,1) : file 2,1 vidée ; fixture `WAITKEY.NEO`, test 44 | fait |
 
+## Sprint 22 — Heure par le modem à la demande (2026-09-22) — livré, v0.22.0
+
+| Story | État |
+|---|---|
+| S91 `clock_read` : 1,20 → source 0 → 1,23 → relecture ; `clock_note` « (clock not set) » (proposition Trinity T-25) | fait |
+| S92 Référence 08, docs, recette 4.17 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

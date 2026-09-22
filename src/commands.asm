@@ -1140,7 +1140,7 @@ cmd_date        jsr     need_datetime
 +               lda     arg1
                 bne     _set
                 #print  "Current date is "
-                #api    1,20
+                jsr     clock_read
                 lda     DParams
                 ldy     DParams+1
                 ldx     #0
@@ -1153,7 +1153,7 @@ cmd_date        jsr     need_datetime
                 jsr     putc
                 lda     DParams+3
                 jsr     print2
-                jmp     newline
+                jmp     clock_note
 _set            #api    1,20                    ; lit l'heure courante
                 jsr     ptr_arg1
                 ldy     #1
@@ -1181,6 +1181,26 @@ _bad            jsr     errlvl1
                 #println "Invalid date"
 _none           rts
 
+; clock_read : 1,20 ; si la source (Parameter:7) est 0 — horloge jamais
+; réglée : 1970-01-01 + temps depuis la mise sous tension — demande l'heure
+; SNTP au modem USB (1,23 : 2 s au plus, erreur immédiate sans modem ; rien
+; n'est automatique dans Trinity depuis 0.9.8) puis relit 1,20. Le firmware
+; garde ensuite la source 3 : un seul appel par session suffit.
+clock_read      #api    1,20
+                lda     DParams+7
+                bne     _done
+                #api    1,23                    ; Sync Clock From Modem
+                #api    1,20
+_done           rts
+
+; clock_note : fin de ligne de DATE/TIME ; « (clock not set) » si la source
+; de 1,20 (encore en Parameter:7) est 0
+clock_note      lda     DParams+7
+                beq     +
+                jmp     newline
++               #println " (clock not set)"
+                rts
+
 ; need_datetime : C=1 (et message) si le firmware n'a pas 1,20/1,21
 need_datetime   lda     caps
                 and     #CAP_DATETIME
@@ -1198,7 +1218,7 @@ cmd_time        jsr     need_datetime
 +               lda     arg1
                 bne     _set
                 #print  "Current time is "
-                #api    1,20
+                jsr     clock_read
                 lda     DParams+4
                 jsr     print2
                 lda     #':'
@@ -1209,7 +1229,7 @@ cmd_time        jsr     need_datetime
                 jsr     putc
                 lda     DParams+6
                 jsr     print2
-                jmp     newline
+                jmp     clock_note
 _set            #api    1,20
                 jsr     ptr_arg1
                 ldy     #1

@@ -187,6 +187,10 @@ sert que pendant le chargement. Limite : un programme qui utilise plus de
 58 octets de pile matérielle ou écrit en `$0100-$01C5` détruit le stub
 (reset ; Trinity relance NeoDOS via `boot/auto.txt`).
 
+`DATE`/`TIME` (affichage) passent par `clock_read` : 1,20 puis, si
+Parameter:7 (source) vaut 0, 1,23 (Sync Clock From Modem, Trinity T-25) et
+relecture ; `clock_note` ajoute ` (clock not set)` si la source reste 0.
+
 ## Fonctions du firmware absentes
 
 `detect_caps` (démarrage) précharge un paramètre puis appelle 3,26 et 1,20 :
