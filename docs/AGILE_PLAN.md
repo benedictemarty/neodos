@@ -250,6 +250,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
+| B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31, connues depuis 0.3.0 : leur nombre suit les accès FatFs) : `hist_save` aux moments calmes plutôt qu'à chaque commande, cache du catalogue pour la complétion Tab | **décision bmarty 2026-09-22 : rien pour l'instant** (traité côté Trinity) |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts
@@ -263,6 +264,8 @@ NeoBASIC (qui reste accessible par `EXIT`).
   Trinity 0.4.0, **NeoDOS est l'environnement résident embarqué** (1,3 le
   recharge, `EXIT` le relance ; NeoBASIC = `boot/neobasic.bin`) : les tests
   reflètent ce comportement depuis la 0.13.0.
+- **Traits rouges à l'écran sur carte** (signalement bmarty 2026-09-22, pendant la frappe et l'affichage) : défaut d'affichage du firmware (lignes DVI en retard, Trinity T-31, connu depuis Trinity 0.3.0), pas de NeoDOS ; leur nombre augmente avec les accès au stockage, dont l'écriture de `boot/neodos.his` à chaque commande depuis la 0.21.0 (B16, non traité par décision).
+
 - Résident : ≈ 2,5 Ko de marge depuis la base `$B800` (0.14.0, ADR-004) ;
   les fonctions nouvelles restent des commandes externes (ADR-003), la marge
   sert à l'éditeur de ligne et à l'interpréteur (`FOR`, `SHIFT`, suggestion).
