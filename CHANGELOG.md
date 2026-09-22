@@ -24,7 +24,7 @@ Sprint 21 : historique persistant, `COLOR`.
 
 ### Modifié
 - Références des tests régénérées (`BIN/COLOR.NEO`, `AUTOEXEC.BAT`).
-- Résident : 11 329 octets, marge ≈ 1,1 Ko.
+- Résident : 11 323 octets, marge ≈ 1,1 Ko.
 
 ## [0.20.0] — 2026-09-21
 
