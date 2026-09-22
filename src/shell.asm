@@ -586,6 +586,11 @@ _run            jsr     redir_flush             ; la redirection reste ouverte
                 sta     DParams
                 #api    3,5
                 #api    3,19
+                #api    1,1                     ; heure de lancement (kbd_flush)
+                lda     DParams
+                sta     runtick
+                lda     DParams+1
+                sta     runtick+1
                 jsr     install_stub            ; stub de retour en $0100
                 stz     hdr_errlvl              ; ERRORLEVEL du programme (base+16)
                 jsr     p0_namebuf
@@ -605,6 +610,28 @@ _bat            jsr     stat_namebuf
 _runbat         jmp     run_batch
 _none           rts
 
+; kbd_flush : après un programme qui a tourné au moins KBD_FLUSH_CS (2 s),
+; vide la file de caractères du firmware (2,1). Un programme qui lit le
+; clavier par l'état des touches (1,2) — un jeu — y laisse tout ce qui a été
+; tapé ; sans vidage, NeoDOS l'exécuterait au retour (« open door » → Bad
+; command or file name). Sous 2 s (HELLO, TREE, FIND…), la frappe anticipée
+; de la commande suivante est conservée.
+kbd_flush       #api    1,1
+                lda     DParams
+                sec
+                sbc     runtick
+                sta     tmp
+                lda     DParams+1
+                sbc     runtick+1
+                bne     _flush                  ; ≥ 2,56 s
+                lda     tmp
+                cmp     #KBD_FLUSH_CS
+                bcc     _done
+_flush          #api    2,1
+                lda     DParams
+                bne     _flush
+_done           rts
+
 ; load_error : le stub a échoué à charger (A = erreur, NeoDOS intact)
 load_error      jsr     err_api
                 jmp     neodos_back
@@ -613,6 +640,7 @@ load_error      jsr     err_api
 ; échec de chargement : pile réinitialisée, reprise du batch ou invite
 neodos_back     ldx     #$ff
                 txs
+                jsr     kbd_flush               ; touches tapées dans le programme
                 lda     hdr_errlvl              ; code de retour du programme
                 sta     errorlevel              ; (IF ERRORLEVEL à la ligne suivante)
                 lda     bat_active              ; un batch reprend après le

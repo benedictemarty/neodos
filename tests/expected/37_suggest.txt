@@ -1,4 +1,4 @@
-NeoDOS version 0.21.0
+NeoDOS version 0.21.1
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -17,8 +17,9 @@ A:\>dir *.NEO
  Directory of A:\
 HELLO.NEO               66
 BIG.NEO               4369
+WAITKEY.NEO             92
 SMASH.NEO               84
-        3 file(s)       4519 bytes
+        4 file(s)       4611 bytes
         0 dir(s)
 A:\>echo hello
 --- files ---
@@ -99,3 +100,4 @@ SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT
+WAITKEY.NEO

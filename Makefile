@@ -69,10 +69,13 @@ storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.
 	python3 tools/mkneo.py $(BUILD)/$*.bin $@ 0800 0800 "$*"
 
 # Fixtures de test binaires (non livrées) : BIG.NEO se charge par-dessus NeoDOS
-fixtures: tests/fixtures/BIG.NEO
+fixtures: tests/fixtures/BIG.NEO tests/fixtures/WAITKEY.NEO
 tests/fixtures/BIG.NEO: examples/big.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/big.bin examples/big.asm
 	python3 tools/mkneo.py $(BUILD)/big.bin $@ B000 B000 "Big"
+tests/fixtures/WAITKEY.NEO: examples/waitkey.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/waitkey.bin examples/waitkey.asm
+	python3 tools/mkneo.py $(BUILD)/waitkey.bin $@ 0800 0800 "WaitKey"
 
 storage/%.BAT: examples/%.BAT
 	cp $< $@

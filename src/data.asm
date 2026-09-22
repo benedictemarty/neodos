@@ -31,6 +31,7 @@ cwdpath         .fill   84              ; « A:\chemin » (DIR, CD)
 runword         .fill   129             ; run_program : nom tel que tapé
 promptskip      .fill   1               ; longueur de la dernière ligne de l'invite
 dpsave          .fill   9               ; sauvegarde DParams/DError pendant redir_flush
+runtick         .fill   2               ; timer 1,1 (1/100 s) au lancement du programme
 hcount          .fill   1               ; historique : nombre d'entrées
 hused           .fill   1               ; historique : octets utilisés
 histbuf         .fill   HIST_SIZE       ; historique : pstrings consécutives

@@ -1,28 +1,11 @@
-FRUITS.TXT              41
-        4 file(s)       1901 bytes
-        0 dir(s)
-A:\>dir GAMES\*.TXT
- Volume in drive A is HOST0
- Directory of A:\GAMES
-A.TXT                    3
-        1 file(s)          3 bytes
-        0 dir(s)
-A:\>dir R*
- Volume in drive A is HOST0
- Directory of A:\
-README.TXT              31
-        1 file(s)         31 bytes
-        0 dir(s)
-A:\>dir ?TRL.TXT
- Volume in drive A is HOST0
- Directory of A:\
-CTRL.TXT                 9
-        1 file(s)          9 bytes
-        0 dir(s)
-A:\>dir *.NOPE
- Volume in drive A is HOST0
- Directory of A:\
-File not found
+NeoDOS version 0.21.1
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>waitkey
+Type a sentence and press Enter...
+A:\>echo after game
+after game
 A:\>
 --- files ---
 ARGS.BAT

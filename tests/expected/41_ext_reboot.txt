@@ -1,4 +1,4 @@
-NeoDOS version 0.21.0
+NeoDOS version 0.21.1
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -90,3 +90,4 @@ SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT
+WAITKEY.NEO

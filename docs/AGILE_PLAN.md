@@ -226,6 +226,12 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S88 `BIN/COLOR.NEO` : `COLOR fe` (DOS), `$90+fond`/`$80+encre` + CLS, fond = encre refusé ; `REM COLOR 1F` dans AUTOEXEC.BAT | fait |
 | S89 Test 43, `HELP`, docs, recette 4.15 | fait |
 
+## Correctif 0.21.1 (2026-09-22) — retour carte : clavier après un jeu
+
+| Story | État |
+|---|---|
+| S90 `kbd_flush` au retour d'un programme ayant tourné ≥ 2 s (`runtick`, timer 1,1) : file 2,1 vidée ; fixture `WAITKEY.NEO`, test 44 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

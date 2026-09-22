@@ -118,6 +118,8 @@ BAT_DEPTH       = 3             ; niveaux de CALL
 BAT_LEVEL_SIZE  = BAT_NAME_SIZE + BAT_ARGS_SIZE + 2
 OUTBUF_SIZE     = 128           ; tampon de la redirection
 HIST_SIZE       = 200           ; historique de commandes (octets, pstrings)
+KBD_FLUSH_CS    = 200           ; durée (1/100 s) au-delà de laquelle un programme
+                                ; est jugé interactif : file clavier vidée au retour
 PATH_SIZE       = 128           ; PATH (pstring, entrées séparées par « ; »)
 PROMPT_SIZE     = 48            ; format de PROMPT (pstring)
 FORSET_SIZE     = 100           ; FOR : ensemble entre parenthèses (pstring)

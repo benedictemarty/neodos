@@ -3,6 +3,25 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.21.1] — 2026-09-22
+
+Correctif : retour carte — les touches tapées dans un jeu ressortaient à l'invite.
+
+### Corrigé
+- **Après `legacy.neo`, la phrase tapée dans le jeu (`open door`) était
+  exécutée par NeoDOS** (`Bad command or file name`). Le jeu lit le clavier
+  par l'état des touches (1,2) sans consommer la file de caractères du
+  firmware (2,1) ; au retour, NeoDOS y trouvait la phrase. `neodos_back`
+  appelle `kbd_flush` : si le programme a tourné **au moins 2 s**
+  (`KBD_FLUSH_CS`, timer 1,1 relevé au lancement dans `runtick`), la file est
+  vidée ; en dessous (HELLO, TREE, FIND…), la frappe anticipée de la
+  commande suivante est conservée.
+- Fixture `WAITKEY.NEO` (`examples/waitkey.asm`, programme façon jeu :
+  attend Entrée par 1,2), test `44_kbd_flush`.
+
+### Modifié
+- Références des tests régénérées (`WAITKEY.NEO`).
+
 ## [0.21.0] — 2026-09-22
 
 Sprint 21 : historique persistant, `COLOR`.

@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.21.0
+NeoDOS version 0.21.1
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir

@@ -65,6 +65,11 @@ et entre deux lignes d'un script `.BAT` (un script qui boucle sur `GOTO` peut
 être interrompu). Le firmware n'est pas réinitialisé (les programmes en
 mémoire sont perdus) ; un programme `.NEO` en cours garde le clavier.
 
+Au retour d'un programme qui a tourné au moins 2 secondes (jeu, éditeur),
+NeoDOS vide la file du clavier : ce qui a été tapé dans le programme sans
+qu'il le lise n'est pas exécuté comme commande. Sous 2 secondes, ce que vous
+tapez d'avance pendant une commande courte est conservé.
+
 ## Fichiers et répertoires
 
 | Commande | Exemple |

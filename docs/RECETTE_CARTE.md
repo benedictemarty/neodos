@@ -75,6 +75,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
 | 4.11 | `PAUSE` puis **Ctrl+Alt+Suppr** | redémarrage à chaud (pas de simple levée de la pause) |
 | 4.12 | `FOREVER` (script `@ECHO OFF` / `:TOP` / `GOTO TOP`, à créer avec `EDIT`) puis **Ctrl+Alt+Suppr** | le script en boucle est interrompu, redémarrage à chaud |
+| 4.16 | `legacy.neo` : taper `open door` + Entrée dans le jeu, quitter | à l'invite, pas de `open door` / `Bad command or file name` (0.21.0 et avant : la phrase était exécutée) |
 | 4.15 | `COLOR 1F` — `DIR` — `REBOOT` (ou coupure) — après redémarrage : `COLOR` puis Flèche haut | texte blanc brillant sur bleu, `DIR` lisible ; au redémarrage couleurs par défaut (mettre `COLOR 1F` dans `AUTOEXEC.BAT` pour les garder) ; Flèche haut rappelle les commandes d'avant le reboot (`boot/neodos.his`) |
 | 4.14 | Programme dont l'image dépasse `$B800` (ProphetGui `legacy.neo`, `$A000-$FBE6`) lancé à l'invite | le programme démarre (0.19.0 et avant : plantage au chargement) ; à sa sortie NeoDOS est rechargé depuis `boot/neodos.neo` |
 | 4.13 | `REBOOT` | `Resetting.` puis reset matériel complet : logo du firmware, menu de boot / `boot/auto.txt`, NeoDOS relancé depuis la clé |
