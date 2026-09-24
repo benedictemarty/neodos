@@ -3,6 +3,26 @@
 Toutes les modifications notables sont consignées ici (format Keep a
 Changelog, versions SemVer). Auteur : bmarty.
 
+## [0.24.0] — 2026-09-24
+
+### Ajouté
+- **`MODE [n]`** : affiche ou change le mode vidéo (`5,10 Get Mode` /
+  `5,9 Set Mode`). Sans argument, le mode courant et ses dimensions ; avec un
+  numéro, le nouveau mode — **0** = 320×240×256, **1** = 720×350 monochrome
+  (Hercules). Un numéro refusé par le firmware donne `Invalid video mode` et
+  `ERRORLEVEL 1`. Jusqu'ici le mode Hercules de Trinity était **inatteignable
+  depuis NeoDOS** : seul NeoBASIC savait y aller, avec `VMODE` (constat
+  bmarty 2026-09-24, « je n'ai pas vmode sous DOS »). Test `46_mode`.
+- `HELP` : la ligne `PATH PROMPT` devient `PATH PROMPT MODE`. Elle n'a **pas**
+  été ajoutée en dix-neuvième ligne : l'aide remplit déjà l'écran, une ligne
+  de plus le fait défiler et la première (`DIR`) disparaît.
+
+### Corrigé
+- Les références de test attendaient encore `NeoDOS version 0.22.0` dans
+  `09_exit` — oubli de la 0.23.0, qui recharge l'image **embarquée dans le
+  firmware** (`neodos_binary.h`) et non le binaire local. Le test échouait
+  depuis. Références alignées et image régénérée dans Trinity.
+
 ## [0.23.0] — 2026-09-22
 
 Sprint 23 : B16 (rouverte) — moins d'accès disque pendant la frappe.

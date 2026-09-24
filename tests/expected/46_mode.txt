@@ -1,27 +1,6 @@
-NeoDOS version 0.24.0
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>path
-PATH=\BIN
-A:\>hi
-Hello from a NeoDOS program!
-A:\>path BIN;GAMES
-A:\>path
-PATH=BIN;GAMES
-A:\>hi
-Hello from a NeoDOS program!
-A:\>tool x
-tool x
-A:\>HI.NEO
-Hello from a NeoDOS program!
-A:\>nope
-Bad command or file name
-A:\>path ;
-A:\>path
-No Path
-A:\>hi
-Bad command or file name
+Current video mode is 1 (720x350, 1 bpp)
+A:\>mode 9
+Invalid video mode
 A:\>
 --- files ---
 ARGS.BAT

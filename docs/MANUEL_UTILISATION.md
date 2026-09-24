@@ -229,6 +229,22 @@ TYPE A.TXT >> TOUT.TXT
 retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 `$p$g`. Exemple : `PROMPT $d $t$_$p$g`.
 
+## Mode vidéo
+
+`MODE` affiche le mode courant et ses dimensions, `MODE n` en change.
+Trinity en propose deux : **0** = 320×240 en 256 couleurs (le mode de
+démarrage), **1** = 720×350 monochrome, le mode **Hercules** — texte fin de
+80 colonnes sur 25 lignes, avec les attributs souligné, gras, inverse et
+clignotant. Un changement de mode efface l'écran. Un numéro que le firmware
+ne connaît pas donne `Invalid video mode` et `ERRORLEVEL 1`.
+
+```
+MODE
+Current video mode is 0 (320x240, 8 bpp)
+MODE 1
+Current video mode is 1 (720x350, 1 bpp)
+```
+
 ## Commandes externes (BIN\)
 
 Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :

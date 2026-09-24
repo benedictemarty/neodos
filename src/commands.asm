@@ -63,6 +63,8 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_path
                 .ptext  "PROMPT"
                 .word   cmd_prompt
+                .ptext  "MODE"
+                .word   cmd_mode
                 .ptext  "HELP"
                 .word   cmd_help
                 .ptext  "EXIT"
@@ -1326,6 +1328,51 @@ cmd_mem         jsr     newline
 ; ---------------------------------------------------------------------------
 ; HELP
 ; ---------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
+; MODE [n] : affiche ou change le mode video (5,10 Get Mode / 5,9 Set Mode).
+; Trinity : 0 = 320x240x256, 1 = 720x350 monochrome (Hercules). NeoDOS n'avait
+; aucun moyen d'atteindre le mode 1 — seul NeoBASIC avec VMODE (bmarty 2026-09-24).
+; ---------------------------------------------------------------------------
+cmd_mode        lda     arg1
+                bne     _set
+                jsr     newline                 ; sans argument : l'etat courant
+_show           #print  "Current video mode is "
+                #api    5,10
+                lda     DParams
+                jsr     print8
+                #print  " ("
+                lda     DParams+1
+                ldy     DParams+2
+                ldx     #0
+                jsr     print16
+                lda     #'x'
+                jsr     putc
+                lda     DParams+3
+                ldy     DParams+4
+                ldx     #0
+                jsr     print16
+                #print  ", "
+                lda     DParams+5
+                jsr     print8
+                #println " bpp)"
+                rts
+_set            jsr     ptr_arg1
+                ldy     #1
+                jsr     parse_num
+                bcs     _bad
+                lda     num+1                   ; un octet suffit
+                bne     _bad
+                lda     num
+                sta     DParams
+                #api    5,9
+                lda     DError
+                bne     _bad                    ; 1 = mode non supporte
+                jsr     newline
+                jmp     _show
+_bad            jsr     errlvl1
+                #println "Invalid video mode"
+                rts
+
 cmd_help        jsr     newline
                 #println "DIR [path] [/P /W] List directory (wildcards)"
                 #println "CD [path]         Change/show directory"
@@ -1336,7 +1383,7 @@ cmd_help        jsr     newline
                 #println "TYPE file         Display a text file"
                 #println "X:                Change drive"
                 #println "CLS VER VOL MEM   Screen, versions, volume, memory"
-                #println "PATH PROMPT       Search path, prompt ($p$g)"
+                #println "PATH PROMPT MODE  Path, prompt ($p$g), video mode"
                 #println "cmd > file        Redirect output (>> appends)"
                 #println "DATE TIME         Show/set date and time"
                 #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"

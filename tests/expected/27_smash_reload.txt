@@ -1,11 +1,11 @@
-NeoDOS version 0.23.0
+NeoDOS version 0.24.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>path \
 A:\>smash
 Smashing $C000-$FBFF...
-NeoDOS version 0.23.0
+NeoDOS version 0.24.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
