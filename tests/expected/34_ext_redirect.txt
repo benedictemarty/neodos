@@ -1,4 +1,4 @@
-NeoDOS version 0.24.0
+NeoDOS version 0.24.1
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -98,6 +98,7 @@ MANY/F34.DAT
 MANY/F35.DAT
 POKER/
 POKER/POKER.NEO
+POKER/REDIR.BAT
 POKER/cards.bin
 README.TXT
 S.TXT

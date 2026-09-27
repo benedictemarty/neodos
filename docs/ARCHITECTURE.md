@@ -104,9 +104,14 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    est publiée dans l'en-tête `$B800` (`jmp start`, `NEODOS` en `$B803`, version en `$B809`,
    pointeur en `$B80C`, vecteur `putc` en `$B80E`, code de retour `ERRORLEVEL` en `$B810` — écrit par le programme, lu par NeoDOS, hors de la somme de contrôle du stub qui part de `$B811` ; `$C0xx` jusqu'à la 0.13.0) : contrat des commandes externes — rien n'est écrit
    dans la zone programme (un programme peut se charger dès `$0200`).
-   `.NEO` : fermeture de la redirection, des canaux (3,5 `$FF`) et du répertoire (3,19), Load
-   File (3,2) — le firmware dépose `JMP exec` en `$FF08` — puis `JSR $FF08`.
-   Au retour : pile réinitialisée, reprise du batch en cours ou invite.
+   `.NEO` : vidage de la redirection (qui reste ouverte : un programme écrivant
+   par le vecteur `putc` y participe), fermeture des canaux 0 et 7 et du
+   répertoire (3,19), `zp_save` (page zéro à préserver : `bptr`, `blen`,
+   `redir`, `caps` → `zpsave`), Load File (3,2) — le firmware dépose
+   `JMP exec` en `$FF08` — puis `JSR $FF08`.
+   Au retour (`neodos_back`) : pile réinitialisée, `zp_restore`, fermeture
+   de la redirection (`try_run` ne revenant pas, la fin de `execute_line`
+   n'est pas atteinte), reprise du batch en cours ou invite.
 
 Toutes les chaînes échangées avec l'API sont des pstrings (octet de
 longueur). `to_apipath` convertit `\` en `/` avant l'appel.
@@ -139,7 +144,7 @@ motif doit être fait de `*`.
 |---|---|
 | `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps` |
 | `$B800-$E0AD` | code (≈ 10,4 Ko ; `codeend`) |
-| `$E0AE-$F2F6` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
+| `$E0AE-$F2F6` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
 | `$F2F7-$FBFF` | libre (≈ 2,3 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
@@ -215,8 +220,8 @@ appel au lieu de 8-10).
 CR → CR LF) ; `redir_flush` écrit le tampon (3,9) en sauvegardant et
 restaurant `DParams`/`DError`, car un affichage peut survenir entre un appel
 API et la lecture de son résultat (`DIR`). `redir_close` (fin de
-`execute_line`, `mainloop`, `batch_next`, lancement d'un `.NEO`) vide et
-ferme.
+`execute_line`, `mainloop`, retour d'un programme dans `neodos_back`) vide
+et ferme.
 
 ## Commandes externes
 

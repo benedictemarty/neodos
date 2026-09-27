@@ -595,6 +595,7 @@ _run            jsr     hist_flush              ; historique écrit ici plutôt 
                 lda     DParams+1
                 sta     runtick+1
                 jsr     install_stub            ; stub de retour en $0100
+                jsr     zp_save                 ; page zéro : le programme en dispose
                 stz     hdr_errlvl              ; ERRORLEVEL du programme (base+16)
                 jsr     p0_namebuf
                 stz     DParams+2               ; adresse : donnée par l'en-tête
@@ -635,6 +636,31 @@ _flush          #api    2,1
                 bne     _flush
 _done           rts
 
+; zp_save / zp_restore : un programme utilise librement la page zéro (SORT
+; écrit $94-$97) ; l'état de NeoDOS qui doit survivre au programme — lecture
+; du batch en cours (bptr, blen), redirection, fonctions du firmware — est
+; mis de côté dans la zone données (vérifiée par les sentinelles au retour)
+zp_save         ldx     #3
+-               lda     bptr,x
+                sta     zpsave,x
+                dex
+                bpl     -
+                lda     redir
+                sta     zpsave+4
+                lda     caps
+                sta     zpsave+5
+                rts
+zp_restore      ldx     #3
+-               lda     zpsave,x
+                sta     bptr,x
+                dex
+                bpl     -
+                lda     zpsave+4
+                sta     redir
+                lda     zpsave+5
+                sta     caps
+                rts
+
 ; load_error : le stub a échoué à charger (A = erreur, NeoDOS intact)
 load_error      jsr     err_api
                 jmp     neodos_back
@@ -643,7 +669,11 @@ load_error      jsr     err_api
 ; échec de chargement : pile réinitialisée, reprise du batch ou invite
 neodos_back     ldx     #$ff
                 txs
+                jsr     zp_restore              ; batch (bptr, blen), redir, caps
                 jsr     kbd_flush               ; touches tapées dans le programme
+                jsr     redir_close             ; try_run ne revient pas : « > » se
+                                                ; ferme ici (batch_next ne passe pas
+                                                ; par mainloop)
                 lda     hdr_errlvl              ; code de retour du programme
                 sta     errorlevel              ; (IF ERRORLEVEL à la ligne suivante)
                 lda     bat_active              ; un batch reprend après le

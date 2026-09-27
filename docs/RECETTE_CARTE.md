@@ -75,6 +75,7 @@ quelques fichiers de test : un `README.TXT` de plusieurs lignes, un
 | 4.10 | **Ctrl+Alt+Suppr** à l'invite | redémarrage à chaud : écran effacé, bannière, AUTOEXEC rejoué |
 | 4.11 | `PAUSE` puis **Ctrl+Alt+Suppr** | redémarrage à chaud (pas de simple levée de la pause) |
 | 4.12 | `FOREVER` (script `@ECHO OFF` / `:TOP` / `GOTO TOP`, à créer avec `EDIT`) puis **Ctrl+Alt+Suppr** | le script en boucle est interrompu, redémarrage à chaud |
+| 4.18 | Créer `R.BAT` (avec `EDIT`) : `SORT README.TXT > TRI.TXT`, puis `ECHO fin`. Lancer `R`, puis `TYPE TRI.TXT` | `fin` s'affiche à l'écran, `TRI.TXT` ne contient que les lignes triées (0.24.0 : `Error 2` après `SORT`, puis `Error 21` pour tout nouveau batch) |
 | 4.17 | Modem USB (Pico W) branché, carte allumée depuis peu : `DATE` puis `TIME` | premier `DATE` : jusqu'à 2 s d'attente, puis date du jour (SNTP via 1,23) ; `TIME` immédiat, heure locale du fuseau (1,24). Sans modem : `1970-01-01 (clock not set)` sans attente |
 | 4.16 | `legacy.neo` : taper `open door` + Entrée dans le jeu, quitter | à l'invite, pas de `open door` / `Bad command or file name` (0.21.0 et avant : la phrase était exécutée) |
 | 4.15 | `COLOR 1F` — `DIR` — `REBOOT` (ou coupure) — après redémarrage : `COLOR` puis Flèche haut | texte blanc brillant sur bleu, `DIR` lisible ; au redémarrage couleurs par défaut (mettre `COLOR 1F` dans `AUTOEXEC.BAT` pour les garder) ; Flèche haut rappelle les commandes d'avant le reboot (`boot/neodos.his`) |

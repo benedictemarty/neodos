@@ -247,6 +247,17 @@ NeoBASIC (qui reste accessible par `EXIT`).
 | S94 Test `45_hist_flush_prog` (SMASH = rechargement complet), références (image embarquée Trinity 0.22.0), docs | fait |
 | S95 Cache du catalogue pour Tab (B16, suite) | à faire |
 
+## Sprint 24 — programmes lancés depuis un batch (2026-09-27) — livré, v0.24.1
+
+Constat venu des tests de Neo6502Zap (UNZAR/ZARC) : la sortie redirigée
+d'un programme lancé depuis un `.BAT` ne se refermait pas.
+
+| Story | État |
+|---|---|
+| S96 `neodos_back` ferme la redirection (`try_run` ne revient pas ; en batch, `batch_next` ne passait pas par `mainloop`) : la ligne suivante n'est plus écrite dans le fichier | fait |
+| S97 `zp_save`/`zp_restore` : `bptr`, `blen`, `redir`, `caps` mis de côté pendant le programme (`SORT` écrit `$94-$97` : `Error 2`, puis `Error 21` à chaque batch suivant) | fait |
+| S98 Test `47_bat_redirect_prog` (fixture `POKER/REDIR.BAT` : `FIND > f`, `SORT > f`, `IF ERRORLEVEL`), références, docs, recette 4.18 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
