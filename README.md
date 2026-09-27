@@ -111,3 +111,7 @@ docs/         AGILE_PLAN, ARCHITECTURE, MANUEL_UTILISATION, TESTS, RECETTE_CARTE
 ## Licence
 
 EUPL v1.2 — © 2026 bmarty <bmarty@mailo.com>.
+
+## Avertissement
+
+⚠️ Avertissement : ce programme est un programme généré par Claude Code sous la supervision d'un être humain : il a été utilisé pour améliorer, développer, rendre compatible ou traduire ce logiciel.
