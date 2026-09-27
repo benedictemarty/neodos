@@ -76,7 +76,13 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    `listbuf` ; le plus long préfixe commun (`cnt`, casse ignorée) est inséré
    par `ins_char` au-delà de ce qui est tapé (`patbuf` − 1) ; pour une
    correspondance unique, `build_path` + `stat_namebuf` (3,16) ajoutent `\`
-   si c'est un répertoire. **F8** : `f8len` = longueur du préfixe (la ligne
+   si c'est un répertoire. `tabdone` (page zéro `$B1`) : posé à la fin d'un
+   Tab, remis à 0 par toute autre touche (et à l'entrée de `readline_ed`) ;
+   un Tab avec `tabdone` à 1 ne relit pas le répertoire — le résultat serait
+   le même, rien ne pouvant changer sur le disque pendant la saisie. Après
+   l'ajout d'un `\`, `tabdone` reste à 0 : le Tab suivant parcourt le
+   répertoire. Une rafale de Tab ne fait donc qu'un parcours (0.25.0, B16 :
+   clavier muet et traits rouges pendant les accès disque, Trinity T-31). **F8** : `f8len` = longueur du préfixe (la ligne
    jusqu'au curseur à la première pression, remise à 0 par toute autre
    touche) ; recherche depuis `hcur` vers les entrées plus anciennes (`idx`)
    d'une commande de même préfixe, puis `_recall`. Les touches de fonction
@@ -142,7 +148,7 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps` |
+| `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `tabdone`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps` |
 | `$B800-$E0AD` | code (≈ 10,4 Ko ; `codeend`) |
 | `$E0AE-$F2F6` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
 | `$F2F7-$FBFF` | libre (≈ 2,3 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |

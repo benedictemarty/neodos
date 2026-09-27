@@ -38,6 +38,8 @@ ces seuls points — régénérer avec `--ref` après avoir relu le diff.
 - `tests/cases/NOM.api` (facultatif) : groupes API à journaliser ; la
   référence contient alors une section `--- api ---` avec les fonctions
   distinctes appelées (vérifie qu'un programme graphique a bien tourné).
+  Avec `count` après le groupe (`3 count`), chaque fonction est suivie de
+  son nombre d'appels (`3,18 x107`) : mesure des accès disque.
 - `tests/expected/NOM.txt` : console attendue (à partir de « NeoDOS version »,
   sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
   des fichiers du stockage après le test.
@@ -102,6 +104,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `38_for_shift` | `FOR` (jokers, littéraux, `%%v`, `IF` dans `DO`, `x` sans `%`, `DO` vide, sans `DO` = erreurs), `SHIFT` (hors script, décalage) |
 | `39_ext_errorlevel` | `IF ERRORLEVEL` après les commandes externes (`FIND` sans/avec correspondance, `ATTRIB` fichier absent, `MORE` sans argument) |
 | `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
+| `48_tab_repeat` | Tab répété (`3 count`) : `echo REA` + 6 Tab, `echo GA` + 3 Tab (`GAMES\` puis contenu), `echo F` Tab `R` Tab Tab — 5 ouvertures de répertoire (3,17) pour 12 Tab ; la 0.24.1 en faisait 12 (276 lectures 3,18 → 111) |
 | `36_completion` | Tab : nom unique, chemin en deux Tab (`\` ajouté après un répertoire), préfixe commun (`F3`), aucune correspondance ; F8 : préfixe `ec`, F8 répété, ligne vide puis Échap |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |
 

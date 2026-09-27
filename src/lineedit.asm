@@ -38,6 +38,7 @@ readline_ed     stz     llen
                 stz     lpos
                 stz     f8len
                 stz     sglen
+                stz     tabdone
                 lda     hcount
                 sta     hcur
 _key            jsr     show_sugg
@@ -48,6 +49,9 @@ _key            jsr     show_sugg
                 cmp     #KEY_F8                 ; toute autre touche termine
                 beq     +                       ; la recherche F8
                 stz     f8len
++               cmp     #CC_TAB                 ; toute autre touche peut changer
+                beq     +                       ; le mot sous le curseur : le
+                stz     tabdone                 ; prochain Tab relira le répertoire
 +               ldx     #0
 -               ldy     keytab,x
                 beq     _print
@@ -190,7 +194,13 @@ _jkey2          jmp     _key
 ; motif ; les entrées du répertoire qui y correspondent sont collectées dans
 ; listbuf, et leur plus long préfixe commun est inséré au-delà de ce qui est
 ; déjà tapé. Aucune correspondance (ou répertoire inexistant) : rien.
-_tab            ldx     lpos                    ; X = début du mot (index de
+; Tab répété sans autre touche entre-temps redonnerait le même résultat : le
+; répertoire n'est pas relu (tabdone), sauf après l'ajout d'un « \ » — le Tab
+; suivant complète alors dans le répertoire. Une rafale de Tab ne fait plus
+; qu'un parcours du disque (clavier muet pendant les accès, Trinity T-31).
+_tab            lda     tabdone
+                bne     _jkey2
+                ldx     lpos                    ; X = début du mot (index de
 -               beq     +                       ; l'espace précédent, 0 = début)
                 lda     linebuf,x
                 cmp     #' '
@@ -215,10 +225,10 @@ _tab            ldx     lpos                    ; X = début du mot (index de
                 lda     #1                      ; fichiers et répertoires
                 sta     flag
                 jsr     collect_open
-                bne     _jkey2
+                bne     _tdone
                 jsr     collect_loop
                 lda     lcount
-                beq     _jkey2
+                beq     _tdone
                 ; cnt = longueur du préfixe commun (sans tenir compte de la casse)
                 jsr     list_first
                 lda     listbuf
@@ -255,18 +265,21 @@ _tins           ldy     patbuf                  ; déjà tapé : patbuf sans « 
                 bra     -
 _tdir           lda     lcount                  ; correspondance unique et
                 cmp     #1                      ; répertoire : « \ » ajouté
-                bne     _jkey3
+                bne     _tdone
                 jsr     list_first              ; ptr2 -> l'entrée
                 jsr     ptr_namebuf
                 jsr     build_path              ; namebuf = dirbuf/nom
                 jsr     stat_namebuf
-                bne     _jkey3
+                bne     _tdone
                 lda     DParams+4
                 and     #ATTR_DIR
-                beq     _jkey3
+                beq     _tdone
                 lda     #'\'
                 jsr     ins_char
-_jkey3          jmp     _key
+_jkey3          jmp     _key                    ; tabdone reste à 0 : Tab suivant = contenu
+_tdone          lda     #1
+                sta     tabdone
+                jmp     _key
 
 keytab          .byte   CR, CC_BACKSPACE, CC_DELETE, CC_LEFT, CC_RIGHT, CC_HOME
                 .byte   CC_END, CC_UP, CC_DOWN, CC_ESC, CC_TAB, KEY_F8, 0

@@ -245,7 +245,7 @@ NeoBASIC (qui reste accessible par `EXIT`).
 |---|---|
 | S93 `histdirty`/`hist_flush` : écriture de l'historique avant un programme, à Ctrl+Alt+Suppr et à `EXIT` (4 écritures → 0 pour 5 commandes) | fait |
 | S94 Test `45_hist_flush_prog` (SMASH = rechargement complet), références (image embarquée Trinity 0.22.0), docs | fait |
-| S95 Cache du catalogue pour Tab (B16, suite) | à faire |
+| S95 Tab répété sans relecture du répertoire (B16, suite ; livré en 0.25.0 — voir sprint 25) | fait |
 
 ## Sprint 24 — programmes lancés depuis un batch (2026-09-27) — livré, v0.24.1
 
@@ -258,6 +258,22 @@ d'un programme lancé depuis un `.BAT` ne se refermait pas.
 | S97 `zp_save`/`zp_restore` : `bptr`, `blen`, `redir`, `caps` mis de côté pendant le programme (`SORT` écrit `$94-$97` : `Error 2`, puis `Error 21` à chaque batch suivant) | fait |
 | S98 Test `47_bat_redirect_prog` (fixture `POKER/REDIR.BAT` : `FIND > f`, `SORT > f`, `IF ERRORLEVEL`), références, docs, recette 4.18 | fait |
 
+## Sprint 25 — B16 : Tab sans rafale d'accès disque (2026-09-27) — livré, v0.25.0
+
+Piste (c) de Trinity T-31 : sur carte, Tab répété rapidement rend le clavier
+muet (rafale d'accès FatFs). Un Tab répété sans autre touche redonne le même
+résultat : il suffit de ne pas relire le répertoire. Retenu à la place d'un
+cache complet du catalogue (tampon dédié ou `listbuf` partagé avec les
+jokers, invalidation) pour 19 octets et aucun tampon ; le cache complet reste
+possible si la carte montre qu'il faut aussi économiser le Tab qui suit une
+frappe.
+
+| Story | État |
+|---|---|
+| S95 `tabdone` (`$B1`) : Tab répété = aucun accès disque, sauf après l'ajout d'un `\` | fait |
+| S99 `run_tests.py` : `NOM.api` accepte `count` (nombre d'appels par fonction) | fait |
+| S100 Test `48_tab_repeat` (5 ouvertures de répertoire pour 12 Tab, contre 12), référence `09_exit` (image embarquée Trinity = 0.24.1), docs, recette 4.19 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -269,7 +285,7 @@ d'un programme lancé depuis un `.BAT` ne se refermait pas.
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
-| B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : **cache du catalogue pour la complétion Tab** (piste (c) de T-31) — reste à faire ; l'écriture d'historique est traitée (0.23.0) | rouverte le 2026-09-22 (demande bmarty) |
+| B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : historique (0.23.0) et Tab répété (0.25.0) traités ; reste, si la carte le demande, un cache complet du catalogue (Tab après frappe, suggestion étendue aux fichiers B14) | à valider sur carte (recette 4.19) |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts
@@ -283,7 +299,7 @@ d'un programme lancé depuis un `.BAT` ne se refermait pas.
   Trinity 0.4.0, **NeoDOS est l'environnement résident embarqué** (1,3 le
   recharge, `EXIT` le relance ; NeoBASIC = `boot/neobasic.bin`) : les tests
   reflètent ce comportement depuis la 0.13.0.
-- **Traits rouges à l'écran sur carte** (signalement bmarty 2026-09-22, pendant la frappe et l'affichage) : défaut d'affichage du firmware (lignes DVI en retard, Trinity T-31, connu depuis Trinity 0.3.0), pas de NeoDOS ; leur nombre augmente avec les accès au stockage, dont l'écriture de `boot/neodos.his` à chaque commande depuis la 0.21.0 (B16, non traité par décision).
+- **Traits rouges à l'écran sur carte** (signalement bmarty 2026-09-22, pendant la frappe et l'affichage) : défaut d'affichage du firmware (lignes DVI en retard, Trinity T-31, connu depuis Trinity 0.3.0), pas de NeoDOS ; leur nombre augmente avec les accès au stockage, dont l'écriture de `boot/neodos.his` à chaque commande depuis la 0.21.0 et les rafales de Tab (B16 : traitées en 0.23.0 et 0.25.0, à confirmer sur carte).
 
 - Résident : ≈ 2,5 Ko de marge depuis la base `$B800` (0.14.0, ADR-004) ;
   les fonctions nouvelles restent des commandes externes (ADR-003), la marge

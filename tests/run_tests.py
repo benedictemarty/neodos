@@ -95,13 +95,17 @@ def run_case(name, ref):
         cmd = [PHOS, NEO, "--storage", tmp, "--cycles", str(cycles),
                "--type-keys", "%d:%s" % (START_CYCLES, keys),
                "--screenshot-text", out]
-        # NOM.api : groupes API à journaliser (ex. « 5 ») ; la référence reçoit
+        # NOM.api : groupes API à journaliser (ex. « 5 », « 3 count » pour compter
+        # les appels de chaque fonction) ; la référence reçoit
         # la liste des fonctions distinctes appelées (programme graphique lancé…)
         api_path = os.path.join(CASES, name + ".api")
         api_log = None
+        count_calls = False
         if os.path.exists(api_path):
             api_log = os.path.join(tmp, "api.log")
-            groups = open(api_path).read().strip()
+            groups = open(api_path).read().split()
+            count_calls = "count" in groups[1:]  # « 3 count » : compter les appels
+            groups = groups[0]
             cmd += ["--api-log", "%s:%s" % (api_log, groups)]
         r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
                            timeout=600, text=True)
@@ -113,8 +117,12 @@ def run_case(name, ref):
         api = None
         if api_log:
             import re as _re
-            calls = set(_re.findall(r"grp=(\d+) fn=(\d+)", open(api_log).read()))
-            api = sorted("%s,%s" % c for c in calls)
+            found = _re.findall(r"grp=(\d+) fn=(\d+)", open(api_log).read())
+            if count_calls:                     # « 3 count » : nombre d'appels
+                api = sorted("%s,%s x%d" % (c[0], c[1], found.count(c))
+                             for c in set(found))
+            else:
+                api = sorted("%s,%s" % c for c in set(found))
             os.remove(api_log)
         files = list_files(tmp)
     finally:
