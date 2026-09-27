@@ -274,6 +274,20 @@ frappe.
 | S99 `run_tests.py` : `NOM.api` accepte `count` (nombre d'appels par fonction) | fait |
 | S100 Test `48_tab_repeat` (5 ouvertures de répertoire pour 12 Tab, contre 12), référence `09_exit` (image embarquée Trinity = 0.24.1), docs, recette 4.19 | fait |
 
+## Sprint 26 — Toolbox Reset au retour des programmes (2026-09-28) — livré, v0.26.0
+
+Demande de Trinity (T-88, décision bmarty) : la toolbox du firmware n'était
+remise à zéro qu'au démarrage de la carte. Sur carte, après `legdiag` (menu
+créé par 35,1, jamais supprimé), NeoLegacy héritait d'un menu orphelin dont
+le descripteur pointait dans ses propres données : titre en charabia, File
+sans options (diagnostic SWD côté Trinity).
+
+| Story | État |
+|---|---|
+| S101 32,19 Toolbox Reset dans `neodos_back` (retour au clavier et en batch) et dans `start` (NeoDOS rechargé après avoir été écrasé) | fait |
+| S102 Fixtures `TBWIN`/`TBWINX`/`TBFRONT` (`examples/tbwin.asm`, `tbfront.asm`, `make fixtures`), `POKER/TB.BAT`, test `49_toolbox_reset` (contre-épreuve sans 32,19 : fenêtres 1, 2, 3) | fait |
+| S103 Phosphoneo recompilé contre Trinity 0.16.49 ; `09_exit` : image embarquée = 0.25.0 ; docs, recette 4.20 | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

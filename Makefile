@@ -69,13 +69,25 @@ storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.
 	python3 tools/mkneo.py $(BUILD)/$*.bin $@ 0800 0800 "$*"
 
 # Fixtures de test binaires (non livrées) : BIG.NEO se charge par-dessus NeoDOS
-fixtures: tests/fixtures/BIG.NEO tests/fixtures/WAITKEY.NEO
+fixtures: tests/fixtures/BIG.NEO tests/fixtures/WAITKEY.NEO \
+          tests/fixtures/POKER/TBWIN.NEO tests/fixtures/POKER/TBWINX.NEO tests/fixtures/POKER/TBFRONT.NEO
 tests/fixtures/BIG.NEO: examples/big.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/big.bin examples/big.asm
 	python3 tools/mkneo.py $(BUILD)/big.bin $@ B000 B000 "Big"
 tests/fixtures/WAITKEY.NEO: examples/waitkey.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/waitkey.bin examples/waitkey.asm
 	python3 tools/mkneo.py $(BUILD)/waitkey.bin $@ 0800 0800 "WaitKey"
+
+# Toolbox Reset (Trinity T-88) : fenêtre laissée ouverte, relue au programme suivant
+tests/fixtures/POKER/TBWIN.NEO: examples/tbwin.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/tbwin.bin examples/tbwin.asm
+	python3 tools/mkneo.py $(BUILD)/tbwin.bin $@ 0800 0800 "TbWin"
+tests/fixtures/POKER/TBWINX.NEO: examples/tbwin.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -D SMASH=1 -o $(BUILD)/tbwinx.bin examples/tbwin.asm
+	python3 tools/mkneo.py $(BUILD)/tbwinx.bin $@ 0800 0800 "TbWinX"
+tests/fixtures/POKER/TBFRONT.NEO: examples/tbfront.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/tbfront.bin examples/tbfront.asm
+	python3 tools/mkneo.py $(BUILD)/tbfront.bin $@ 0800 0800 "TbFront"
 
 storage/%.BAT: examples/%.BAT
 	cp $< $@

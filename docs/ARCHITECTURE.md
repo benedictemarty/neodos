@@ -115,7 +115,11 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    répertoire (3,19), `zp_save` (page zéro à préserver : `bptr`, `blen`,
    `redir`, `caps` → `zpsave`), Load File (3,2) — le firmware dépose
    `JMP exec` en `$FF08` — puis `JSR $FF08`.
-   Au retour (`neodos_back`) : pile réinitialisée, `zp_restore`, fermeture
+   Au retour (`neodos_back`) : pile réinitialisée, `zp_restore`, **32,19
+   Toolbox Reset** (Trinity T-88, ≥ 0.16.49 : fenêtres, menus, contrôles,
+   dialogues, événements remis à l'état du démarrage, rien n'est dessiné ;
+   ignorée par un firmware plus ancien — aussi appelée par `start`, pour le
+   cas où NeoDOS est rechargé après avoir été écrasé), fermeture
    de la redirection (`try_run` ne revenant pas, la fin de `execute_line`
    n'est pas atteinte), reprise du batch en cours ou invite.
 

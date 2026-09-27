@@ -41,6 +41,8 @@ start           cld
                 sta     DParams
                 #api    3,5
                 #api    3,19
+                #api    32,19                   ; Toolbox Reset (Trinity T-88) : rechargé
+                                                ; après un programme qui a écrasé NeoDOS
                 jsr     hist_load               ; historique de la session
                 jsr     newline                 ; précédente (/boot/neodos.his)
                 #println "NeoDOS version " .. VERSION
@@ -670,6 +672,9 @@ load_error      jsr     err_api
 neodos_back     ldx     #$ff
                 txs
                 jsr     zp_restore              ; batch (bptr, blen), redir, caps
+                #api    32,19                   ; Toolbox Reset (Trinity T-88) : ni menu, ni
+                                                ; fenêtre, ni dialogue laissés au suivant
+                                                ; (sans effet sur un firmware qui l'ignore)
                 jsr     kbd_flush               ; touches tapées dans le programme
                 jsr     redir_close             ; try_run ne revient pas : « > » se
                                                 ; ferme ici (batch_next ne passe pas

@@ -14,7 +14,8 @@ python3 tests/run_tests.py --ref     # régénère les références (à relire !
 ```
 
 Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
-`~/Phosphoneo/build/phosphoneo`), version avec les touches d'édition du
+`~/Phosphoneo/build/phosphoneo`, compilé contre Trinity **≥ 0.16.49** depuis
+NeoDOS 0.26.0 : `49_toolbox_reset` a besoin de 32,19), version avec les touches d'édition du
 typer (commit `ef145e3` de Phosphoneo, 2026-09-19 : `\z` = Ctrl+Alt+Suppr).
 Depuis le 2026-09-20 (commit `02da22d`), Phosphoneo est compilé contre la
 branche `trinity` du firmware : les références suivent **Trinity**. Au
@@ -104,6 +105,7 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `38_for_shift` | `FOR` (jokers, littéraux, `%%v`, `IF` dans `DO`, `x` sans `%`, `DO` vide, sans `DO` = erreurs), `SHIFT` (hors script, décalage) |
 | `39_ext_errorlevel` | `IF ERRORLEVEL` après les commandes externes (`FIND` sans/avec correspondance, `ATTRIB` fichier absent, `MORE` sans argument) |
 | `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
+| `49_toolbox_reset` | Toolbox Reset au retour d'un programme (Trinity T-88) : `TBWIN` ouvre une fenêtre (34,1) et rend la main, `TBFRONT` lit la fenêtre au premier plan (34,10) → `0` ; idem depuis `TB.BAT`, et après `TBWINX` qui écrase aussi NeoDOS (rechargement, `start`). Sans 32,19 : 1, 2, 3 |
 | `48_tab_repeat` | Tab répété (`3 count`) : `echo REA` + 6 Tab, `echo GA` + 3 Tab (`GAMES\` puis contenu), `echo F` Tab `R` Tab Tab — 5 ouvertures de répertoire (3,17) pour 12 Tab ; la 0.24.1 en faisait 12 (276 lectures 3,18 → 111) |
 | `36_completion` | Tab : nom unique, chemin en deux Tab (`\` ajouté après un répertoire), préfixe commun (`F3`), aucune correspondance ; F8 : préfixe `ec`, F8 répété, ligne vide puis Échap |
 | `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite |

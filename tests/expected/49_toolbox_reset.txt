@@ -1,4 +1,21 @@
-
+NeoDOS version 0.26.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>cd POKER
+A:\POKER>tbwin
+A:\POKER>tbfront
+Front window 0
+A:\POKER>tb
+A:\POKER>tbwin
+A:\POKER>tbfront
+Front window 0
+A:\POKER>tbwinx
+NeoDOS version 0.26.0
+(C) 2026 bmarty - Neo6502 disk operating system
+A:\POKER>tbfront
+Front window 0
+A:\POKER>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -83,10 +100,3 @@ SMASH.NEO
 SUB.BAT
 SUB2.BAT
 WAITKEY.NEO
---- api ---
-5,1
-5,3
-5,6
-5,64
-5,65
-5,66

@@ -112,6 +112,11 @@ Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
 est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
 lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
 
+Au retour, NeoDOS remet la toolbox du firmware à zéro (Trinity ≥ 0.16.49) :
+fenêtres, menus et dialogues qu'un programme aurait laissés ouverts ne sont
+pas hérités par le suivant (sinon, par exemple, un menu laissé par un
+programme apparaissait en charabia dans la barre de menus de NeoLegacy).
+
 Un programme peut écrire entre `$B800` et `$FBFF` (zone NeoDOS — les
 programmes llvm-mos y placent leur pile C en `$F600`) à condition de rendre
 la main par `RTS` : NeoDOS détecte qu'il a été écrasé et se recharge depuis
