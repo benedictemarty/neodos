@@ -105,6 +105,8 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `38_for_shift` | `FOR` (jokers, littéraux, `%%v`, `IF` dans `DO`, `x` sans `%`, `DO` vide, sans `DO` = erreurs), `SHIFT` (hors script, décalage) |
 | `39_ext_errorlevel` | `IF ERRORLEVEL` après les commandes externes (`FIND` sans/avec correspondance, `ATTRIB` fichier absent, `MORE` sans argument) |
 | `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
+| `51_edit_find_clip` | `EDIT` : `F` `APPLE` (casse ignorée) puis `X`, `N` puis `Y`, `K` (couper), 3×Haut, `P`, `C`, 3×Bas, `P`, `F` texte absent (`Not found`), `X` ; fichier vérifié par `TYPE` |
+| `51b_edit_hscroll` | `EDIT` : ligne de 60 caractères, éditeur laissé ouvert : l'affichage commence au 10ᵉ caractère |
 | `50_copy_concat` | `COPY a+b c` (via `BIN/CONCAT.NEO`), ajout à la première source (taille 91 = 50 + 41) sous redirection `> LOG.TXT`, destination = seconde source refusée, source absente (rien de créé), chemin `GAMES\A.TXT` ; `IF ERRORLEVEL` |
 | `49_toolbox_reset` | Toolbox Reset au retour d'un programme (Trinity T-88) : `TBWIN` ouvre une fenêtre (34,1) et rend la main, `TBFRONT` lit la fenêtre au premier plan (34,10) → `0` ; idem depuis `TB.BAT`, et après `TBWINX` qui écrase aussi NeoDOS (rechargement, `start`). Sans 32,19 : 1, 2, 3 |
 | `48_tab_repeat` | Tab répété (`3 count`) : `echo REA` + 6 Tab, `echo GA` + 3 Tab (`GAMES\` puis contenu), `echo F` Tab `R` Tab Tab — 5 ouvertures de répertoire (3,17) pour 12 Tab ; la 0.24.1 en faisait 12 (276 lectures 3,18 → 111) |

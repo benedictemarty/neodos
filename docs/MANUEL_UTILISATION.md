@@ -284,11 +284,24 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 Flèches, Début/Fin, PgUp/PgDn pour se déplacer ; les caractères tapés
 s'insèrent ; Retour arrière et Suppr effacent (en début/fin de ligne, la
 ligne est fusionnée avec la précédente/suivante) ; Entrée coupe la ligne.
-**Échap** ouvre le menu : `S` sauver, `X` sauver et quitter, `Q` quitter sans
-sauver, Échap revenir. La ligne d'état montre le nom (`*` si modifié), la
-ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko, lignes affichées sur 52
-colonnes (le reste est conservé mais invisible), pas de recherche ni de
-sélection.
+**Échap** ouvre le menu (`S)ave eX)it Q)uit F)ind N)ext K)cut C)opy P)aste`) :
+
+| Touche | Action |
+|---|---|
+| `S` / `X` / `Q` | sauver / sauver et quitter / quitter sans sauver |
+| `F` | chercher : taper le texte puis Entrée (casse ignorée, vers l'avant, reprise au début du fichier ; Entrée sur une saisie vide reprend le texte précédent ; `Not found` sinon) |
+| `N` | occurrence suivante |
+| `K` | couper la ligne du curseur ; plusieurs `K` à la suite s'accumulent dans le presse-papier |
+| `C` | copier la ligne du curseur |
+| `P` | coller le presse-papier avant la ligne du curseur (autant de fois que voulu) |
+| Échap | revenir au texte |
+
+Les lignes plus longues que l'écran défilent horizontalement : la colonne du
+curseur reste toujours visible. La ligne d'état montre le nom (`*` si
+modifié), la ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko de texte,
+presse-papier de 2 Ko (lignes entières : pas de sélection au caractère près).
+Pas de raccourcis Ctrl : sur le Neo6502 leurs codes sont ceux des touches de
+déplacement (Ctrl+F = PgDn).
 
 La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |

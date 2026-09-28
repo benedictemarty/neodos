@@ -315,13 +315,26 @@ Demande bmarty : « améliorer l'empreinte mémoire ». Zone du résident fixe
 | S110 ARCHITECTURE (table mémoire à jour, section réduction), 53/53 | fait |
 | S111 `HELP` en commande externe `BIN/HELP.NEO` (−877 octets, marge 1 930) — décision bmarty 2026-09-28, livré en 0.28.0 | fait |
 
+## Sprint 29 — B10 : EDIT, recherche et presse-papier (2026-09-28) — livré, v0.29.0
+
+Tout se passe dans la commande externe `EDIT.NEO` (1 912 → 2 696 octets) :
+aucun octet de plus dans le résident. Menu Échap, pas de raccourcis Ctrl
+(leurs codes sont ceux des touches de déplacement).
+
+| Story | État |
+|---|---|
+| S112 `F` chercher (casse ignorée, reprise au début, saisie vide = précédente), `N` suivante | fait |
+| S113 `K` couper (cumul), `C` copier, `P` coller des lignes entières — presse-papier 2 Ko en `$1800`, garde `.cerror` si le code l'atteint | fait |
+| S114 Défilement horizontal des lignes longues (`hleft`) ; colonne saturée à 255 | fait |
+| S115 Tests `51_edit_find_clip`, `51b_edit_hscroll` ; `09_exit` = 0.27.0 (Trinity 0.16.52) ; manuel | fait |
+| S116 Sélection au caractère près | non fait : les lignes entières couvrent l'usage courant ; à rouvrir sur demande |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
-| B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B15 | `%ERRORLEVEL%` comme variable dans les lignes (au-delà de `IF ERRORLEVEL`) ; `CHOICE` | scripts |
 | B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |

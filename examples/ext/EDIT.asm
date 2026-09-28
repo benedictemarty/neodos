@@ -3,7 +3,14 @@
 ; Texte en mémoire ($2000-$B5FF, lignes terminées par CR ; CR/LF converti au
 ; chargement, réécrit à la sauvegarde). Touches : flèches, Début/Fin,
 ; PgUp/PgDn, caractères (insertion), Retour arrière, Suppr, Entrée,
-; Échap = menu (S sauver, X sauver et quitter, Q quitter sans sauver).
+; Échap = menu : S sauver, X sauver et quitter, Q quitter sans sauver,
+; F chercher (casse ignorée, vers l'avant, reprise au début ; Entrée sur une
+; saisie vide = texte précédent), N occurrence suivante, K couper la ligne,
+; C copier la ligne, P coller avant la ligne du curseur (presse-papier de
+; 2 Ko en $1800 : une ou plusieurs lignes, K successifs s'accumulent).
+; Les lignes plus longues que l'écran défilent horizontalement (colonne du
+; curseur toujours visible). Pas de raccourcis Ctrl : leurs codes sont ceux
+; des touches de déplacement (Ctrl+F = 6 = PgDn).
 ;   make examples  ->  storage/BIN/EDIT.NEO
 ptr             = $80
 sptr            = $82
@@ -19,6 +26,11 @@ dirty           = $92
 key             = $93
 ptr2            = $94
 wantcol         = $96           ; colonne souhaitée (déplacements verticaux)
+hleft           = $97           ; défilement horizontal : colonnes masquées à gauche
+skip            = $98           ; affichage : caractères encore à masquer sur la ligne
+lastk           = $99           ; dernière commande du menu (K successifs : cumul)
+CLIP            = $1800         ; presse-papier (lignes, CR compris)
+CLIP_MAX        = $0800
 TEXT            = $2000
 TEXT_END        = $B600         ; limite (les CR/LF de sauvegarde ont besoin de marge)
 ROWS            = 28
@@ -275,12 +287,20 @@ draw_all        jsr     find_lstart
                 sta     ptr
                 lda     top+1
                 sta     ptr+1
-                lda     #1
+                stz     hleft                   ; colonnes masquées : la colonne
+                lda     col                     ; du curseur reste visible
+                cmp     #COLS-1
+                bcc     +
+                sbc     #COLS-2
+                sta     hleft
++               lda     #1
                 sta     tmp                     ; rangée
 _row            ldx     #0
                 ldy     tmp
                 jsr     set_cursor
                 stz     tmp+1                   ; colonne
+                lda     hleft
+                sta     skip
 _ch             lda     ptr
                 cmp     tend
                 lda     ptr+1
@@ -289,7 +309,11 @@ _ch             lda     ptr
                 lda     (ptr)
                 cmp     #CR
                 beq     _eolcr
-                ldx     tmp+1
+                ldx     skip                    ; partie masquée à gauche
+                beq     +
+                dec     skip
+                bra     _skipc
++               ldx     tmp+1
                 cpx     #COLS-1
                 bcs     _skipc                  ; ligne trop longue : coupée
                 jsr     putc
@@ -313,8 +337,10 @@ _eol            jsr     pad_line
                 #print  "Esc=menu  Ln "
                 jsr     cur_line_no
                 jsr     pad_line
-                ; curseur : rangée row+1, colonne col
+                ; curseur : rangée row+1, colonne col - hleft
                 lda     col
+                sec
+                sbc     hleft
                 cmp     #COLS-1
                 bcc     +
                 lda     #COLS-1
@@ -396,6 +422,8 @@ _loop           lda     lstart                  ; == TEXT ?
                 inc     lstart+1
                 bra     _done
 +               inc     col
+                bne     _loop
+                dec     col                     ; saturée à 255
                 bra     _loop
 _done           rts
 
@@ -716,16 +744,28 @@ _r              rts
 menu            ldx     #0
                 ldy     #ROWS+1
                 jsr     set_cursor
-                #print  "S=save  X=save+exit  Q=quit (no save)  Esc=back"
+                #print  "S)ave eX)it Q)uit F)ind N)ext K)cut C)opy P)aste"
                 jsr     pad_line
 _key            jsr     getkey
                 and     #$DF
+                ldx     lastk                   ; K précédent ?
+                sta     lastk
                 cmp     #'S'
                 beq     _save
                 cmp     #'X'
                 beq     _savex
                 cmp     #'Q'
                 beq     _quit
+                cmp     #'F'
+                beq     _find
+                cmp     #'N'
+                beq     _next
+                cmp     #'K'
+                beq     _cut
+                cmp     #'C'
+                beq     _copy
+                cmp     #'P'
+                beq     _paste
                 cmp     #(CC_ESC & $DF)
                 beq     _back
                 cmp     #CC_ESC
@@ -738,7 +778,351 @@ _savex          jsr     save_file
                 bcs     _back
 _quit           sec
                 rts
+_find           jsr     find_prompt
+                bra     _back
+_next           jsr     find_next
+                bra     _back
+_cut            cpx     #'K'                    ; K après K : cumul
+                beq     +
+                stz     clen
+                stz     clen+1
++               jsr     clip_line
+                bcs     _back
+                jsr     del_line
+                bra     _back
+_copy           stz     clen
+                stz     clen+1
+                jsr     clip_line
+                bra     _back
+_paste          jsr     paste_clip
 _back           clc
+                rts
+
+; ---------------------------------------------------------------------------
+; Recherche
+; ---------------------------------------------------------------------------
+; find_prompt : « Find: » sur la ligne d'aide ; Entrée : cherche (saisie vide
+; = texte précédent) ; Échap : abandon
+find_prompt     ldx     #0
+                ldy     #ROWS+1
+                jsr     set_cursor
+                #print  "Find: "
+                jsr     pad_line
+                ldx     #6
+                ldy     #ROWS+1
+                jsr     set_cursor
+                stz     tbuf
+_k              jsr     getkey
+                cmp     #CR
+                beq     _enter
+                cmp     #CC_ESC
+                beq     _r
+                cmp     #CC_BS
+                bne     _chr
+                lda     tbuf
+                beq     _k
+                dec     tbuf
+                lda     #CC_BS
+                jsr     putc
+                bra     _k
+_chr            cmp     #' '
+                bcc     _k
+                cmp     #127
+                bcs     _k
+                ldx     tbuf
+                cpx     #FIND_MAX
+                bcs     _k
+                inx
+                sta     tbuf,x
+                stx     tbuf
+                jsr     putc
+                bra     _k
+_enter          ldx     tbuf                    ; vide : texte précédent
+                beq     find_next
+-               lda     tbuf,x
+                sta     fbuf,x
+                dex
+                bpl     -
+                bra     find_next
+_r              rts
+
+; find_next : prochaine occurrence de fbuf après le curseur (reprise au
+; début du texte) ; « Not found » sinon
+find_next       lda     fbuf
+                beq     _r
+                lda     cur                     ; départ : cur + 1
+                sta     ptr
+                lda     cur+1
+                sta     ptr+1
+                stz     tmp                     ; tmp = 1 : reprise faite
+_adv            inc     ptr
+                bne     _test
+                inc     ptr+1
+_test           lda     tmp                     ; après la reprise : jusqu'à cur
+                beq     _fits
+                lda     cur
+                cmp     ptr
+                lda     cur+1
+                sbc     ptr+1
+                bcc     _nf                     ; ptr > cur : tout vu
+_fits           lda     ptr                     ; ptr + longueur <= tend ?
+                clc
+                adc     fbuf
+                sta     ptr2
+                lda     ptr+1
+                adc     #0
+                sta     ptr2+1
+                lda     tend
+                cmp     ptr2
+                lda     tend+1
+                sbc     ptr2+1
+                bcs     _cmp
+                lda     tmp                     ; fin du texte : reprise
+                bne     _nf
+                inc     tmp
+                lda     #<TEXT
+                sta     ptr
+                lda     #>TEXT
+                sta     ptr+1
+                bra     _test
+_cmp            ldy     #0
+-               lda     (ptr),y
+                jsr     upper
+                sta     key
+                lda     fbuf+1,y
+                jsr     upper
+                cmp     key
+                bne     _adv
+                iny
+                cpy     fbuf
+                bne     -
+                lda     ptr                     ; trouvé
+                sta     cur
+                lda     ptr+1
+                sta     cur+1
+                jsr     find_lstart
+                lda     col
+                sta     wantcol
+_r              rts
+_nf             ldx     #0
+                ldy     #ROWS+1
+                jsr     set_cursor
+                #print  "Not found - press a key"
+                jsr     pad_line
+                jmp     getkey
+
+upper           cmp     #'a'
+                bcc     +
+                cmp     #'z'+1
+                bcs     +
+                and     #$DF
++               rts
+
+; ---------------------------------------------------------------------------
+; Presse-papier (lignes entières)
+; ---------------------------------------------------------------------------
+; line_span : lstart = début de la ligne du curseur, ptr2 = fin (après le CR,
+; ou tend), mcount = longueur ; curseur ramené en début de ligne
+line_span       jsr     find_lstart
+                jsr     goto_eol
+                lda     cur                     ; après le CR s'il y en a un
+                cmp     tend
+                lda     cur+1
+                sbc     tend+1
+                bcs     +
+                jsr     cur_inc
++               lda     cur
+                sta     ptr2
+                sec
+                sbc     lstart
+                sta     mcount
+                lda     cur+1
+                sta     ptr2+1
+                sbc     lstart+1
+                sta     mcount+1
+                lda     lstart
+                sta     cur
+                lda     lstart+1
+                sta     cur+1
+                rts
+
+; clip_line : ajoute la ligne du curseur au presse-papier (CR final ajouté
+; si la ligne n'en a pas) ; C=1 si elle ne tient pas
+clip_line       jsr     line_span
+                lda     clen                    ; clen + mcount + 1 <= CLIP_MAX ?
+                sec
+                adc     mcount
+                sta     tmp
+                lda     clen+1
+                adc     mcount+1
+                cmp     #>CLIP_MAX
+                bcc     _fits
+                bne     _full
+                lda     tmp
+                beq     _fits                   ; = CLIP_MAX tout juste
+_full           ldx     #0
+                ldy     #ROWS+1
+                jsr     set_cursor
+                #print  "Line too long - press a key"
+                jsr     pad_line
+                jsr     getkey
+                sec
+                rts
+_fits           lda     clen                    ; ptr = CLIP + clen
+                clc
+                adc     #<CLIP
+                sta     ptr
+                lda     clen+1
+                adc     #>CLIP
+                sta     ptr+1
+                lda     lstart                  ; sptr = source
+                sta     sptr
+                lda     lstart+1
+                sta     sptr+1
+                lda     #CR                     ; dernier octet copié
+                sta     key
+                lda     mcount
+                ora     mcount+1
+                beq     _cr
+_copy           lda     (sptr)
+                sta     key
+                sta     (ptr)
+                jsr     inc_both
+                lda     sptr                    ; jusqu'à ptr2
+                cmp     ptr2
+                bne     _copy
+                lda     sptr+1
+                cmp     ptr2+1
+                bne     _copy
+_cr             lda     key                     ; pas de CR final : en ajouter un
+                cmp     #CR
+                beq     _len
+                lda     #CR
+                sta     (ptr)
+                inc     ptr
+                bne     _len
+                inc     ptr+1
+_len            lda     ptr                     ; clen = ptr - CLIP
+                sec
+                sbc     #<CLIP
+                sta     clen
+                lda     ptr+1
+                sbc     #>CLIP
+                sta     clen+1
+                clc
+                rts
+
+; inc_both : sptr++, ptr++
+inc_both        inc     sptr
+                bne     +
+                inc     sptr+1
++               inc     ptr
+                bne     +
+                inc     ptr+1
++               rts
+
+; del_line : retire [lstart, ptr2) du texte (line_span déjà fait)
+del_line        lda     lstart                  ; ptr = destination, sptr = source
+                sta     ptr
+                lda     lstart+1
+                sta     ptr+1
+                lda     ptr2
+                sta     sptr
+                lda     ptr2+1
+                sta     sptr+1
+_mv             lda     sptr                    ; sptr < tend : recopie
+                cmp     tend
+                lda     sptr+1
+                sbc     tend+1
+                bcs     _end
+                lda     (sptr)
+                sta     (ptr)
+                jsr     inc_both
+                bra     _mv
+_end            lda     ptr                     ; nouvelle fin
+                sta     tend
+                lda     ptr+1
+                sta     tend+1
+                jmp     edited
+
+; paste_clip : insère le presse-papier au début de la ligne du curseur
+paste_clip      lda     clen
+                ora     clen+1
+                beq     _r
+                lda     tend                    ; tend + clen <= TEXT_END ?
+                clc
+                adc     clen
+                sta     ptr2
+                lda     tend+1
+                adc     clen+1
+                sta     ptr2+1
+                lda     ptr2
+                cmp     #<TEXT_END
+                lda     ptr2+1
+                sbc     #>TEXT_END
+                bcc     +
+_r              rts
++               jsr     find_lstart
+                lda     tend                    ; recopie à reculons :
+                sta     sptr                    ; [lstart, tend) -> +clen
+                lda     tend+1
+                sta     sptr+1
+_back           lda     sptr                    ; sptr == lstart : fini
+                cmp     lstart
+                bne     +
+                lda     sptr+1
+                cmp     lstart+1
+                beq     _copy
++               lda     sptr
+                bne     +
+                dec     sptr+1
++               dec     sptr
+                lda     ptr2
+                bne     +
+                dec     ptr2+1
++               dec     ptr2
+                lda     (sptr)
+                sta     (ptr2)
+                bra     _back
+_copy           lda     tend                    ; tend += clen
+                clc
+                adc     clen
+                sta     tend
+                lda     tend+1
+                adc     clen+1
+                sta     tend+1
+                lda     lstart                  ; CLIP -> lstart
+                sta     ptr
+                lda     lstart+1
+                sta     ptr+1
+                lda     #<CLIP
+                sta     sptr
+                lda     #>CLIP
+                sta     sptr+1
+                lda     clen                    ; ptr2 = fin du presse-papier
+                clc
+                adc     #<CLIP
+                sta     ptr2
+                lda     clen+1
+                adc     #>CLIP
+                sta     ptr2+1
+-               lda     (sptr)
+                sta     (ptr)
+                jsr     inc_both
+                lda     sptr
+                cmp     ptr2
+                bne     -
+                lda     sptr+1
+                cmp     ptr2+1
+                bne     -
+                lda     ptr                     ; curseur après le collage
+                sta     cur
+                lda     ptr+1
+                sta     cur+1
+edited          lda     #1
+                sta     dirty
+                jsr     find_lstart
+                stz     wantcol
                 rts
 
 ; print16 : A (bas) Y (haut) en décimal
@@ -788,3 +1172,9 @@ cnt16           .fill   2
 size16          .fill   2
 argbuf          .fill   122
 filebuf         .fill   122
+FIND_MAX        = 40
+tbuf            .fill   FIND_MAX+1              ; saisie de « Find: »
+fbuf            .fill   FIND_MAX+1              ; texte cherché
+clen            .fill   2                       ; octets dans le presse-papier
+mcount          .fill   2
+                .cerror * > CLIP, "EDIT : le code déborde sur le presse-papier"

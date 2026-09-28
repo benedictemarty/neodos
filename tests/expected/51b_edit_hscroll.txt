@@ -1,14 +1,6 @@
-NeoDOS version 0.29.0
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>echo README.TXT
-README.TXT
-A:\>echo GAMES\
-GAMES\
-A:\>echo FRUITS.TXT
-FRUITS.TXT
-A:\>
+EDIT LONG.NEW*
+901234567890123456789012345678901234567890123456789
+Esc=menu  Ln 1
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -95,12 +87,3 @@ SMASH.NEO
 SUB.BAT
 SUB2.BAT
 WAITKEY.NEO
---- api ---
-3,16 x6
-3,17 x5
-3,18 x107
-3,19 x6
-3,2 x1
-3,23 x4
-3,26 x5
-3,5 x1

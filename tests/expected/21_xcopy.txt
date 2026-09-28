@@ -17,7 +17,7 @@ MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
 REBOOT.NEO   CONCAT.NEO   ARGS.NEO     FIND.NEO
 SORT.NEO     DELTREE.NEO  HELP.NEO     COLOR.NEO
 TREE.NEO     HI.NEO       TOOL.BAT
-       15 file(s)      11877 bytes
+       15 file(s)      12679 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
