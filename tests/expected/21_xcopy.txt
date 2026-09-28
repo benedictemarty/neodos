@@ -15,9 +15,9 @@ A:\>dir BIN /w
  Directory of A:\BIN
 MORE.NEO     EDIT.NEO     XCOPY.NEO    ATTRIB.NEO
 REBOOT.NEO   CONCAT.NEO   ARGS.NEO     FIND.NEO
-SORT.NEO     DELTREE.NEO  COLOR.NEO    TREE.NEO
-HI.NEO       TOOL.BAT
-       14 file(s)      10728 bytes
+SORT.NEO     DELTREE.NEO  HELP.NEO     COLOR.NEO
+TREE.NEO     HI.NEO       TOOL.BAT
+       15 file(s)      11877 bytes
         0 dir(s)
 A:\>xcopy NOPE X
 Invalid source directory
@@ -36,6 +36,7 @@ BIN/CONCAT.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO
+BIN/HELP.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
 BIN/REBOOT.NEO

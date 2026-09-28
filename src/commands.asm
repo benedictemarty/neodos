@@ -65,8 +65,6 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_prompt
                 .ptext  "MODE"
                 .word   cmd_mode
-                .ptext  "HELP"
-                .word   cmd_help
                 .ptext  "EXIT"
                 .word   cmd_exit
                 .ptext  "BASIC"
@@ -1396,28 +1394,6 @@ _bad            jsr     errlvl1
                 #println "Invalid video mode"
                 rts
 
-cmd_help        jsr     newline
-                jsr     puts                    ; un seul bloc : 3 + 1 octets par ligne gagnés
-                .text   "DIR [path] [/P /W] List directory (wildcards)", CR
-                .text   "CD [path]         Change/show directory", CR
-                .text   "MD RD path        Make/remove directory", CR
-                .text   "DEL file|*.*      Delete files", CR
-                .text   "REN old new       Rename files (REN *.TXT *.BAK)", CR
-                .text   "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)", CR
-                .text   "TYPE file         Display a text file", CR
-                .text   "X:                Change drive", CR
-                .text   "CLS VER VOL MEM   Screen, versions, volume, memory", CR
-                .text   "PATH PROMPT MODE  Path, prompt ($p$g), video mode", CR
-                .text   "cmd > file        Redirect output (>> appends)", CR
-                .text   "DATE TIME         Show/set date and time", CR
-                .text   "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)", CR
-                .text   "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label", CR
-                .text   "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT", CR
-                .text   "EXIT              Reload the resident environment", CR
-                .text   "name[.NEO]        Run a program (here, then PATH)", CR
-                .text   "BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND", CR
-                .text   "                  MORE REBOOT SORT TREE XCOPY", CR, 0
-                jmp     newline
 
 ; ---------------------------------------------------------------------------
 ; EXIT : relance l'environnement résident du firmware (1,3), depuis le stub

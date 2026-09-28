@@ -1,4 +1,4 @@
-NeoDOS version 0.27.1
+NeoDOS version 0.28.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -11,7 +11,7 @@ A:\POKER>tbwin
 A:\POKER>tbfront
 Front window 0
 A:\POKER>tbwinx
-NeoDOS version 0.27.1
+NeoDOS version 0.28.0
 (C) 2026 bmarty - Neo6502 disk operating system
 A:\POKER>tbfront
 Front window 0
@@ -28,6 +28,7 @@ BIN/CONCAT.NEO
 BIN/DELTREE.NEO
 BIN/EDIT.NEO
 BIN/FIND.NEO
+BIN/HELP.NEO
 BIN/HI.NEO
 BIN/MORE.NEO
 BIN/REBOOT.NEO

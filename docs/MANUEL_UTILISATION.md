@@ -266,6 +266,8 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 
 | Commande | Rôle |
 |---|---|
+| `HELP` | liste des commandes (externe depuis la 0.28.0 : sans `PATH \BIN`, `Bad command or file name`) |
+| `CONCAT` | concaténation, appelée par `COPY a+b dest` (voir `COPY`) |
 | `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
 | `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
 | `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |
@@ -306,7 +308,6 @@ La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `TIME [hh:mm[:ss]]` | affiche ou règle l'heure (même synchronisation par le modem que `DATE`) |
 | `PATH [rép;rép]` | répertoires de recherche des programmes |
 | `PROMPT [texte]` | format de l'invite |
-| `HELP` | liste des commandes |
 | `EXIT` ou `BASIC` | retour à NeoBASIC |
 
 ## Messages d'erreur

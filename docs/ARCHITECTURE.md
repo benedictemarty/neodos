@@ -153,9 +153,9 @@ motif doit être fait de `*`.
 | Zone | Contenu |
 |---|---|
 | `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `tabdone`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps`, `api_call` (`aret`, `$BE-$BF`) |
-| `$B800-$E489` | code (11 402 octets en 0.27.1 ; `codeend`) — taille du fichier `neodos.neo` |
-| `$E48A-$F7E2` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `asave`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
-| `$F7E3-$FBFF` | libre (1 053 octets en 0.27.1 ; `.cerror` si `dataend > $FC00`) |
+| `$B800-$E11C` | code (10 525 octets en 0.28.0 ; `codeend`) — taille du fichier `neodos.neo` |
+| `$E11D-$F475` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `asave`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
+| `$F476-$FBFF` | libre (1 930 octets en 0.28.0 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
@@ -177,7 +177,9 @@ changement de comportement (53/53) :
   commun (−181).
 
 Écarté : codage des suites d'espaces dans les messages (≈ 110 octets, source
-illisible). Plus gros bloc restant : `HELP` (870 octets).
+illisible). 0.28.0 (décision bmarty) : `HELP` devient la commande externe
+`BIN/HELP.NEO` (texte identique) — 11 402 → 10 525 octets (−877), marge
+1 930 octets ; sans `PATH \BIN`, `HELP` répond `Bad command or file name`.
 
 ## Batch
 

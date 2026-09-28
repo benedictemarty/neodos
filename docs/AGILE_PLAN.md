@@ -313,7 +313,7 @@ Demande bmarty : « améliorer l'empreinte mémoire ». Zone du résident fixe
 | S108 `api_call` : macro `#api` en 5 octets au lieu de 8 (contrat du noyau respecté) | fait |
 | S109 `HELP` en un bloc ; `vol_line`, `press_msg`, `ver_line`, `err_drive` mis en commun | fait |
 | S110 ARCHITECTURE (table mémoire à jour, section réduction), 53/53 | fait |
-| S111 `HELP` en commande externe (−870 octets) | proposé, décision bmarty (HELP exigerait `PATH \BIN`) |
+| S111 `HELP` en commande externe `BIN/HELP.NEO` (−877 octets, marge 1 930) — décision bmarty 2026-09-28, livré en 0.28.0 | fait |
 
 ## Backlog (priorisé)
 
