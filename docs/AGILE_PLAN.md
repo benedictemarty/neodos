@@ -287,6 +287,7 @@ sans options (diagnostic SWD côté Trinity).
 | S101 32,19 Toolbox Reset dans `neodos_back` (retour au clavier et en batch) et dans `start` (NeoDOS rechargé après avoir été écrasé) | fait |
 | S102 Fixtures `TBWIN`/`TBWINX`/`TBFRONT` (`examples/tbwin.asm`, `tbfront.asm`, `make fixtures`), `POKER/TB.BAT`, test `49_toolbox_reset` (contre-épreuve sans 32,19 : fenêtres 1, 2, 3) | fait |
 | S103 Phosphoneo recompilé contre Trinity 0.16.49 ; `09_exit` : image embarquée = 0.25.0 ; docs, recette 4.20 | fait |
+| S104 Trinity 0.16.50 embarque NeoDOS 0.26.0 (tag `trinity-v0.16.50`) : Phosphoneo recompilé, `09_exit` = 0.26.0 après `EXIT` | fait |
 
 ## Backlog (priorisé)
 
