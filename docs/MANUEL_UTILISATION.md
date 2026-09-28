@@ -84,7 +84,7 @@ tapez d'avance pendant une commande courte est conservé.
 | `RD chemin` | `RD SAVES` (le répertoire doit être vide) |
 | `DEL fichier\|motif` | `DEL OLD.TXT`, `DEL *.BAK`, `DEL SAVES\*.*` (confirmation) ; refuse un répertoire : `Access denied` |
 | `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
-| `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` |
+| `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` ; `COPY A.TXT+B.TXT C.TXT` : concaténation (voir plus bas) |
 | `MOVE source destination` | `MOVE A.TXT OLD.TXT`, `MOVE *.BAK ARCHIVE` (déplacement par renommage) |
 | `TYPE fichier` | `TYPE README.TXT` |
 | `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
@@ -104,6 +104,16 @@ répertoires et demande confirmation (`Y/N`) pour `*` et `*.*`. `REN` avec
 jokers applique le second motif nom et extension séparément : `*` recopie le
 reste de la partie source, `?` un caractère (`REN *.TXT *.BAK`,
 `REN A?.DAT B?.DAT`). `COPY` avec joker exige un répertoire de destination.
+
+**Concaténation** : `COPY A.TXT+B.TXT[+C.TXT…] DEST.TXT` écrit les sources
+bout à bout dans `DEST.TXT` (copie binaire, sans traitement de Ctrl+Z). Si
+la destination est la première source (`COPY LOG.TXT+NEW.TXT LOG.TXT`), les
+suivantes y sont **ajoutées**. Une destination égale à une autre source est
+refusée (`Content of destination lost before copy`), et une source absente
+arrête tout avant que la destination soit créée (`NOPE.TXT: File not
+found`) ; `ERRORLEVEL 1` dans les deux cas. Les `+` se collent aux noms,
+sans espace ni joker, et la destination est obligatoire. Le travail est fait
+par la commande externe `BIN\CONCAT.NEO` : `PATH` doit contenir `\BIN`.
 
 ## Programmes
 
@@ -321,9 +331,9 @@ La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 
 ## Limites connues (v0.1)
 
-- Pas de `FOR`, `SHIFT`, `%VAR%` dans les scripts, pas de `<` ni `|`, pas
-  de `XCOPY /S` (récursif), pas de dates de fichiers dans `DIR` (voir le
-  backlog dans `docs/AGILE_PLAN.md`).
+- Pas de variables `%VAR%` dans les scripts (seulement `%0`-`%9` et la
+  variable de `FOR`), pas de `<` ni `|`, pas de dates de fichiers dans `DIR`
+  (voir le backlog dans `docs/AGILE_PLAN.md`).
 - Sur les émulateurs, seul l'attribut `R` est réellement stocké (permissions
   du fichier hôte) ; `H`, `S`, `A` n'ont d'effet que sur la carte (FAT).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`

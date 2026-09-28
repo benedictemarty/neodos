@@ -562,7 +562,8 @@ _each           jsr     list_next
                 jmp     _each
 
 ; ---------------------------------------------------------------------------
-; COPY source|motif destination[répertoire]
+; COPY source|motif destination[répertoire] ; COPY a+b[+c…] destination :
+; concaténation par la commande externe CONCAT (BIN/CONCAT.NEO, via PATH)
 ; ---------------------------------------------------------------------------
 cmd_copy        lda     #20                     ; Copy File
                 sta     opfn
@@ -578,7 +579,16 @@ _syn            jmp     err_syntax
                 jsr     to_apipath
                 jsr     ptr_arg2
                 jsr     to_apipath
-                stz     wflag                   ; wflag = destination répertoire
+                lda     opfn                    ; COPY a+b : concaténation
+                cmp     #20
+                bne     _nocat
+                ldx     arg1
+_plus           lda     arg1,x
+                cmp     #'+'
+                beq     _cat
+                dex
+                bne     _plus
+_nocat          stz     wflag                   ; wflag = destination répertoire
                 #setparam 0, arg2
                 #api    3,16
                 lda     DError
@@ -614,6 +624,12 @@ _one            jsr     file_op
                 jmp     _count
 _nf             jmp     err_notfound
 _err            jmp     err_api
+_cat            ldx     #6                      ; namebuf = « CONCAT »
+-               lda     concat_name,x
+                sta     namebuf,x
+                dex
+                bpl     -
+                jmp     run_named
 _wild           lda     wflag
                 bne     +
                 jsr     errlvl1
@@ -655,6 +671,8 @@ _count          lda     nfiles
 _done           rts
 _moved          #println " file(s) moved"
                 rts
+
+concat_name     .ptext  "CONCAT"
 
 ; file_op : appel API 3,opfn (paramètres déjà en place)
 file_op         jsr     WaitMessage

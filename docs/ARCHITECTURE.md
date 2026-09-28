@@ -233,6 +233,18 @@ API et la lecture de son résultat (`DIR`). `redir_close` (fin de
 `execute_line`, `mainloop`, retour d'un programme dans `neodos_back`) vide
 et ferme.
 
+## Concaténation (`COPY a+b dest`)
+
+`copy_move` cherche un `+` dans la source (COPY seulement) et passe alors la
+main à la commande externe `CONCAT` par `run_named` (même recherche que
+`run_program` — répertoire courant puis `PATH` — pour un nom déjà placé
+dans `namebuf`) ; la ligne tapée reste la ligne de commande du programme.
+Le résident n'y consacre que 40 octets : une version interne coûtait
+465 octets (0.27.0, ADR-003). `CONCAT.NEO` vérifie toutes les sources
+(3,16) et la destination avant d'écrire, lit par blocs de 16 Ko (canal 4,
+3,8) et écrit sur le canal 5 (3,9) ; ajout à la première source par
+Open 2 + Seek à la taille (3,10 puis 3,6).
+
 ## Commandes externes
 
 `examples/ext/neoext.inc` : mêmes conventions que le résident (API par

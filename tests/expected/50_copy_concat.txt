@@ -1,26 +1,32 @@
-NeoDOS version 0.27.0
-(C) 2026 bmarty - Neo6502 disk operating system
-Welcome to NeoDOS on the Neo6502
-Type HELP for the list of commands
-A:\>cd POKER
-A:\POKER>redir
-A:\POKER>find "e p" \FRUITS.TXT > F.TXT
-A:\POKER>echo after find
-after find
-A:\POKER>sort \FRUITS.TXT > S.TXT
-A:\POKER>if errorlevel 1 echo sort failed
-A:\POKER>echo end of script
-end of script
-A:\POKER>type F.TXT
-apple pie
-A:\POKER>type S.TXT
+A:\>copy FRUITS.TXT+CTRL.TXT C.TXT
+        1 file(s) copied
+A:\>copy C.TXT+FRUITS.TXT C.TXT > LOG.TXT
+A:\>type LOG.TXT
+        1 file(s) copied
+A:\>dir C.TXT
+ Volume in drive A is HOST0
+ Directory of A:\
+C.TXT                   91
+        1 file(s)         91 bytes
+        0 dir(s)
+A:\>copy FRUITS.TXT+C.TXT C.TXT
+Content of destination lost before copy
+A:\>if errorlevel 1 echo refused
+refused
+A:\>copy FRUITS.TXT+NOPE.TXT D.TXT
+NOPE.TXT: File not found
+A:\>if errorlevel 1 echo failed
+failed
+A:\>copy GAMES\A.TXT+FRUITS.TXT E.TXT
+        1 file(s) copied
+A:\>type E.TXT
+abcpear
 Apple
-apple pie
 banana
 cherry
-pear
+apple pie
 Zebra
-A:\POKER>
+A:\>
 --- files ---
 ARGS.BAT
 AUTOEXEC.BAT
@@ -40,10 +46,12 @@ BIN/SORT.NEO
 BIN/TOOL.BAT
 BIN/TREE.NEO
 BIN/XCOPY.NEO
+C.TXT
 CALLER.BAT
 CHAIN.BAT
 CTRL.TXT
 DEMO.BAT
+E.TXT
 ERRLVL.BAT
 FOREVER.BAT
 FRUITS.TXT
@@ -54,6 +62,7 @@ GAMES/SUB/DEEP/
 GAMES/SUB/DEEP/Y.TXT
 GAMES/SUB/X.TXT
 HELLO.NEO
+LOG.TXT
 LONG.TXT
 LOOP.BAT
 MANY/
@@ -93,10 +102,8 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 POKER/
-POKER/F.TXT
 POKER/POKER.NEO
 POKER/REDIR.BAT
-POKER/S.TXT
 POKER/TB.BAT
 POKER/TBFRONT.NEO
 POKER/TBWIN.NEO

@@ -487,18 +487,20 @@ _done           rts
 ; ---------------------------------------------------------------------------
 ; run_program : commande inconnue -> NOM.NEO ou NOM.BAT (ou nom tel quel
 ; s'il porte déjà l'extension). Sinon « Bad command or file name ».
+; run_named : même recherche pour le nom déjà dans namebuf (COPY a+b ->
+; CONCAT), la ligne de commande restant celle tapée.
 ; ---------------------------------------------------------------------------
 run_program     jsr     first_word_raw          ; nom tel que tapé
-                ldx     namebuf                 ; runword = copie
+run_named       ldx     namebuf                 ; runword = copie
 -               lda     namebuf,x
                 sta     runword,x
                 dex
                 bpl     -
                 jsr     try_run                 ; ne revient que si absent
-                jsr     first_word_raw          ; puis en majuscules (DOS)
-                ldx     namebuf
+                ldx     runword                 ; puis en majuscules (DOS)
                 beq     _bad
--               lda     namebuf,x
+                stx     namebuf
+-               lda     runword,x
                 jsr     upper
                 sta     namebuf,x
                 dex

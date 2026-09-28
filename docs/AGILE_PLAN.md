@@ -289,12 +289,24 @@ sans options (diagnostic SWD côté Trinity).
 | S103 Phosphoneo recompilé contre Trinity 0.16.49 ; `09_exit` : image embarquée = 0.25.0 ; docs, recette 4.20 | fait |
 | S104 Trinity 0.16.50 embarque NeoDOS 0.26.0 (tag `trinity-v0.16.50`) : Phosphoneo recompilé, `09_exit` = 0.26.0 après `EXIT` | fait |
 
+## Sprint 27 — B6 : `COPY a+b` (2026-09-28) — livré, v0.27.0
+
+`XCOPY /S` existait déjà (0.12.0, `30_ext_xcopy`) : restait la
+concaténation. Une première version dans le résident coûtait 465 octets
+(marge 743 → 278) : abandonnée pour une commande externe, conformément à
+l'ADR-003.
+
+| Story | État |
+|---|---|
+| S105 `run_named` : lancer un externe dont le nom est dans `namebuf` ; `COPY` avec `+` → `CONCAT` (+40 octets) | fait |
+| S106 `BIN/CONCAT.NEO` : blocs de 16 Ko, ajout à la première source, destination = autre source refusée, sources vérifiées avant écriture, ERRORLEVEL | fait |
+| S107 Test `50_copy_concat`, références (`BIN/CONCAT.NEO` dans le stockage), manuel (section Limites mise à jour), README, ARCHITECTURE | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
 |---|---|---|
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
-| B6 | `COPY` avec concaténation, `XCOPY /S` (sous-répertoires, récursif) | mémoire : pile de chemins |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B10 | `EDIT.NEO` : recherche, sélection/copier-coller, défilement horizontal | suite |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
