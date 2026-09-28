@@ -190,8 +190,7 @@ ECHO %1 not found
   (vide si absent) ; `%` suivi d'autre chose qu'un chiffre reste littéral.
 - `IF [NOT] EXIST fichier commande` ; `IF [NOT] a==b commande` (`a == b` et
   `"a"=="b"` acceptés, comparaison exacte) ; `IF [NOT] ERRORLEVEL n commande`
-  (vrai si le niveau d'erreur de la commande précédente est ≥ n : 1 après un
-  message d'erreur, 0 sinon). Les `IF` se chaînent.
+  (vrai si le niveau d'erreur est ≥ n). Les `IF` se chaînent.
 - `GOTO label` saute à la ligne `:label` (casse ignorée) ; « Label not
   found » arrête le script.
 - `CALL script [args]` exécute un autre `.BAT` puis reprend à la ligne
@@ -221,9 +220,45 @@ GOTO BOUCLE
 :FIN
 ```
 
-Le niveau d'erreur (`IF ERRORLEVEL`) est aussi renseigné par les **commandes
-externes** (`BIN\*.NEO`) : `FIND` renvoie 1 si le texte est absent, les
-autres renvoient 1 en cas d'erreur (fichier introuvable, mauvais usage…).
+### Niveau d'erreur : `ERRORLEVEL`, `%ERRORLEVEL%`, `CHOICE`
+
+Le niveau d'erreur est fixé par la dernière commande qui le renseigne :
+
+- les **programmes** et **commandes externes** (`BIN\*.NEO`) rendent le leur :
+  `FIND` 1 si le texte est absent, `CHOICE` le rang de la touche, les autres
+  1 en cas d'erreur (fichier introuvable, mauvais usage…) ;
+- les commandes internes mettent 1 après un message d'erreur, 0 sinon
+  (extension de NeoDOS : sous MS-DOS elles n'y touchent pas) ;
+- **sauf** `IF`, `ECHO`, `REM`, `GOTO`, `SHIFT` et `PAUSE`, qui le laissent
+  tel quel, comme sous MS-DOS (depuis la 0.30.0 ; avant, un `ECHO` ou un
+  premier `IF` le remettait à 0).
+
+`%ERRORLEVEL%` (casse ignorée) est remplacé par sa valeur en décimal, dans
+les scripts comme au clavier : `ECHO code %ERRORLEVEL%`. Dans un script, la
+ligne affichée (écho) montre déjà la valeur.
+
+`CHOICE [/C[:]touches] [/N] [texte]` (commande externe) affiche le texte puis
+`[Y,N]?` (liste masquée par `/N`), attend l'une des touches (`YN` par défaut,
+majuscules et minuscules confondues, les autres sont ignorées) et rend son
+rang : 1 pour la première, 2 pour la deuxième… Pas de `/S` ni de `/T`.
+
+```
+@ECHO OFF
+CHOICE /C:ABC Votre choix
+IF ERRORLEVEL 3 GOTO C
+IF ERRORLEVEL 2 GOTO B
+ECHO choix A
+GOTO FIN
+:B
+ECHO choix B
+GOTO FIN
+:C
+ECHO choix C
+:FIN
+```
+
+Les `IF ERRORLEVEL` se testent du plus grand au plus petit, puisque chacun
+est vrai pour toute valeur supérieure ou égale.
 
 ## Redirection
 
@@ -268,6 +303,7 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 |---|---|
 | `HELP` | liste des commandes (externe depuis la 0.28.0 : sans `PATH \BIN`, `Bad command or file name`) |
 | `CONCAT` | concaténation, appelée par `COPY a+b dest` (voir `COPY`) |
+| `CHOICE [/C[:]touches] [/N] [texte]` | attend une touche parmi celles proposées, rend son rang dans `ERRORLEVEL` (voir « Niveau d'erreur ») |
 | `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
 | `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
 | `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |

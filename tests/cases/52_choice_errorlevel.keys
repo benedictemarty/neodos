@@ -1,0 +1,13 @@
+cd POKER
+ch
+b\c
+cd \
+choice
+xn\c
+echo %errorlevel%
+echo %ERRORLEVEL% again
+choice /n /c:yn Continue?
+y\c
+choice /x
+echo %errorlevel%
+echo 100% %errorlevelx

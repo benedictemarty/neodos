@@ -847,7 +847,8 @@ vol_line        #print  " Volume in drive "
 ; ---------------------------------------------------------------------------
 ; ECHO [ON|OFF|texte]
 ; ---------------------------------------------------------------------------
-cmd_echo        lda     argrest
+cmd_echo        jsr     keep_el
+                lda     argrest
                 bne     _text
                 #print  "ECHO is "
                 lda     echo_off
@@ -896,7 +897,14 @@ _print          #setptr ptr, argrest
                 jmp     newline
 
 ; REM : commentaire
-cmd_rem         rts
+; REM ; keep_el : ERRORLEVEL laissé tel quel (niveau de la commande
+; précédente), comme les commandes internes de MS-DOS — pour IF, ECHO, REM,
+; GOTO, SHIFT, PAUSE : « CHOICE » suivi d'IF ERRORLEVEL en cascade (du plus
+; grand au plus petit) ; sans cela le premier IF remettait le niveau à 0
+cmd_rem
+keep_el         lda     preverr
+                sta     errorlevel
+                rts
 
 ; ---------------------------------------------------------------------------
 ; PATH [rép;rép…] : affiche ou fixe les répertoires de recherche ; « PATH ; »
@@ -955,7 +963,8 @@ cmd_prompt      ldx     argrest
 ; ---------------------------------------------------------------------------
 ; IF [NOT] EXIST fichier | a==b | ERRORLEVEL n  commande
 ; ---------------------------------------------------------------------------
-cmd_if          stz     negate
+cmd_if          jsr     keep_el                 ; IF faux : niveau inchangé
+                stz     negate
                 stz     cond
                 ldy     #0
                 jsr     ptr_arg2
@@ -1146,7 +1155,8 @@ _no             ply
                 rts
 
 ; PAUSE : attend une touche
-cmd_pause       jsr     press_msg
+cmd_pause       jsr     keep_el
+                jsr     press_msg
                 jsr     newline
                 jmp     wait_key
 

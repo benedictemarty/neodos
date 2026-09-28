@@ -298,7 +298,8 @@ read_command    jmp     readline_ed
 ; ---------------------------------------------------------------------------
 ; execute_line : analyse linebuf et exécute la commande
 ; ---------------------------------------------------------------------------
-execute_line    jsr     redir_setup             ; « > fichier » en fin de ligne
+execute_line    jsr     expand_el               ; %ERRORLEVEL% (commande précédente)
+                jsr     redir_setup             ; « > fichier » en fin de ligne
                 jsr     execute_line1
                 jmp     redir_close
 

@@ -110,6 +110,7 @@ batch_next      ldx     #$ff                    ; boucle de haut niveau : pile
                 sbc     blen+1
                 bcs     batch_end
                 jsr     batch_getline           ; -> linebuf (paramètres remplacés)
+                jsr     expand_el               ; écho de la ligne déjà remplacée
                 lda     linebuf
                 beq     batch_next
                 lda     linebuf+1
@@ -242,6 +243,92 @@ _eol            lda     bx
                 sta     linebuf
                 rts
 
+; expand_el : remplace %ERRORLEVEL% (casse ignorée) dans linebuf par le code
+; de retour de la commande précédente, en décimal ; appelé par execute_line
+; (clavier, scripts, FOR) avant que la commande ne remette errorlevel à 0.
+; La ligne est recopiée dans iobuf (libre à ce moment) puis rendue.
+expand_el       ldx     #0                      ; X = longueur écrite (iobuf)
+                ldy     #1                      ; Y = lecture (linebuf)
+_loop           cpy     linebuf
+                beq     +
+                bcs     _end
++               lda     linebuf,y
+                cmp     #'%'
+                bne     _put
+                jsr     is_elvar
+                bcs     _num
+                lda     #'%'
+_put            inx
+                sta     iobuf,x
+                iny
+                bra     _loop
+_num            phy                             ; valeur : 3 chiffres au plus,
+                lda     errorlevel              ; zéros de tête retirés
+                ldy     #28                     ; pow10 : 100, 10, 1 (dwords 7-9)
+                stz     cnt                     ; 1 = un chiffre écrit
+_div            sta     tmp
+                lda     #'0'
+                sta     idx
+                lda     tmp
+-               cmp     pow10,y
+                bcc     +
+                sbc     pow10,y
+                inc     idx
+                bra     -
++               pha
+                lda     idx
+                cpy     #36                     ; unités : toujours écrites
+                beq     +
+                cmp     #'0'
+                bne     +
+                lda     cnt
+                beq     _skip0
+                lda     idx
++               inx
+                sta     iobuf,x
+                inc     cnt
+_skip0          pla
+                iny
+                iny
+                iny
+                iny
+                cpy     #40
+                bne     _div
+                ply
+                bra     _loop
+_end            stx     iobuf                   ; iobuf -> linebuf
+-               lda     iobuf,x
+                sta     linebuf,x
+                dex
+                bpl     -
+                rts
+
+; is_elvar : C=1 si « %ERRORLEVEL% » commence en linebuf,Y (Y avancé après
+; le « % » final) ; sinon C=0, Y inchangé ; X préservé
+is_elvar        sty     tmp
+                phx
+                ldx     #0
+_c              iny
+                cpy     linebuf
+                beq     +
+                bcs     _no
++               lda     linebuf,y
+                jsr     upper
+                cmp     kw_el,x
+                bne     _no
+                inx
+                cpx     #11
+                bne     _c
+                iny
+                plx
+                sec
+                rts
+_no             ldy     tmp
+                plx
+                clc
+                rts
+kw_el           .text   "ERRORLEVEL%"
+
 ; insert_arg : ajoute à linebuf le mot n° A (0 = premier) de batargs
 insert_arg      sta     cnt
                 ldy     #0
@@ -280,7 +367,8 @@ _done           rts
 ; ---------------------------------------------------------------------------
 ; GOTO label : cherche « :label » dans batbuf et reprend après cette ligne
 ; ---------------------------------------------------------------------------
-cmd_goto        lda     bat_active
+cmd_goto        jsr     keep_el
+                lda     bat_active
                 bne     +
                 rts                             ; hors batch : ignoré (DOS)
 +               lda     arg1
@@ -424,7 +512,8 @@ _found          clc
 ; SHIFT : décale les paramètres du script (%0 <- %1, %1 <- %2…) en retirant
 ; le premier mot de batargs ; sans effet hors d'un script ou sans paramètre.
 ; ---------------------------------------------------------------------------
-cmd_shift       lda     bat_active
+cmd_shift       jsr     keep_el
+                lda     bat_active
                 beq     _done
                 ldy     #0
 _skip           cpy     batargs                 ; espaces de tête

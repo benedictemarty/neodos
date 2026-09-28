@@ -1,4 +1,4 @@
-NeoDOS version 0.29.0
+NeoDOS version 0.30.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -28,6 +28,7 @@ BIG.NEO
 BIN/
 BIN/ARGS.NEO
 BIN/ATTRIB.NEO
+BIN/CHOICE.NEO
 BIN/COLOR.NEO
 BIN/CONCAT.NEO
 BIN/DELTREE.NEO
@@ -102,6 +103,7 @@ MANY/F33.DAT
 MANY/F34.DAT
 MANY/F35.DAT
 POKER/
+POKER/CH.BAT
 POKER/POKER.NEO
 POKER/REDIR.BAT
 POKER/TB.BAT

@@ -181,6 +181,19 @@ illisible). 0.28.0 (décision bmarty) : `HELP` devient la commande externe
 `BIN/HELP.NEO` (texte identique) — 11 402 → 10 525 octets (−877), marge
 1 930 octets ; sans `PATH \BIN`, `HELP` répond `Bad command or file name`.
 
+## Niveau d'erreur (0.30.0)
+
+`execute_line1` recopie `errorlevel` dans `preverr` puis le met à 0 ; les
+commandes le fixent (`errlvl1`, code de retour d'un programme en `$B810`).
+`keep_el` (`errorlevel = preverr`) est appelé en tête de `IF`, `ECHO`, `REM`,
+`GOTO`, `SHIFT` et `PAUSE` : ces commandes laissent le niveau inchangé, comme
+sous MS-DOS — sans cela, `IF ERRORLEVEL` en cascade après `CHOICE` voyait 0
+dès le second `IF`. `expand_el` remplace `%ERRORLEVEL%` (casse ignorée) par
+la valeur décimale, au début d'`execute_line` (clavier, scripts, `FOR`) et
+dans `batch_next` juste après `batch_getline` (écho de la ligne déjà
+remplacé) ; la ligne est reconstruite dans `iobuf`, libre à ce moment. Le
+tout coûte 183 octets au résident ; `CHOICE` est externe (`BIN/CHOICE.NEO`).
+
 ## Batch
 
 Le `.BAT` est chargé entier dans `batbuf` (`batch_load` : File Stat puis
