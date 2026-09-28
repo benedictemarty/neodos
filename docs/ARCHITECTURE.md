@@ -152,13 +152,32 @@ motif doit être fait de `*`.
 
 | Zone | Contenu |
 |---|---|
-| `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `tabdone`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps` |
-| `$B800-$E0AD` | code (≈ 10,4 Ko ; `codeend`) |
-| `$E0AE-$F2F6` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
-| `$F2F7-$FBFF` | libre (≈ 2,3 Ko depuis la base `$B800` et `ATTRIB` externalisé, 0.14.0 / ADR-004 ; `.cerror` si `dataend > $FC00`) |
+| `$80-$BD` | page zéro : `ptr`, `ptr2`, `tmp`, `cnt`, `idx`, `flag`, `num` (32), `total` (32), `nfiles`, `ndirs`, `bptr`, `blen`, `sptr`, jokers (`mstar_*`, `lptr`, `lcount`, `lidx`), DIR (`dirflags`, `dirlines`, `dircol`), `apply_pattern` (`sp_*`, `pp_*`, `oidx`), `wflag`, `errsave`, IF (`negate`, `cond`, `preverr`), batch (`bx`, `by`), `redir`, `opfn`, `tabdone`, éditeur (`lpos`, `llen`, `hcur`, `f8len`, suggestion `sglen`/`sgidx`/`sgink`), `FOR` (`forvar`/`foritem`/`formatch`), `caps`, `api_call` (`aret`, `$BE-$BF`) |
+| `$B800-$E489` | code (11 402 octets en 0.27.1 ; `codeend`) — taille du fichier `neodos.neo` |
+| `$E48A-$F7E2` | tampons (mis à zéro par `start`) : `promptbuf`, `cwdbuf`, `linebuf` (201), `cmdbuf`, `arg1`, `arg2`, `argrest` (201), `namebuf`, `iobuf` (256), `batbuf` (768), `dirbuf`, `patbuf`, `newname`, `listbuf` (896), `errorlevel`, `batname` (64), `batargs` (128), `batdepth`, `batstack` (582), `outbuf` (128), `pathbuf` (129), `promptfmt` (49), `cwdpath`, `runword`, `promptskip`, `dpsave`, `runtick`, `asave`, `zpsave` (6), `hcount`, `hused`, `histbuf` (200), `forset` (101), `fortpl` (161) |
+| `$F7E3-$FBFF` | libre (1 053 octets en 0.27.1 ; `.cerror` si `dataend > $FC00`) |
 
 La page zéro `$E0-$EF` et `$FC-$FF` est réservée au noyau (ordonnanceur
 F-61) et n'est pas utilisée.
+
+### Réduction de l'empreinte (0.27.1)
+
+Le résident occupe une zone fixe (`$B800-$FBFF`, ADR-004 : l'en-tête des
+commandes externes est en `$B800`) ; gagner des octets agrandit la marge
+laissée aux fonctions futures, pas la mémoire des programmes. 0.27.1 :
+11 753 → 11 402 octets de code (−351), marge 703 → 1 053 octets, sans
+changement de comportement (53/53) :
+
+- `#api` : `jsr api_call` + 2 octets (5 au lieu de 8, 64 appels, −170) ;
+  `api_call` (`console.asm`) respecte le contrat du noyau — A, X, Y, C et V
+  préservés, N/Z selon A (`KSendMessage`/`KWaitMessage` de Trinity) ;
+- `HELP` en un seul bloc `puts` ; en-tête de volume (`vol_line`, partagé par
+  `VOL` et `DIR`), message de pause (`press_msg`), ligne de version
+  (`ver_line`) et « Invalid drive specification » (`err_drive`) mis en
+  commun (−181).
+
+Écarté : codage des suites d'espaces dans les messages (≈ 110 octets, source
+illisible). Plus gros bloc restant : `HELP` (870 octets).
 
 ## Batch
 

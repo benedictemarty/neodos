@@ -64,6 +64,37 @@ _loop           lda     (ptr),y
 _done           ply
                 rts
 
+; api_call : « jsr api_call / .byte groupe, fonction » (macro #api) —
+; équivaut à SendMessage + WaitMessage en 5 octets au lieu de 8. Même
+; contrat que le noyau : A, X, Y, C et V préservés, N/Z selon A.
+api_call        sta     asave
+                pla                             ; adresse de retour - 1
+                sta     aret
+                pla
+                sta     aret+1
+                phy
+                jsr     WaitMessage             ; message précédent terminé
+                ldy     #2
+                lda     (aret),y
+                sta     DFunction
+                dey
+                lda     (aret),y
+                sta     DCommand                ; groupe : lance l'appel
+                ply
+                jsr     WaitMessage
+                inc     aret                    ; saute les deux octets
+                bne     +                       ; (inc : C intact)
+                inc     aret+1
++               inc     aret
+                bne     +
+                inc     aret+1
++               lda     aret+1
+                pha
+                lda     aret
+                pha
+                lda     asave
+                rts
+
 ; putpstr_dos : comme putpstr, en affichant « / » comme « \ »
 putpstr_dos     phy
                 lda     (ptr)

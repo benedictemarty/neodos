@@ -4,10 +4,9 @@
 ; précédente avant d'envoyer ; KWaitMessage attend la réponse. Les paramètres
 ; doivent avoir été écrits AVANT (aucune commande n'est en cours à ce moment :
 ; putc attend la fin de chaque écriture console).
-api             .macro
-                jsr     SendMessage
+api             .macro                  ; 5 octets (api_call) au lieu de 8
+                jsr     api_call
                 .byte   \1, \2
-                jsr     WaitMessage
                 .endm
 
 ; Affiche un texte inline (terminé par 0)

@@ -302,6 +302,19 @@ l'ADR-003.
 | S106 `BIN/CONCAT.NEO` : blocs de 16 Ko, ajout à la première source, destination = autre source refusée, sources vérifiées avant écriture, ERRORLEVEL | fait |
 | S107 Test `50_copy_concat`, références (`BIN/CONCAT.NEO` dans le stockage), manuel (section Limites mise à jour), README, ARCHITECTURE | fait |
 
+## Sprint 28 — empreinte mémoire du résident (2026-09-28) — livré, v0.27.1
+
+Demande bmarty : « améliorer l'empreinte mémoire ». Zone du résident fixe
+(ADR-004) : le gain va à la marge. 11 753 → 11 402 octets (−351), marge
+703 → 1 053 octets, comportement inchangé.
+
+| Story | État |
+|---|---|
+| S108 `api_call` : macro `#api` en 5 octets au lieu de 8 (contrat du noyau respecté) | fait |
+| S109 `HELP` en un bloc ; `vol_line`, `press_msg`, `ver_line`, `err_drive` mis en commun | fait |
+| S110 ARCHITECTURE (table mémoire à jour, section réduction), 53/53 | fait |
+| S111 `HELP` en commande externe (−870 octets) | proposé, décision bmarty (HELP exigerait `PATH \BIN`) |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

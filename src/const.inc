@@ -61,6 +61,7 @@ redir           = $AF           ; sortie redirigée vers CH_OUT (bit 7 = active)
 opfn            = $B0           ; COPY/MOVE : fonction API (20 copie, 12 renomme)
 tabdone         = $B1           ; Tab : complétion déjà faite, aucune touche depuis (ne pas relire le répertoire)
                                 ; $B2 : libre
+aret            = $BE           ; api_call : adresse de retour (2)
 lpos            = $B3           ; éditeur de ligne : curseur
 llen            = $B4           ; éditeur de ligne : longueur
 hcur            = $B5           ; historique : entrée en cours de rappel

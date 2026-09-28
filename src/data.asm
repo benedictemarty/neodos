@@ -32,6 +32,7 @@ runword         .fill   129             ; run_program : nom tel que tapé
 promptskip      .fill   1               ; longueur de la dernière ligne de l'invite
 dpsave          .fill   9               ; sauvegarde DParams/DError pendant redir_flush
 runtick         .fill   2               ; timer 1,1 (1/100 s) au lancement du programme
+asave           .fill   1               ; api_call : A de l'appelant
 zpsave          .fill   6               ; page zéro rendue au retour d'un programme : bptr, blen, redir, caps
 histdirty       .fill   1               ; historique modifié depuis la dernière écriture
 hcount          .fill   1               ; historique : nombre d'entrées

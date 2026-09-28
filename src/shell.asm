@@ -45,7 +45,7 @@ start           cld
                                                 ; après un programme qui a écrasé NeoDOS
                 jsr     hist_load               ; historique de la session
                 jsr     newline                 ; précédente (/boot/neodos.his)
-                #println "NeoDOS version " .. VERSION
+                jsr     ver_line
                 #println "(C) 2026 bmarty - Neo6502 disk operating system"
                 jsr     newline
                 jsr     run_autoexec
@@ -814,7 +814,8 @@ err_api         jsr     errlvl1
                 rts
 _path           #println "Path not found"
                 rts
-_drive          #println "Invalid drive specification"
+_drive
+err_drive       #println "Invalid drive specification"
                 rts
 _exist          #println "File already exists"
                 rts

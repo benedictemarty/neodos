@@ -113,14 +113,7 @@ _open           #setparam 0, dirbuf
                 jmp     err_api
 +               stz     dirlines
                 stz     dircol
-                #print  " Volume in drive "
-                stz     DParams                 ; sans 3,26 (Trinity) : A
-                #api    3,26
-                lda     DParams
-                clc
-                adc     #'A'
-                jsr     putc
-                jsr     print_volname
+                jsr     vol_line
                 jsr     dir_newline
                 #print  " Directory of "
                 jsr     build_cwdpath           ; « A:\chemin »
@@ -294,7 +287,7 @@ dir_newline     jsr     newline
                 cmp     #DIR_PAGE_LINES
                 bcc     _done
                 stz     dirlines
-                #print  "Press any key to continue . . ."
+                jsr     press_msg
                 jsr     wait_key
                 jmp     newline
 _done           rts
@@ -813,11 +806,15 @@ _syntax         jmp     err_syntax
 cmd_cls         #api    2,12
                 rts
 
+; ver_line : « NeoDOS version x.y.z » (bannière, VER)
+ver_line        #println "NeoDOS version " .. VERSION
+                rts
+
 ; ---------------------------------------------------------------------------
 ; VER : version de NeoDOS et du firmware
 ; ---------------------------------------------------------------------------
 cmd_ver         jsr     newline
-                #println "NeoDOS version " .. VERSION
+                jsr     ver_line
                 #print  "Neo6502 firmware "
                 #api    1,11
                 lda     DParams
@@ -836,15 +833,18 @@ cmd_ver         jsr     newline
 ; ---------------------------------------------------------------------------
 ; VOL : volume courant
 ; ---------------------------------------------------------------------------
-cmd_vol         #print  " Volume in drive "
+cmd_vol         jsr     vol_line
+                jmp     newline
+
+; vol_line : « Volume in drive X is nom » sans fin de ligne (VOL, DIR)
+vol_line        #print  " Volume in drive "
                 stz     DParams                 ; sans 3,26 (Trinity) : A
                 #api    3,26
                 lda     DParams
                 clc
                 adc     #'A'
                 jsr     putc
-                jsr     print_volname
-                jmp     newline
+                jmp     print_volname
 
 ; ---------------------------------------------------------------------------
 ; ECHO [ON|OFF|texte]
@@ -1148,8 +1148,13 @@ _no             ply
                 rts
 
 ; PAUSE : attend une touche
-cmd_pause       #println "Press any key to continue . . ."
+cmd_pause       jsr     press_msg
+                jsr     newline
                 jmp     wait_key
+
+; press_msg : invite de PAUSE et de DIR /P (sans fin de ligne)
+press_msg       #print  "Press any key to continue . . ."
+                rts
 
 ; ---------------------------------------------------------------------------
 ; DATE [aaaa-mm-jj] / TIME [hh:mm[:ss]]
@@ -1392,25 +1397,26 @@ _bad            jsr     errlvl1
                 rts
 
 cmd_help        jsr     newline
-                #println "DIR [path] [/P /W] List directory (wildcards)"
-                #println "CD [path]         Change/show directory"
-                #println "MD RD path        Make/remove directory"
-                #println "DEL file|*.*      Delete files"
-                #println "REN old new       Rename files (REN *.TXT *.BAK)"
-                #println "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)"
-                #println "TYPE file         Display a text file"
-                #println "X:                Change drive"
-                #println "CLS VER VOL MEM   Screen, versions, volume, memory"
-                #println "PATH PROMPT MODE  Path, prompt ($p$g), video mode"
-                #println "cmd > file        Redirect output (>> appends)"
-                #println "DATE TIME         Show/set date and time"
-                #println "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)"
-                #println "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label"
-                #println "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT"
-                #println "EXIT              Reload the resident environment"
-                #println "name[.NEO]        Run a program (here, then PATH)"
-                #println "BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND"
-                #println "                  MORE REBOOT SORT TREE XCOPY"
+                jsr     puts                    ; un seul bloc : 3 + 1 octets par ligne gagnés
+                .text   "DIR [path] [/P /W] List directory (wildcards)", CR
+                .text   "CD [path]         Change/show directory", CR
+                .text   "MD RD path        Make/remove directory", CR
+                .text   "DEL file|*.*      Delete files", CR
+                .text   "REN old new       Rename files (REN *.TXT *.BAK)", CR
+                .text   "COPY MOVE src dst Copy/move files (COPY *.TXT DIR)", CR
+                .text   "TYPE file         Display a text file", CR
+                .text   "X:                Change drive", CR
+                .text   "CLS VER VOL MEM   Screen, versions, volume, memory", CR
+                .text   "PATH PROMPT MODE  Path, prompt ($p$g), video mode", CR
+                .text   "cmd > file        Redirect output (>> appends)", CR
+                .text   "DATE TIME         Show/set date and time", CR
+                .text   "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)", CR
+                .text   "IF GOTO CALL      IF [NOT] EXIST|==|ERRORLEVEL, :label", CR
+                .text   "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT", CR
+                .text   "EXIT              Reload the resident environment", CR
+                .text   "name[.NEO]        Run a program (here, then PATH)", CR
+                .text   "BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND", CR
+                .text   "                  MORE REBOOT SORT TREE XCOPY", CR, 0
                 jmp     newline
 
 ; ---------------------------------------------------------------------------
@@ -1440,5 +1446,5 @@ cmd_drive       lda     cmdbuf+1
                 lda     DError
                 beq     _ok
 _bad            jsr     errlvl1
-                #println "Invalid drive specification"
+                jmp     err_drive
 _ok             rts
