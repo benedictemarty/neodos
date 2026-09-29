@@ -1,0 +1,8 @@
+wc FRUITS.TXT
+wc LONG.TXT
+wc GAMES\A.TXT
+wc /l FRUITS.TXT
+wc > W.TXT
+type W.TXT
+wc FRUITS.TXT >> W.TXT
+tail /1 W.TXT

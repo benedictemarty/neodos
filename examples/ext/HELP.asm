@@ -30,8 +30,8 @@ main            lda     #CR
                 .text   "FOR SHIFT         FOR %f IN (set) DO cmd; SHIFT", CR
                 .text   "EXIT              Reload the resident environment", CR
                 .text   "name[.NEO]        Run a program (here, then PATH)", CR
-                .text   "BIN\ (PATH \BIN): ATTRIB COLOR DELTREE EDIT FIND", CR
-                .text   "                  MORE REBOOT SORT TREE XCOPY", CR, 0
+                .text   "BIN\ (PATH \BIN): ATTRIB CHOICE COLOR DELTREE EDIT", CR
+                .text   "  FIND HEAD MORE REBOOT SORT TAIL TREE WC XCOPY", CR, 0
                 lda     #CR
                 jmp     putc
 argbuf          = $2000                         ; exigé par neoext.inc (cmd_arg), non utilisé

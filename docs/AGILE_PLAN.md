@@ -338,6 +338,17 @@ aucun octet de plus dans le résident. Menu Échap, pas de raccourcis Ctrl
 | S119 `IF`, `ECHO`, `REM`, `GOTO`, `SHIFT`, `PAUSE` conservent le niveau (`keep_el`) : la cascade `IF ERRORLEVEL` après `CHOICE` ne marchait pas (constat en écrivant le test) | fait |
 | S120 Test `52_choice_errorlevel` ; `16_bat_call` adapté à la nouvelle règle (`CALLER.BAT`) ; manuel (section Niveau d'erreur), ARCHITECTURE | fait |
 
+## Sprint 31 — B12 : `HEAD`, `TAIL`, `WC` (2026-09-29) — livré, v0.31.0
+
+Trois commandes externes (résident inchangé) sur une base commune
+`textfile.inc`. `MOVE` reste interne (il partage `copy_move` avec `COPY`).
+
+| Story | État |
+|---|---|
+| S121 `textfile.inc` : arguments `[/n] fichier`, lecture par blocs, fins de ligne normalisées | fait |
+| S122 `HEAD [/n]` (700 o), `TAIL [/n]` en deux passes (764 o), `WC` 32 bits (991 o) | fait |
+| S123 Tests `53_head_tail`, `53b_wc` (valeurs calculées à part) ; `HELP` liste les nouveaux externes ; manuel, README, ARCHITECTURE | fait |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -345,7 +356,6 @@ aucun octet de plus dans le résident. Menu Échap, pas de raccourcis Ctrl
 | B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas : évolution firmware |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
-| B12 | `HEAD`/`TAIL`, `WC` en externes ; `MOVE` reste interne (partage `copy_move` avec `COPY`, gain ≈ 30 o) | commandes externes |
 | B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : historique (0.23.0) et Tab répété (0.25.0) traités ; reste, si la carte le demande, un cache complet du catalogue (Tab après frappe, suggestion étendue aux fichiers B14) | à valider sur carte (recette 4.19) |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 

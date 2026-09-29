@@ -49,7 +49,7 @@ clean:
 	rm -rf $(BUILD)
 
 # Exemples : programmes HELLO.NEO, BIN/ARGS.NEO et scripts .BAT copiés dans storage/
-EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/BIN/MORE.NEO storage/BIN/TREE.NEO storage/BIN/XCOPY.NEO storage/BIN/DELTREE.NEO storage/BIN/FIND.NEO storage/BIN/SORT.NEO storage/BIN/EDIT.NEO storage/BIN/ATTRIB.NEO storage/BIN/REBOOT.NEO storage/BIN/COLOR.NEO storage/BIN/CONCAT.NEO storage/BIN/HELP.NEO storage/BIN/CHOICE.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
+EXAMPLES = storage/HELLO.NEO storage/BIN/ARGS.NEO storage/BIN/MORE.NEO storage/BIN/TREE.NEO storage/BIN/XCOPY.NEO storage/BIN/DELTREE.NEO storage/BIN/FIND.NEO storage/BIN/SORT.NEO storage/BIN/EDIT.NEO storage/BIN/ATTRIB.NEO storage/BIN/REBOOT.NEO storage/BIN/COLOR.NEO storage/BIN/CONCAT.NEO storage/BIN/HELP.NEO storage/BIN/CHOICE.NEO storage/BIN/HEAD.NEO storage/BIN/TAIL.NEO storage/BIN/WC.NEO storage/AUTOEXEC.BAT storage/DEMO.BAT
 
 examples: $(EXAMPLES)
 
@@ -63,7 +63,7 @@ storage/BIN/ARGS.NEO: examples/args.asm tools/mkneo.py | $(BUILD)
 	python3 tools/mkneo.py $(BUILD)/args.bin $@ 0800 0800 "Args"
 
 # Commandes externes (examples/ext/NOM.asm, base neoext.inc) -> storage/BIN/NOM.NEO
-storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.inc examples/ext/glob.inc tools/mkneo.py | $(BUILD)
+storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.inc examples/ext/glob.inc examples/ext/textfile.inc tools/mkneo.py | $(BUILD)
 	mkdir -p storage/BIN
 	$(AS) --mw65c02 --nostart --quiet --case-sensitive -I examples/ext -o $(BUILD)/$*.bin $<
 	python3 tools/mkneo.py $(BUILD)/$*.bin $@ 0800 0800 "$*"

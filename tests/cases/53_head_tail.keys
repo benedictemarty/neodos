@@ -1,0 +1,9 @@
+head /2 FRUITS.TXT
+tail /2 FRUITS.TXT
+tail /3 LONG.TXT
+head /0 FRUITS.TXT
+tail GAMES\A.TXT
+head FRUITS.TXT
+head NOPE.TXT
+if errorlevel 1 echo err %errorlevel%
+head /x FRUITS.TXT

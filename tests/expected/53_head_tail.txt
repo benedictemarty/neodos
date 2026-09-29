@@ -1,32 +1,31 @@
-F20.DAT                  2
-F02.DAT                  2
-F08.DAT                  2
-F32.DAT                  2
-F31.DAT                  2
-F26.DAT                  2
-F18.DAT                  2
-F14.DAT                  2
-F01.DAT                  2
-F27.DAT                  2
-F15.DAT                  2
-F30.DAT                  2
-F35.DAT                  2
-Press any key to continue . . .
-F16.DAT                  2
-F24.DAT                  2
-F03.DAT                  2
-F17.DAT                  2
-F07.DAT                  2
-F23.DAT                  2
-F25.DAT                  2
-F04.DAT                  2
-F12.DAT                  2
-F09.DAT                  2
-       35 file(s)         70 bytes
-        0 dir(s)
-A:\>
-A:\>echo done
-done
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>head /2 FRUITS.TXT
+pear
+Apple
+A:\>tail /2 FRUITS.TXT
+apple pie
+Zebra
+A:\>tail /3 LONG.TXT
+Line 68 of the long file
+Line 69 of the long file
+Line 70 of the long file
+A:\>head /0 FRUITS.TXT
+A:\>tail GAMES\A.TXT
+abc
+A:\>head FRUITS.TXT
+pear
+Apple
+banana
+cherry
+apple pie
+Zebra
+A:\>head NOPE.TXT
+File not found
+A:\>if errorlevel 1 echo err %errorlevel%
+err 1
+A:\>head /x FRUITS.TXT
+Usage: HEAD [/n] file
 A:\>
 --- files ---
 ARGS.BAT

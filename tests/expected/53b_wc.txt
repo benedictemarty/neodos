@@ -1,32 +1,21 @@
-F20.DAT                  2
-F02.DAT                  2
-F08.DAT                  2
-F32.DAT                  2
-F31.DAT                  2
-F26.DAT                  2
-F18.DAT                  2
-F14.DAT                  2
-F01.DAT                  2
-F27.DAT                  2
-F15.DAT                  2
-F30.DAT                  2
-F35.DAT                  2
-Press any key to continue . . .
-F16.DAT                  2
-F24.DAT                  2
-F03.DAT                  2
-F17.DAT                  2
-F07.DAT                  2
-F23.DAT                  2
-F25.DAT                  2
-F04.DAT                  2
-F12.DAT                  2
-F09.DAT                  2
-       35 file(s)         70 bytes
-        0 dir(s)
-A:\>
-A:\>echo done
-done
+NeoDOS version 0.31.0
+(C) 2026 bmarty - Neo6502 disk operating system
+Welcome to NeoDOS on the Neo6502
+Type HELP for the list of commands
+A:\>wc FRUITS.TXT
+       6       7      41 FRUITS.TXT
+A:\>wc LONG.TXT
+      70     420    1820 LONG.TXT
+A:\>wc GAMES\A.TXT
+       1       1       3 GAMES\A.TXT
+A:\>wc /l FRUITS.TXT
+Usage: WC file
+A:\>wc > W.TXT
+A:\>type W.TXT
+Usage: WC file
+A:\>wc FRUITS.TXT >> W.TXT
+A:\>tail /1 W.TXT
+       6       7      41 FRUITS.TXT
 A:\>
 --- files ---
 ARGS.BAT
@@ -118,4 +107,5 @@ SHIFT.BAT
 SMASH.NEO
 SUB.BAT
 SUB2.BAT
+W.TXT
 WAITKEY.NEO

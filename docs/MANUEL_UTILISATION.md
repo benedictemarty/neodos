@@ -303,6 +303,9 @@ Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
 |---|---|
 | `HELP` | liste des commandes (externe depuis la 0.28.0 : sans `PATH \BIN`, `Bad command or file name`) |
 | `CONCAT` | concaténation, appelée par `COPY a+b dest` (voir `COPY`) |
+| `HEAD [/n] fichier` | les n premières lignes (10 par défaut ; `HEAD /20 LISTE.TXT`) |
+| `TAIL [/n] fichier` | les n dernières lignes (10 par défaut), quelle que soit la taille du fichier |
+| `WC fichier` | nombre de lignes, de mots et d'octets, puis le nom (`       6       7      41 FRUITS.TXT`) |
 | `CHOICE [/C[:]touches] [/N] [texte]` | attend une touche parmi celles proposées, rend son rang dans `ERRORLEVEL` (voir « Niveau d'erreur ») |
 | `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
 | `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
@@ -338,6 +341,10 @@ modifié), la ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko de texte,
 presse-papier de 2 Ko (lignes entières : pas de sélection au caractère près).
 Pas de raccourcis Ctrl : sur le Neo6502 leurs codes sont ceux des touches de
 déplacement (Ctrl+F = PgDn).
+
+`HEAD`, `TAIL` et `WC` acceptent les fins de ligne CR LF, LF ou CR ; une
+dernière ligne sans fin de ligne compte. Pas de jokers ni de fichiers
+multiples ; `ERRORLEVEL 1` si le fichier est absent.
 
 La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 | `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |

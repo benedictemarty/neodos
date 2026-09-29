@@ -279,6 +279,14 @@ Le résident n'y consacre que 40 octets : une version interne coûtait
 3,8) et écrit sur le canal 5 (3,9) ; ajout à la première source par
 Open 2 + Seek à la taille (3,10 puis 3,6).
 
+## Commandes externes : fichiers texte (0.31.0)
+
+`examples/ext/textfile.inc` (partagé par `HEAD`, `TAIL`, `WC`) : `tf_args`
+(`[/n] fichier`), `tf_open`/`tf_close` (canal 4), `tf_byte` (lecture par
+blocs de 4 Ko en `$2000`), `tf_char` (CR LF, LF, CR → un CR), `tf_put`
+(affichage comme `TYPE`). `TAIL` fait deux passes (compte, puis saute) : pas
+de tampon de lignes, pas de limite de taille. `WC` compte sur 32 bits.
+
 ## Commandes externes
 
 `examples/ext/neoext.inc` : mêmes conventions que le résident (API par

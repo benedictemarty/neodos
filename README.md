@@ -12,7 +12,7 @@ programmes `.NEO`, scripts `.BAT` avec `AUTOEXEC.BAT` au démarrage.
 > [docs/adr/ADR-001](docs/adr/ADR-001-dos-natif.md)).
 
 ```
-NeoDOS version 0.30.0
+NeoDOS version 0.31.0
 (C) 2026 bmarty - Neo6502 disk operating system
 
 A:\>dir
@@ -74,7 +74,7 @@ date/heure du fork, `B:`, `DATE`, `TIME` y sont inactifs (message explicite).
 | `FOR %v IN (jeu) DO cmd`, `SHIFT` | boucle sur un jeu (jokers développés) ; décalage des paramètres `%1`… |
 | `PATH [rép;rép]`, `PROMPT [texte]` | répertoires de recherche des programmes ; format de l'invite (`$p$g`, `$n`, `$d`, `$t`, `$_`) |
 | `commande > fichier`, `>> fichier` | redirige la sortie vers un fichier |
-| `ATTRIB [+R -H…] [fichier]`, `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]`, `REBOOT`, `COLOR fe`, `CONCAT` (`COPY a+b dest`), `HELP`, `CHOICE` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : attributs, éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri, reset matériel, couleurs, concaténation, aide, choix dans les scripts ; leur sortie suit la redirection `>` |
+| `ATTRIB [+R -H…] [fichier]`, `EDIT fichier`, `MORE`, `TREE [/F]`, `XCOPY [/S]`, `DELTREE`, `FIND [/I /N /C /V]`, `SORT [/R]`, `REBOOT`, `COLOR fe`, `CONCAT` (`COPY a+b dest`), `HELP`, `CHOICE`, `HEAD`/`TAIL [/n]`, `WC` | commandes **externes** (`BIN/*.NEO`, via `PATH \BIN`) : attributs, éditeur plein écran, pagination, arborescence, copie et suppression récursives, recherche, tri, reset matériel, couleurs, concaténation, aide, choix dans les scripts, début/fin de fichier, comptage ; leur sortie suit la redirection `>` |
 
 Édition de ligne : flèches, Début/Fin, Suppr, Échap ; **Haut/Bas** rappellent l'historique des commandes (conservé dans `boot/neodos.his` d'un démarrage à l'autre) ; **Tab** complète le nom de fichier ou de répertoire sous le curseur ; **F8** rappelle la dernière commande commençant par le texte tapé (DOSKEY) ; en fin de ligne, la suite de la dernière commande correspondante est **suggérée en gris** au fil de la frappe (→ ou Fin pour l'accepter). **Ctrl+Alt+Suppr** redémarre NeoDOS à chaud (à l'invite, pendant `PAUSE`/`DIR /P`/`Y/N`, ou entre deux lignes d'un script).
 
