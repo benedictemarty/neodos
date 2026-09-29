@@ -244,10 +244,14 @@ relecture ; `clock_note` ajoute ` (clock not set)` si la source reste 0.
 
 ## Fonctions du firmware absentes
 
-`detect_caps` (démarrage) précharge un paramètre puis appelle 3,26 et 1,20 :
-sur carte une fonction inconnue laisse les paramètres intacts (`WARN_GROUP`
-vide en `PICO`), ce qui révèle son absence. `caps` (bit 0 volumes, bit 1
-date/heure) est consulté par `print_volname`, `cmd_drive`, `DATE`/`TIME`
+`detect_caps` (démarrage) précharge un paramètre puis appelle 3,26, 1,20 et
+3,29 : sur carte une fonction inconnue laisse les paramètres intacts
+(`WARN_GROUP` vide en `PICO`), ce qui révèle son absence. Pour 3,29, l'octet
+fort de l'heure est préchargé à `$FF` (heure 31, impossible) : la fonction le
+remplace toujours, même en erreur. `caps` (bit 0 volumes, bit 1 date/heure,
+bit 2 date des fichiers `CAP_FILEDATE`) est consulté par `dir_date` (DIR : 3,29
+après chaque 3,18, date/heure FAT copiées dans `fdt` avant l'affichage — 2,6
+écrit le caractère dans Parameter:0), par `print_volname`, `cmd_drive`, `DATE`/`TIME`
 (`need_datetime`) et `$d`/`$t` de l'invite ; `build_cwdpath` précharge P0 = 0
 avant 3,26 (lettre `A` par défaut).
 

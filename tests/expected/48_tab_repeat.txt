@@ -1,4 +1,4 @@
-NeoDOS version 0.31.0
+NeoDOS version 0.32.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -108,4 +108,5 @@ WAITKEY.NEO
 3,2 x1
 3,23 x4
 3,26 x5
+3,29 x1
 3,5 x1

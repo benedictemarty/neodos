@@ -1,0 +1,4 @@
+dir GAMES
+copy FRUITS.TXT NEW.TXT
+dir *.TXT
+dir GAMES /w

@@ -1,22 +1,22 @@
-FRUITS.TXT              41
+FRUITS.TXT              41  2026-01-02 03:04
         4 file(s)       1901 bytes
         0 dir(s)
 A:\>dir GAMES\*.TXT
  Volume in drive A is HOST0
  Directory of A:\GAMES
-A.TXT                    3
+A.TXT                    3  2031-12-31 23:59
         1 file(s)          3 bytes
         0 dir(s)
 A:\>dir R*
  Volume in drive A is HOST0
  Directory of A:\
-README.TXT              31
+README.TXT              31  2026-01-02 03:04
         1 file(s)         31 bytes
         0 dir(s)
 A:\>dir ?TRL.TXT
  Volume in drive A is HOST0
  Directory of A:\
-CTRL.TXT                 9
+CTRL.TXT                 9  2026-01-02 03:04
         1 file(s)          9 bytes
         0 dir(s)
 A:\>dir *.NOPE

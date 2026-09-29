@@ -33,6 +33,7 @@ promptskip      .fill   1               ; longueur de la dernière ligne de l'in
 dpsave          .fill   9               ; sauvegarde DParams/DError pendant redir_flush
 runtick         .fill   2               ; timer 1,1 (1/100 s) au lancement du programme
 asave           .fill   1               ; api_call : A de l'appelant
+fdt             .fill   4               ; DIR : date/heure FAT de l'entrée (3,29)
 zpsave          .fill   6               ; page zéro rendue au retour d'un programme : bptr, blen, redir, caps
 histdirty       .fill   1               ; historique modifié depuis la dernière écriture
 hcount          .fill   1               ; historique : nombre d'entrées

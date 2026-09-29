@@ -1,4 +1,4 @@
-NeoDOS version 0.31.0
+NeoDOS version 0.32.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -6,8 +6,8 @@ A:\>dir GAMES > D.TXT
 A:\>type D.TXT
  Volume in drive A is HOST0
  Directory of A:\GAMES
-A.TXT                    3
-SUB                  <DIR>
+A.TXT                    3  2031-12-31 23:59
+SUB                  <DIR>  2026-01-02 03:04
         1 file(s)          3 bytes
         1 dir(s)
 A:\>dir *.NOPE > F.TXT

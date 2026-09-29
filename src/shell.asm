@@ -1031,4 +1031,13 @@ detect_caps     stz     caps
                 lda     caps
                 ora     #CAP_DATETIME
                 sta     caps
++               lda     #$ff                    ; 3,29 : l'octet fort de l'heure
+                sta     DParams+3               ; (heure <= 23) remplace $FF
+                #api    3,29                    ; si la fonction existe
+                lda     DParams+3
+                cmp     #$ff
+                beq     +
+                lda     caps
+                ora     #CAP_FILEDATE
+                sta     caps
 +               rts

@@ -1,5 +1,5 @@
-A.TXT                    3
-SUB                  <DIR>
+A.TXT                    3  2031-12-31 23:59
+SUB                  <DIR>  2026-01-02 03:04
         5 file(s)       1904 bytes
         1 dir(s)
 A:\>del GAMES\*.*
@@ -18,7 +18,7 @@ Are you sure (Y/N)?Y
 A:\>dir GAMES
  Volume in drive A is HOST0
  Directory of A:\GAMES
-SUB                  <DIR>
+SUB                  <DIR>  2026-01-02 03:04
         0 file(s)          0 bytes
         1 dir(s)
 A:\>del *.NOPE

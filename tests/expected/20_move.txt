@@ -1,4 +1,4 @@
-SUB                  <DIR>
+SUB                  <DIR>  2026-01-02 03:04
         2 file(s)         34 bytes
         1 dir(s)
 A:\>move GAMES\README.TXT R2.TXT
@@ -6,10 +6,10 @@ A:\>move GAMES\README.TXT R2.TXT
 A:\>dir *.TXT
  Volume in drive A is HOST0
  Directory of A:\
-R2.TXT                  31
-CTRL.TXT                 9
-LONG.TXT              1820
-FRUITS.TXT              41
+R2.TXT                  31  2026-01-02 03:04
+CTRL.TXT                 9  2026-01-02 03:04
+LONG.TXT              1820  2026-01-02 03:04
+FRUITS.TXT              41  2026-01-02 03:04
         4 file(s)       1901 bytes
         0 dir(s)
 A:\>move *.TXT GAMES

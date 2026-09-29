@@ -5,7 +5,7 @@ A:\>xcopy GAMES NEWDIR
 A:\>dir NEWDIR
  Volume in drive A is HOST0
  Directory of A:\NEWDIR
-A.TXT                    3
+A.TXT                    3  YYYY-MM-DD hh:mm
         1 file(s)          3 bytes
         0 dir(s)
 A:\>xcopy GAMES\A.* BIN

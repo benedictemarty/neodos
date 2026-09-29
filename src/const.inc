@@ -108,6 +108,7 @@ CH_BAT          = 7             ; lecture d'un fichier batch
 CH_OUT          = 1             ; redirection de la sortie (>, >>)
 CAP_VOLUMES     = 1
 CAP_DATETIME    = 2
+CAP_FILEDATE    = 4             ; 3,29 Last Entry Date Time (Trinity 0.16.55, T-91)
 STUB_BASE       = $0100         ; stub de retour des programmes (bas de la page pile)
 CANARY          = $A5           ; sentinelle des données NeoDOS (vérifiée par le stub)
 

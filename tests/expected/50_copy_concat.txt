@@ -6,7 +6,7 @@ A:\>type LOG.TXT
 A:\>dir C.TXT
  Volume in drive A is HOST0
  Directory of A:\
-C.TXT                   91
+C.TXT                   91  YYYY-MM-DD hh:mm
         1 file(s)         91 bytes
         0 dir(s)
 A:\>copy FRUITS.TXT+C.TXT C.TXT

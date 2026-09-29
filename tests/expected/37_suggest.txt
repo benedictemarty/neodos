@@ -1,4 +1,4 @@
-NeoDOS version 0.31.0
+NeoDOS version 0.32.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
@@ -15,10 +15,10 @@ hello
 A:\>dir *.NEO
  Volume in drive A is HOST0
  Directory of A:\
-HELLO.NEO               66
-BIG.NEO               4369
-WAITKEY.NEO             92
-SMASH.NEO               84
+HELLO.NEO               66  2026-01-02 03:04
+BIG.NEO               4369  2026-01-02 03:04
+WAITKEY.NEO             92  2026-01-02 03:04
+SMASH.NEO               84  2026-01-02 03:04
         4 file(s)       4611 bytes
         0 dir(s)
 A:\>echo hello

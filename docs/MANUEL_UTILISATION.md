@@ -78,7 +78,7 @@ tapez d'avance pendant une commande courte est conservé.
 
 | Commande | Exemple |
 |---|---|
-| `DIR [chemin][motif] [/P] [/W]` | `DIR`, `DIR GAMES`, `DIR \`, `DIR *.TXT`, `DIR GAMES\*.NEO /W`, `DIR /P` |
+| `DIR [chemin][motif] [/P] [/W]` | `DIR`, `DIR GAMES`, `DIR \`, `DIR *.TXT`, `DIR GAMES\*.NEO /W`, `DIR /P` ; chaque entrée montre sa date et son heure (`README.TXT   31  2026-09-29 14:05`) avec Trinity ≥ 0.16.55 — rien sur un firmware plus ancien ni en `/W` |
 | `CD [chemin]` | `CD GAMES`, `CD ..`, `CD \`, `CD` (affiche le répertoire) |
 | `MD chemin` | `MD SAVES` |
 | `RD chemin` | `RD SAVES` (le répertoire doit être vide) |
@@ -389,8 +389,8 @@ La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
 ## Limites connues (v0.1)
 
 - Pas de variables `%VAR%` dans les scripts (seulement `%0`-`%9` et la
-  variable de `FOR`), pas de `<` ni `|`, pas de dates de fichiers dans `DIR`
-  (voir le backlog dans `docs/AGILE_PLAN.md`).
+  variable de `FOR`), pas de `<` ni `|` (voir le backlog dans
+  `docs/AGILE_PLAN.md`).
 - Sur les émulateurs, seul l'attribut `R` est réellement stocké (permissions
   du fichier hôte) ; `H`, `S`, `A` n'ont d'effet que sur la carte (FAT).
 - Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`

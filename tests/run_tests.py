@@ -36,6 +36,17 @@ EXPECTED = os.path.join(ROOT, "tests", "expected")
 FIXTURES = os.path.join(ROOT, "tests", "fixtures")
 STORAGE = os.path.join(ROOT, "storage")
 
+# Date des fichiers (DIR, 3,29 depuis NeoDOS 0.32.0) : les fichiers du stockage
+# de test reçoivent une date fixe, vérifiée par les références ; celle des
+# fichiers créés pendant le test (heure courante) est remplacée par DATE_ANY.
+import re as _re_date, time as _time
+FIXED_MTIME = _time.mktime((2026, 1, 2, 3, 4, 0, 0, 0, -1))     # heure locale
+EDGE_MTIME = _time.mktime((2031, 12, 31, 23, 59, 58, 0, 0, -1))  # GAMES/A.TXT : champs FAT
+EDGE_FILE = os.path.join("GAMES", "A.TXT")                        # extrêmes (mois 12, 23:59)
+FIXED_DATES = ("2026-01-02 03:04", "2031-12-31 23:59")
+DATE_ANY = "YYYY-MM-DD hh:mm"
+_DIR_DATE = _re_date.compile(r"(  )(\d{4}-\d\d-\d\d \d\d:\d\d)$")
+
 START_CYCLES = 3_000_000        # NeoDOS a affiché son invite
 CYCLES_PER_KEY = 700_000        # typer Phosphoneo : 6 trames par touche
 TAIL_CYCLES = 8_000_000         # marge pour la dernière commande
@@ -50,6 +61,10 @@ def build_storage(tmp):
     gitkeep = os.path.join(tmp, ".gitkeep")
     if os.path.exists(gitkeep):
         os.remove(gitkeep)
+    for d, dirs, files in os.walk(tmp):                     # dates fixes (DIR)
+        for x in dirs + files:
+            os.utime(os.path.join(d, x), (FIXED_MTIME, FIXED_MTIME))
+    os.utime(os.path.join(tmp, EDGE_FILE), (EDGE_MTIME, EDGE_MTIME))
 
 
 def list_files(root):
@@ -66,8 +81,15 @@ def list_files(root):
     return sorted(out)
 
 
+def _dir_date(line):
+    m = _DIR_DATE.search(line)
+    if m and m.group(2) not in FIXED_DATES:
+        return line[:m.start(2)] + DATE_ANY
+    return line
+
+
 def normalise(text):
-    lines = [l.rstrip() for l in text.splitlines()]
+    lines = [_dir_date(l.rstrip()) for l in text.splitlines()]
     lines = [l for l in lines if l]
     for i, l in enumerate(lines):
         if l.startswith("NeoDOS version"):

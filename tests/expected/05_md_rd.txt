@@ -1,23 +1,23 @@
-GAMES                <DIR>
-BIN                  <DIR>
-SUB2.BAT                33
-ARGS.BAT               201
-ERRLVL.BAT             275
-MANY                 <DIR>
-SUB.BAT                 56
-POKER                <DIR>
-CTRL.TXT                 9
-CALLER.BAT             239
-BIG.NEO               4369
-WAITKEY.NEO             92
-SHIFT.BAT               99
-README.TXT              31
-LONG.TXT              1820
-CHAIN.BAT               25
-FRUITS.TXT              41
-SMASH.NEO               84
-LOOP.BAT               102
-FOREVER.BAT             41
+GAMES                <DIR>  2026-01-02 03:04
+BIN                  <DIR>  2026-01-02 03:04
+SUB2.BAT                33  2026-01-02 03:04
+ARGS.BAT               201  2026-01-02 03:04
+ERRLVL.BAT             275  2026-01-02 03:04
+MANY                 <DIR>  2026-01-02 03:04
+SUB.BAT                 56  2026-01-02 03:04
+POKER                <DIR>  2026-01-02 03:04
+CTRL.TXT                 9  2026-01-02 03:04
+CALLER.BAT             239  2026-01-02 03:04
+BIG.NEO               4369  2026-01-02 03:04
+WAITKEY.NEO             92  2026-01-02 03:04
+SHIFT.BAT               99  2026-01-02 03:04
+README.TXT              31  2026-01-02 03:04
+LONG.TXT              1820  2026-01-02 03:04
+CHAIN.BAT               25  2026-01-02 03:04
+FRUITS.TXT              41  2026-01-02 03:04
+SMASH.NEO               84  2026-01-02 03:04
+LOOP.BAT               102  2026-01-02 03:04
+FOREVER.BAT             41  2026-01-02 03:04
        19 file(s)       7877 bytes
         6 dir(s)
 A:\>rd SUB

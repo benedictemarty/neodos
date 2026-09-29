@@ -1,11 +1,11 @@
-CTRL.BAK                 9
+CTRL.BAK                 9  2026-01-02 03:04
         4 file(s)       1901 bytes
         0 dir(s)
 A:\>ren C?RL.BAK X?RL.OLD
 A:\>dir *.OLD
  Volume in drive A is HOST0
  Directory of A:\
-XTRL.OLD                 9
+XTRL.OLD                 9  2026-01-02 03:04
         1 file(s)          9 bytes
         0 dir(s)
 A:\>copy README.BAK GAMES
@@ -13,9 +13,9 @@ A:\>copy README.BAK GAMES
 A:\>dir GAMES
  Volume in drive A is HOST0
  Directory of A:\GAMES
-README.BAK              31
-A.TXT                    3
-SUB                  <DIR>
+README.BAK              31  YYYY-MM-DD hh:mm
+A.TXT                    3  2031-12-31 23:59
+SUB                  <DIR>  2026-01-02 03:04
         2 file(s)         34 bytes
         1 dir(s)
 A:\>copy *.BAK X.TXT

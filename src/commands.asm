@@ -172,6 +172,7 @@ _entry          lda     #100
                 and     #ATTR_DIR
                 beq     _file
                 #print  "     <DIR>"
+                jsr     dir_date
                 jsr     dir_newline
                 inc     ndirs
                 bne     _entry
@@ -180,6 +181,7 @@ _entry          lda     #100
 _file           jsr     dir_addsize
                 ldx     #10
                 jsr     print32
+                jsr     dir_date
                 jsr     dir_newline
                 bra     _entry
 _wide           lda     DParams+6               ; /W : [DIR] ou NOM, 4 colonnes
@@ -289,6 +291,77 @@ dir_newline     jsr     newline
                 jsr     wait_key
                 jmp     newline
 _done           rts
+
+; dir_date : «  2026-09-29 14:05 » de l'entrée qui vient d'être lue (3,29,
+; Trinity >= 0.16.55) ; rien si le firmware ne le permet pas ou si la date est
+; inconnue (0/0). Date et heure au format FAT : P0-1 jour/mois/année-1980,
+; P2-3 secondes/2, minutes, heure.
+dir_date        lda     caps
+                and     #CAP_FILEDATE
+                beq     _r
+                #api    3,29
+                lda     DError
+                bne     _r
+                ldx     #3                      ; copie : l'affichage (2,6)
+-               lda     DParams,x               ; écrit dans Parameter:0
+                sta     fdt,x
+                dex
+                bpl     -
+                lda     fdt
+                ora     fdt+1
+                beq     _r
+                jsr     space
+                jsr     space
+                lda     fdt+1               ; année = 1980 + bits 15-9
+                lsr     a
+                clc
+                adc     #<1980
+                pha
+                lda     #>1980
+                adc     #0
+                tay
+                pla
+                ldx     #0
+                jsr     print16
+                lda     #'-'
+                jsr     putc
+                lda     fdt+1               ; mois = bits 8-5
+                lsr     a
+                lda     fdt
+                ror     a
+                lsr     a
+                lsr     a
+                lsr     a
+                lsr     a
+                jsr     print2
+                lda     #'-'
+                jsr     putc
+                lda     fdt                     ; jour = bits 4-0
+                and     #$1f
+                jsr     print2
+                jsr     space
+                lda     fdt+3               ; heure = bits 15-11
+                lsr     a
+                lsr     a
+                lsr     a
+                jsr     print2
+                lda     #':'
+                jsr     putc
+                lda     fdt+3               ; minutes = bits 10-5
+                and     #7
+                asl     a
+                asl     a
+                asl     a
+                sta     tmp
+                lda     fdt+2
+                lsr     a
+                lsr     a
+                lsr     a
+                lsr     a
+                lsr     a
+                ora     tmp
+                jmp     print2
+_r              rts
 
 ; dir_parse_args : mots de argrest -> arg1 (premier mot qui n'est pas un
 ; commutateur) et dirflags (/P = 1, /W = 2). Un commutateur est un mot de
