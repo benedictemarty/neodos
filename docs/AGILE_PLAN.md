@@ -353,7 +353,7 @@ Trois commandes externes (résident inchangé) sur une base commune
 
 | # | Story | Notes |
 |---|---|---|
-| B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas (P7 seul libre) : **demandé à Trinity le 2026-09-29** — nouvelle fonction du groupe 3 rendant fdate/ftime FAT de la dernière entrée lue ; en attente de réponse |
+| B3 | Date/heure des fichiers dans `DIR` | l'API 3,18 ne les renvoie pas (P7 seul libre) : **demandé à Trinity le 2026-09-29**, inscrit au backlog Trinity sous **T-91** : 3,29 Last Entry Date/Time (P0-1 fdate, P2-3 ftime FAT, 0/0 si inconnue, erreur si aucune entrée lue ; mtime hôte sur émulateur). Faisabilité confirmée ; codage en attente de l'accord de bmarty côté Trinity |
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : historique (0.23.0) et Tab répété (0.25.0) traités ; reste, si la carte le demande, un cache complet du catalogue (Tab après frappe, suggestion étendue aux fichiers B14) | à valider sur carte (recette 4.19) |
