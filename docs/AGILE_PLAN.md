@@ -374,6 +374,7 @@ l'écran restait noir (contournement : `MODE 0` à l'aveugle).
 | S128 `prog_reset` (`start` et `neodos_back`) : 32,19 puis 5,12 et 5,11 avec P0 = 0 ; mode inchangé (+20 octets, résident 10 906 o) | fait |
 | S129 Fixture `POKER/PAGES.NEO`, test `55_page_realign` (journal API) ; références : `PAGES.NEO` dans les listings, 5,11/5,12 dans `26_run_at_0200`, `09_exit` voit NeoDOS 0.32.0 embarqué par Trinity 0.16.61 | fait |
 | S130 Validation sur carte avec BattleNeo | à faire (accord bmarty) |
+| S131 Phosphoneo : capture texte fidèle quand dessin ≠ affichage (demandé par mémo `docs/MEMO-NEODOS-2026-09-30.md` du dépôt Phosphoneo), puis cas de contrôle sans réalignement dans `55_page_realign` | en attente de Phosphoneo |
 
 ## Backlog (priorisé)
 
