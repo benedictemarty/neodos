@@ -12,7 +12,7 @@
 ;  (bloc de contrôle $FF00).
 ; ***************************************************************************
 
-VERSION         = "0.32.0"
+VERSION         = "0.32.1"
 
                 .include "const.inc"
                 .include "macros.inc"

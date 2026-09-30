@@ -41,8 +41,8 @@ start           cld
                 sta     DParams
                 #api    3,5
                 #api    3,19
-                #api    32,19                   ; Toolbox Reset (Trinity T-88) : rechargé
-                                                ; après un programme qui a écrasé NeoDOS
+                jsr     prog_reset              ; Toolbox et pages : rechargé après un
+                                                ; programme qui a écrasé NeoDOS
                 jsr     hist_load               ; historique de la session
                 jsr     newline                 ; précédente (/boot/neodos.his)
                 jsr     ver_line
@@ -675,9 +675,7 @@ load_error      jsr     err_api
 neodos_back     ldx     #$ff
                 txs
                 jsr     zp_restore              ; batch (bptr, blen), redir, caps
-                #api    32,19                   ; Toolbox Reset (Trinity T-88) : ni menu, ni
-                                                ; fenêtre, ni dialogue laissés au suivant
-                                                ; (sans effet sur un firmware qui l'ignore)
+                jsr     prog_reset              ; Toolbox et pages laissées par le programme
                 jsr     kbd_flush               ; touches tapées dans le programme
                 jsr     redir_close             ; try_run ne revient pas : « > » se
                                                 ; ferme ici (batch_next ne passe pas
@@ -688,6 +686,18 @@ neodos_back     ldx     #$ff
                 beq     +                       ; programme (comme MS-DOS)
                 jmp     batch_next
 +               jmp     mainloop
+
+; prog_reset : état laissé par un programme. 32,19 Toolbox Reset (Trinity
+; T-88) : ni menu, ni fenêtre, ni dialogue laissés au suivant. 5,12 puis 5,11
+; (F-55) : page affichée et page de dessin remises à 0 — un programme qui rend
+; la main en dessinant dans la page 1 (BattleNeo en mode 2) laissait la console
+; écrire hors de l'écran. Le mode n'est pas changé. Sans effet sur un firmware
+; qui ignore ces fonctions.
+prog_reset      #api    32,19
+                stz     DParams
+                #api    5,12
+                #api    5,11
+                rts
 
 ; first_word_raw : premier mot de linebuf (tel que tapé) -> namebuf
 first_word_raw  ldy     #1

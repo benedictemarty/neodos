@@ -70,7 +70,8 @@ storage/BIN/%.NEO: examples/ext/%.asm examples/ext/neoext.inc examples/ext/walk.
 
 # Fixtures de test binaires (non livrées) : BIG.NEO se charge par-dessus NeoDOS
 fixtures: tests/fixtures/BIG.NEO tests/fixtures/WAITKEY.NEO \
-          tests/fixtures/POKER/TBWIN.NEO tests/fixtures/POKER/TBWINX.NEO tests/fixtures/POKER/TBFRONT.NEO
+          tests/fixtures/POKER/TBWIN.NEO tests/fixtures/POKER/TBWINX.NEO tests/fixtures/POKER/TBFRONT.NEO \
+          tests/fixtures/POKER/PAGES.NEO
 tests/fixtures/BIG.NEO: examples/big.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/big.bin examples/big.asm
 	python3 tools/mkneo.py $(BUILD)/big.bin $@ B000 B000 "Big"
@@ -88,6 +89,11 @@ tests/fixtures/POKER/TBWINX.NEO: examples/tbwin.asm tools/mkneo.py | $(BUILD)
 tests/fixtures/POKER/TBFRONT.NEO: examples/tbfront.asm tools/mkneo.py | $(BUILD)
 	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/tbfront.bin examples/tbfront.asm
 	python3 tools/mkneo.py $(BUILD)/tbfront.bin $@ 0800 0800 "TbFront"
+
+# Pages de dessin et d'affichage (F-55) laissées différentes par un programme
+tests/fixtures/POKER/PAGES.NEO: examples/pages.asm tools/mkneo.py | $(BUILD)
+	$(AS) --mw65c02 --nostart --quiet -o $(BUILD)/pages.bin examples/pages.asm
+	python3 tools/mkneo.py $(BUILD)/pages.bin $@ 0800 0800 "Pages"
 
 storage/%.BAT: examples/%.BAT
 	cp $< $@

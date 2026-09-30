@@ -362,6 +362,19 @@ dernière entrée lue par 3,16 ou 3,18).
 | S126 Phosphoneo : `FISGetLastEntryTime` (hôte : mtime local ; disquette : FatFs) — il ne se liait plus contre Trinity 0.16.55 (commit `c76a605`) | fait |
 | S127 Lanceur : dates fixes du stockage, date extrême sur `GAMES/A.TXT`, dates des fichiers créés neutralisées ; test `54_dir_dates` ; toutes les références `DIR` datées | fait |
 
+## Sprint 33 — pages de dessin et d'affichage au retour d'un programme (2026-09-30) — livré, v0.32.1
+
+Demande de la session Trinity, confirmée par bmarty : sur la carte (Trinity
+0.16.62), BattleNeo quittait en mode 2 avec la page de dessin 1 et la page
+affichée 0 ; revenu sous NeoDOS, tout le texte s'écrivait dans la page 1 et
+l'écran restait noir (contournement : `MODE 0` à l'aveugle).
+
+| Story | État |
+|---|---|
+| S128 `prog_reset` (`start` et `neodos_back`) : 32,19 puis 5,12 et 5,11 avec P0 = 0 ; mode inchangé (+20 octets, résident 10 906 o) | fait |
+| S129 Fixture `POKER/PAGES.NEO`, test `55_page_realign` (journal API) ; références : `PAGES.NEO` dans les listings, 5,11/5,12 dans `26_run_at_0200`, `09_exit` voit NeoDOS 0.32.0 embarqué par Trinity 0.16.61 | fait |
+| S130 Validation sur carte avec BattleNeo | à faire (accord bmarty) |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |

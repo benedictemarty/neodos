@@ -119,7 +119,11 @@ l'API (`$FF00-$FF0B`) et les vecteurs du noyau 6502 (`ReadLine $FFEB`,
    Toolbox Reset** (Trinity T-88, ≥ 0.16.49 : fenêtres, menus, contrôles,
    dialogues, événements remis à l'état du démarrage, rien n'est dessiné ;
    ignorée par un firmware plus ancien — aussi appelée par `start`, pour le
-   cas où NeoDOS est rechargé après avoir été écrasé), fermeture
+   cas où NeoDOS est rechargé après avoir été écrasé), **5,12 puis 5,11** (page
+   affichée et page de dessin remises à 0, F-55 : un programme qui rend la
+   main en dessinant dans la page 1 — BattleNeo en mode 2 — laissait la
+   console écrire hors de l'écran ; le mode n'est pas changé ; les deux,
+   avec 32,19, forment `prog_reset`), fermeture
    de la redirection (`try_run` ne revenant pas, la fin de `execute_line`
    n'est pas atteinte), reprise du batch en cours ou invite.
 
