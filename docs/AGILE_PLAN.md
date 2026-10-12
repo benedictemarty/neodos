@@ -389,8 +389,8 @@ inchangé), donc `EDIT` (30 lignes en dur) cassait sa mise en page en 25 lignes.
 | S132 `MODE` : `text 80x25` (console, 5,10 +6/+7) au lieu de `0 bpp` (+15 octets, résident 10 921 o) | fait |
 | S133 `EDIT` : lignes et colonnes lues par 5,10 (`get_console`) ; 53 × 30 si le firmware ne les donne pas ou si la console a moins de 50 colonnes ou 5 lignes (+48 octets) | fait |
 | S134 Tests `56_mode3_edit` et `56b_mode3` ; références : version 0.33.0, `09_exit` (Trinity 0.16.88 embarque 0.32.1), `55_page_realign` (firmware 0.16.88), `21_xcopy` (taille d'`EDIT.NEO`) ; `EDIT` en mode 1 essayé à part (23 lignes) | fait |
-| S135 Validation sur carte : `MODE 3` puis `EDIT` (mise en page, vitesse comparée au mode 0), et retour d'un programme en mode 3 (jamais essayé sur carte, selon Trinity) | demandée à la sonde de Trinity le 2026-10-12 (accord bmarty), en attente |
-| S136 5,13-5,15 (écriture, défilement, effacement de texte) pour `EDIT` : livrés par Trinity 0.16.89 (2026-10-12, validés sur carte par son test text3) ; mode 3 seulement (erreur ailleurs), CP437 brut, sans toucher au curseur ni à la mémoire de la console ; un 2,12 ou un défilement de la console repeint depuis cette mémoire et efface ce qu'ils ont écrit : un seul des deux chemins dans `EDIT` en mode 3. Gain à mesurer (vitesse de `draw_all`) avant de doubler le code | à décider (accord bmarty) |
+| S135 Validation sur carte (2026-10-12, Trinity 0.16.90 avec NeoDOS 0.33.0, sonde SWD et œil de bmarty) : `MODE` en mode 3, `EDIT` (23 lignes + état + aide, rien hors écran ; flèche bas, PgDn/PgUp ; défilement horizontal), retour à l'invite en mode 3 puis `DIR` ; environ 15 à 17 réaffichages par seconde, comme en mode 0 ; aucune ligne DVI en retard ; bmarty : « vitesse acceptable » | fait |
+| S136 5,13-5,15 (texte du mode 3, Trinity 0.16.89) pour `EDIT` : inutiles, la console suffit (S135 : même vitesse qu'en mode 0, c'est le travail d'`EDIT` par touche qui limite) | abandonné (décision bmarty) |
 
 ## Backlog (priorisé)
 
