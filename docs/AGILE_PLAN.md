@@ -383,7 +383,7 @@ l'écran restait noir (contournement : `MODE 0` à l'aveugle).
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : historique (0.23.0) et Tab répété (0.25.0) traités ; reste, si la carte le demande, un cache complet du catalogue (Tab après frappe, suggestion étendue aux fichiers B14) | à valider sur carte (recette 4.19) |
-| B17 | Mode vidéo 3 de Trinity 0.16.88 (texte couleur 80 × 25, 640 × 200, 0 bpp ; validé sur carte avec `MODE 3` et `DIR`, 2026-10-12) : `MODE` affiche « 0 bpp » (dire « texte » ?) ; `EDIT` a `COLS = 53` en dur, à lire depuis 5,10 (largeur de console) | signalé par Trinity, vérifié dans les sources ; accord bmarty |
+| B17 | Mode vidéo 3 de Trinity 0.16.88 (texte couleur 80 × 25, 640 × 200, 0 bpp ; validé sur carte avec `MODE 3` et `DIR`, 2026-10-12) : `MODE` affiche « 0 bpp » (dire « texte » ?) ; `EDIT` a `ROWS = 28` et `COLS = 53` en dur : en 25 lignes, la ligne d'aide (rangée 29) et les lignes 25 à 28 tombent hors de l'écran ; dimensions à lire depuis 5,10 (console). Rien n'a été essayé sur carte ni dans Phosphoneo | signalé par Trinity, vérifié dans les sources ; accord bmarty |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts
