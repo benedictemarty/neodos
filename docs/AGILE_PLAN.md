@@ -390,7 +390,7 @@ inchangé), donc `EDIT` (30 lignes en dur) cassait sa mise en page en 25 lignes.
 | S133 `EDIT` : lignes et colonnes lues par 5,10 (`get_console`) ; 53 × 30 si le firmware ne les donne pas ou si la console a moins de 50 colonnes ou 5 lignes (+48 octets) | fait |
 | S134 Tests `56_mode3_edit` et `56b_mode3` ; références : version 0.33.0, `09_exit` (Trinity 0.16.88 embarque 0.32.1), `55_page_realign` (firmware 0.16.88), `21_xcopy` (taille d'`EDIT.NEO`) ; `EDIT` en mode 1 essayé à part (23 lignes) | fait |
 | S135 Validation sur carte : `MODE 3` puis `EDIT`, et retour d'un programme en mode 3 (jamais essayé sur carte, selon Trinity) | à faire (accord bmarty) |
-| S136 5,13-5,15 (écriture, défilement, effacement de texte, Trinity 0.16.89) pour `EDIT` | en attente de Trinity |
+| S136 5,13-5,15 (écriture, défilement, effacement de texte) pour `EDIT` : livrés par Trinity 0.16.89 (2026-10-12, validés sur carte par son test text3) ; mode 3 seulement (erreur ailleurs), CP437 brut, sans toucher au curseur ni à la mémoire de la console ; un 2,12 ou un défilement de la console repeint depuis cette mémoire et efface ce qu'ils ont écrit : un seul des deux chemins dans `EDIT` en mode 3. Gain à mesurer (vitesse de `draw_all`) avant de doubler le code | à décider (accord bmarty) |
 
 ## Backlog (priorisé)
 
