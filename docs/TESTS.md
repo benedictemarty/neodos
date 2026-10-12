@@ -4,7 +4,7 @@
 
 Les tests s'exécutent **sur cible** : `build/neodos.neo` tourne dans
 Phosphoneo en mode headless, les commandes sont frappées au clavier
-(`--type-keys`), la console texte (53×30) est capturée
+(`--type-keys`), la console texte (53×30, ou 80×25 après `MODE 1`/`MODE 3`) est capturée
 (`--screenshot-text`) et l'état du stockage est relevé après le test.
 
 ```
@@ -111,6 +111,8 @@ cycles par touche, 6 trames) ; un test dure environ 0,5 s.
 | `38_for_shift` | `FOR` (jokers, littéraux, `%%v`, `IF` dans `DO`, `x` sans `%`, `DO` vide, sans `DO` = erreurs), `SHIFT` (hors script, décalage) |
 | `39_ext_errorlevel` | `IF ERRORLEVEL` après les commandes externes (`FIND` sans/avec correspondance, `ATTRIB` fichier absent, `MORE` sans argument) |
 | `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
+| `56_mode3_edit` | `MODE 3` (Trinity 0.16.88, texte 80×25) puis `EDIT LONG.TXT` : 23 lignes de texte entre la ligne d'état et la ligne d'aide, défilement vertical jusqu'à la ligne 26, défilement horizontal à 80 colonnes (85 caractères insérés) ; capture 80×25 |
+| `56b_mode3` | `MODE 3` affiche `Current video mode is 3 (640x200, text 80x25)` (0 bpp), puis `DIR GAMES` en 80 colonnes |
 | `55_page_realign` | `PAGES` (fixture `POKER/PAGES.NEO`) rend la main en mode 1 avec la page de dessin 1 et la page affichée 0 ; journal `5 count` : 5,11 et 5,12 appelés au démarrage, par le programme et au retour (×3). Phosphoneo lit la console quelle que soit la page : l'écran noir de la carte n'est pas reproduit, seul l'appel est vérifié |
 | `54_dir_dates` | `DIR GAMES` (date extrême et répertoire), fichier créé par `COPY` (date neutralisée), `DIR *.TXT`, `DIR /W` sans date |
 | `53_head_tail` | `HEAD /2`, `TAIL /2`, `TAIL /3` (fichier de 70 lignes), `HEAD /0`, `TAIL` d'un fichier sans fin de ligne, `HEAD` par défaut, fichier absent (`ERRORLEVEL 1`), option invalide |

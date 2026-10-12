@@ -376,6 +376,22 @@ l'écran restait noir (contournement : `MODE 0` à l'aveugle).
 | S130 Validation sur carte avec BattleNeo | à faire (accord bmarty) |
 | S131 Phosphoneo : capture texte fidèle quand dessin ≠ affichage (demandé par mémo `docs/MEMO-NEODOS-2026-09-30.md` du dépôt Phosphoneo), puis cas de contrôle sans réalignement dans `55_page_realign` | en attente de Phosphoneo |
 
+## Sprint 34 — mode vidéo 3 de Trinity (2026-10-12) — livré, v0.33.0
+
+Trinity 0.16.88 ajoute le mode 3 : texte couleur 80 × 25 (640 × 200, 0 bpp),
+validé sur carte avec NeoDOS 0.32.1 (`MODE 3`, `DIR`). Remarques de la
+session Trinity vérifiées dans les sources, puis confirmées par elle : 5,10
+donne la console en octets +6/+7 ; 2,7 hors console est refusé (curseur
+inchangé), donc `EDIT` (30 lignes en dur) cassait sa mise en page en 25 lignes.
+
+| Story | État |
+|---|---|
+| S132 `MODE` : `text 80x25` (console, 5,10 +6/+7) au lieu de `0 bpp` (+15 octets, résident 10 921 o) | fait |
+| S133 `EDIT` : lignes et colonnes lues par 5,10 (`get_console`) ; 53 × 30 si le firmware ne les donne pas ou si la console a moins de 50 colonnes ou 5 lignes (+48 octets) | fait |
+| S134 Tests `56_mode3_edit` et `56b_mode3` ; références : version 0.33.0, `09_exit` (Trinity 0.16.88 embarque 0.32.1), `55_page_realign` (firmware 0.16.88), `21_xcopy` (taille d'`EDIT.NEO`) ; `EDIT` en mode 1 essayé à part (23 lignes) | fait |
+| S135 Validation sur carte : `MODE 3` puis `EDIT`, et retour d'un programme en mode 3 (jamais essayé sur carte, selon Trinity) | à faire (accord bmarty) |
+| S136 5,13-5,15 (écriture, défilement, effacement de texte, Trinity 0.16.89) pour `EDIT` | en attente de Trinity |
+
 ## Backlog (priorisé)
 
 | # | Story | Notes |
@@ -383,7 +399,6 @@ l'écran restait noir (contournement : `MODE 0` à l'aveugle).
 | B9 | Validation sur carte (USB, SD, plusieurs volumes `A:`/`B:`) | |
 | B14 | Suggestion automatique étendue aux noms de fichiers (accès disque à chaque touche : à mesurer sur carte) | éditeur de ligne |
 | B16 | Réduire les accès disque (traits rouges = lignes DVI en retard du firmware, Trinity T-31) : historique (0.23.0) et Tab répété (0.25.0) traités ; reste, si la carte le demande, un cache complet du catalogue (Tab après frappe, suggestion étendue aux fichiers B14) | à valider sur carte (recette 4.19) |
-| B17 | Mode vidéo 3 de Trinity 0.16.88 (texte couleur 80 × 25, 640 × 200, 0 bpp ; validé sur carte avec `MODE 3` et `DIR`, 2026-10-12) : `MODE` affiche « 0 bpp » (dire « texte » ?) ; `EDIT` a `ROWS = 28` et `COLS = 53` en dur : en 25 lignes, la ligne d'aide (rangée 29) et les lignes 25 à 28 tombent hors de l'écran ; dimensions à lire depuis 5,10 (console). Confirmé par Trinity le 2026-10-12 : 5,10 donne +5 = 0 (bpp), +6/+7 = console 80 × 25 (carte et émulateur) ; 2,7 hors console est refusé sans bornage, le texte suivant s'écrit à l'ancienne position, donc mise en page d'EDIT cassée sans plantage (émulateur) ; retour d'un programme en mode 3 non essayé sur carte (déduit) ; 5,13-5,15 (écriture, défilement, effacement de texte) annoncés pour Trinity 0.16.89 | signalé par Trinity, vérifié dans les sources ; accord bmarty |
 | B11 | Intégration dans le firmware à la place de `basic_binary.h` (option) | refusé pour l'instant : `.neo` seulement |
 
 ## Risques et points ouverts

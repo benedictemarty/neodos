@@ -1434,7 +1434,8 @@ cmd_mem         jsr     newline
 ; ---------------------------------------------------------------------------
 ; ---------------------------------------------------------------------------
 ; MODE [n] : affiche ou change le mode video (5,10 Get Mode / 5,9 Set Mode).
-; Trinity : 0 = 320x240x256, 1 = 720x350 monochrome (Hercules). NeoDOS n'avait
+; Trinity : 0 = 320x240x256, 1 = 720x350 monochrome (Hercules), 3 = texte
+; couleur 80x25 (0.16.88 ; « text 80x25 » au lieu des bpp). NeoDOS n'avait
 ; aucun moyen d'atteindre le mode 1 — seul NeoBASIC avec VMODE (bmarty 2026-09-24).
 ; ---------------------------------------------------------------------------
 cmd_mode        lda     arg1
@@ -1457,6 +1458,7 @@ _show           #print  "Current video mode is "
                 jsr     print16
                 #print  ", "
                 lda     DParams+5
+                beq     _text                   ; 0 bpp : mode texte (Trinity mode 3)
                 jsr     print8
                 #println " bpp)"
                 rts
@@ -1475,6 +1477,15 @@ _set            jsr     ptr_arg1
                 jmp     _show
 _bad            jsr     errlvl1
                 #println "Invalid video mode"
+                rts
+_text           #print  "text "
+                lda     DParams+6               ; console en caractères
+                jsr     print8
+                lda     #'x'
+                jsr     putc
+                lda     DParams+7
+                jsr     print8
+                #println ")"
                 rts
 
 

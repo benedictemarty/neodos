@@ -282,10 +282,13 @@ retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 ## Mode vidéo
 
 `MODE` affiche le mode courant et ses dimensions, `MODE n` en change.
-Trinity en propose deux : **0** = 320×240 en 256 couleurs (le mode de
-démarrage), **1** = 720×350 monochrome, le mode **Hercules** — texte fin de
-80 colonnes sur 25 lignes, avec les attributs souligné, gras, inverse et
-clignotant. Un changement de mode efface l'écran. Un numéro que le firmware
+Modes de Trinity : **0** = 320×240 en 256 couleurs (le mode de
+démarrage, console de 53 colonnes sur 30 lignes), **1** = 720×350
+monochrome, le mode **Hercules** — texte fin de 80 colonnes sur 25 lignes,
+avec les attributs souligné, gras, inverse et clignotant —, **3** (Trinity
+0.16.88 et suivants) = texte couleur de 80 colonnes sur 25 lignes, comme la
+carte CGA, sans pixels (dessin et sprites refusés) ; `MODE` y affiche la
+taille de la console au lieu des bits par pixel. Un changement de mode efface l'écran. Un numéro que le firmware
 ne connaît pas donne `Invalid video mode` et `ERRORLEVEL 1`.
 
 ```
@@ -293,6 +296,8 @@ MODE
 Current video mode is 0 (320x240, 8 bpp)
 MODE 1
 Current video mode is 1 (720x350, 1 bpp)
+MODE 3
+Current video mode is 3 (640x200, text 80x25)
 ```
 
 ## Commandes externes (BIN\)
@@ -335,7 +340,9 @@ ligne est fusionnée avec la précédente/suivante) ; Entrée coupe la ligne.
 | `P` | coller le presse-papier avant la ligne du curseur (autant de fois que voulu) |
 | Échap | revenir au texte |
 
-Les lignes plus longues que l'écran défilent horizontalement : la colonne du
+L'éditeur prend la taille de la console : 28 lignes de texte sur 53
+colonnes en mode 0, 23 sur 80 en mode 1 ou 3 (un firmware qui ne donne pas
+cette taille garde 53×30). Les lignes plus longues que l'écran défilent horizontalement : la colonne du
 curseur reste toujours visible. La ligne d'état montre le nom (`*` si
 modifié), la ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko de texte,
 presse-papier de 2 Ko (lignes entières : pas de sélection au caractère près).

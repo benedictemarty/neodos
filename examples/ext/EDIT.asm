@@ -1,5 +1,6 @@
 ; EDIT.asm — commande externe NeoDOS : EDIT fichier — éditeur de texte plein
-; écran (53x30 : 1 ligne d'état, 28 lignes de texte, 1 ligne d'aide).
+; écran à la taille de la console (5,10 : 53x30 en mode 0, 80x25 en mode 3 ;
+; 1 ligne d'état, les lignes de texte, 1 ligne d'aide).
 ; Texte en mémoire ($2000-$B5FF, lignes terminées par CR ; CR/LF converti au
 ; chargement, réécrit à la sauvegarde). Touches : flèches, Début/Fin,
 ; PgUp/PgDn, caractères (insertion), Retour arrière, Suppr, Entrée,
@@ -20,7 +21,7 @@ tend            = $88           ; fin du texte (exclue)
 top             = $8A           ; première ligne affichée
 lstart          = $8C           ; début de la ligne du curseur
 tmp             = $8E
-row             = $90           ; ligne d'écran du curseur (0-27)
+row             = $90           ; ligne d'écran du curseur (0 à nrows-1)
 col             = $91
 dirty           = $92
 key             = $93
@@ -29,11 +30,14 @@ wantcol         = $96           ; colonne souhaitée (déplacements verticaux)
 hleft           = $97           ; défilement horizontal : colonnes masquées à gauche
 skip            = $98           ; affichage : caractères encore à masquer sur la ligne
 lastk           = $99           ; dernière commande du menu (K successifs : cumul)
+nrows           = $9A           ; lignes de texte (hauteur de la console - 2)
+helprow         = $9B           ; rangée de la ligne d'aide (nrows + 1)
+lastcol         = $9C           ; dernière colonne (largeur - 1), jamais écrite
 CLIP            = $1800         ; presse-papier (lignes, CR compris)
 CLIP_MAX        = $0800
 TEXT            = $2000
 TEXT_END        = $B600         ; limite (les CR/LF de sauvegarde ont besoin de marge)
-ROWS            = 28
+ROWS            = 28            ; console par défaut (53x30) si 5,10 ne la donne pas
 COLS            = 53
 CC_LEFT         = 1
 CC_RIGHT        = 4
@@ -76,6 +80,7 @@ main            lda     #1
                 sta     lstart+1
                 stz     col
                 stz     wantcol
+                jsr     get_console
                 #api    2,12                    ; CLS
 _loop           jsr     draw_all
                 jsr     getkey
@@ -83,6 +88,27 @@ _loop           jsr     draw_all
                 jsr     handle_key
                 bcc     _loop
 _exit           #api    2,12
+                rts
+
+; get_console : nrows, helprow, lastcol d'après la console (5,10, octets 6
+; et 7) ; ROWS x COLS si le firmware ne les renvoie pas ou si elle est trop petite
+get_console     stz     DParams+6
+                stz     DParams+7
+                #api    5,10
+                lda     DParams+6
+                ldx     DParams+7
+                cmp     #50                     ; menu complet sur la ligne d'aide
+                bcc     _dflt
+                cpx     #5
+                bcs     +
+_dflt           lda     #COLS
+                ldx     #ROWS+2
++               dec     a
+                sta     lastcol
+                dex
+                stx     helprow
+                dex
+                stx     nrows
                 rts
 
 ; ---------------------------------------------------------------------------
@@ -264,7 +290,7 @@ dec_ptr2        lda     ptr2
 ; ---------------------------------------------------------------------------
 ; Affichage
 ; ---------------------------------------------------------------------------
-; draw_all : ligne d'état, ROWS lignes depuis top, ligne d'aide, curseur
+; draw_all : ligne d'état, nrows lignes depuis top, ligne d'aide, curseur
 draw_all        jsr     find_lstart
                 jsr     adjust_top
                 ; ligne d'état
@@ -289,9 +315,10 @@ draw_all        jsr     find_lstart
                 sta     ptr+1
                 stz     hleft                   ; colonnes masquées : la colonne
                 lda     col                     ; du curseur reste visible
-                cmp     #COLS-1
+                cmp     lastcol
                 bcc     +
-                sbc     #COLS-2
+                sbc     lastcol
+                inc     a
                 sta     hleft
 +               lda     #1
                 sta     tmp                     ; rangée
@@ -314,7 +341,7 @@ _ch             lda     ptr
                 dec     skip
                 bra     _skipc
 +               ldx     tmp+1
-                cpx     #COLS-1
+                cpx     lastcol
                 bcs     _skipc                  ; ligne trop longue : coupée
                 jsr     putc
                 inc     tmp+1
@@ -328,11 +355,11 @@ _eolcr          inc     ptr
 _eol            jsr     pad_line
                 inc     tmp
                 lda     tmp
-                cmp     #ROWS+1
+                cmp     helprow
                 bcc     _row
                 ; aide
                 ldx     #0
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 #print  "Esc=menu  Ln "
                 jsr     cur_line_no
@@ -341,9 +368,9 @@ _eol            jsr     pad_line
                 lda     col
                 sec
                 sbc     hleft
-                cmp     #COLS-1
+                cmp     lastcol
                 bcc     +
-                lda     #COLS-1
+                lda     lastcol
 +               tax
                 ldy     row
                 iny
@@ -351,17 +378,17 @@ _eol            jsr     pad_line
                 lda     #CC_REV
                 jmp     putc
 
-; pad_line : espaces jusqu'à la fin de la ligne (colonne tmp+1 -> COLS)
+; pad_line : espaces jusqu'à la fin de la ligne (colonne tmp+1 -> lastcol)
 pad_line        #api    2,13                    ; Cursor Position -> P0 = x
                 lda     DParams
-                cmp     #COLS-1
+                cmp     lastcol
                 bcs     _last
                 sta     tmp+1
 _sp             lda     #' '
                 jsr     putc
                 inc     tmp+1
                 lda     tmp+1
-                cmp     #COLS-1
+                cmp     lastcol
                 bcc     _sp
 _last           rts
 
@@ -458,7 +485,7 @@ _loop           lda     ptr
                 inc     ptr+1
                 bra     _loop
 _check          lda     row
-                cmp     #ROWS
+                cmp     nrows
                 bcc     _ok
                 ; trop bas : top avance d'une ligne, on recompte
                 jsr     top_next_line
@@ -554,7 +581,8 @@ _up             jsr     line_up
 _down           jsr     line_down
                 clc
                 rts
-_pgup           ldx     #ROWS-1
+_pgup           ldx     nrows
+                dex
 -               phx
                 jsr     line_up
                 plx
@@ -562,7 +590,8 @@ _pgup           ldx     #ROWS-1
                 bne     -
                 clc
                 rts
-_pgdn           ldx     #ROWS-1
+_pgdn           ldx     nrows
+                dex
 -               phx
                 jsr     line_down
                 plx
@@ -742,7 +771,7 @@ _r              rts
 
 ; menu : Échap — S sauver, X sauver et quitter, Q quitter ; C=1 pour quitter
 menu            ldx     #0
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 #print  "S)ave eX)it Q)uit F)ind N)ext K)cut C)opy P)aste"
                 jsr     pad_line
@@ -804,12 +833,12 @@ _back           clc
 ; find_prompt : « Find: » sur la ligne d'aide ; Entrée : cherche (saisie vide
 ; = texte précédent) ; Échap : abandon
 find_prompt     ldx     #0
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 #print  "Find: "
                 jsr     pad_line
                 ldx     #6
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 stz     tbuf
 _k              jsr     getkey
@@ -905,7 +934,7 @@ _cmp            ldy     #0
                 sta     wantcol
 _r              rts
 _nf             ldx     #0
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 #print  "Not found - press a key"
                 jsr     pad_line
@@ -961,7 +990,7 @@ clip_line       jsr     line_span
                 lda     tmp
                 beq     _fits                   ; = CLIP_MAX tout juste
 _full           ldx     #0
-                ldy     #ROWS+1
+                ldy     helprow
                 jsr     set_cursor
                 #print  "Line too long - press a key"
                 jsr     pad_line
