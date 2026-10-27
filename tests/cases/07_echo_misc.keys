@@ -1,0 +1,11 @@
+echo
+echo off
+echo
+echo on
+echo Hello World
+echo.
+rem ignored
+z:
+b:
+cls
+echo after cls

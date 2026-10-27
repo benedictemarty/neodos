@@ -1,0 +1,404 @@
+# Manuel d'utilisation — NeoDOS
+
+## Lancer NeoDOS
+
+- **Émulateur** : `make run` (Phosphoneo, fenêtre SDL, stockage `storage/`)
+  ou `make run-neo` (émulateur officiel).
+- **Carte (Trinity)** : `make dist`, copier le contenu de `build/dist/` à la
+  racine de la clé (`boot/neodos.neo`, `boot/auto.txt`, `AUTOEXEC.BAT`,
+  `BIN/`) : NeoDOS démarre automatiquement (Échap au démarrage = menu du
+  firmware). Autre firmware : dans NeoBASIC, `run "neodos.neo"`.
+
+Sur une Trinity antérieure à la 0.6.0, `DATE`/`TIME` répondent « not
+supported by this firmware » ; depuis, l'heure vient de l'horloge logicielle,
+d'une horloge PCF8563 sur UEXT ou du modem USB (SNTP, voir `DATE`).
+
+Au démarrage, NeoDOS affiche sa bannière, exécute `AUTOEXEC.BAT` s'il existe
+dans le répertoire courant, puis affiche l'invite `A:\>`.
+
+## L'invite
+
+`A:\GAMES>` : `A` est le lecteur (volume 0 du firmware ; `B` = volume 1, …),
+`\GAMES` le répertoire courant. Les commandes ne distinguent pas majuscules et
+minuscules ; les chemins acceptent `\` ou `/`.
+
+### Édition de la ligne de commande
+
+Gauche/Droite déplacent le curseur, les caractères tapés s'insèrent, Retour
+arrière et Suppr effacent, Début/Fin (Home/End) vont aux extrémités, Échap
+efface la ligne. **Haut/Bas** parcourent l'historique des commandes (les
+dernières lignes tapées, environ 200 caractères conservés) ; Bas après la
+dernière entrée redonne une ligne vide. L'historique **survit aux
+redémarrages** (Ctrl+Alt+Suppr, `REBOOT`) : il est écrit à
+**Ctrl+Alt+Suppr**, par `EXIT` et avant le lancement d'un programme dans
+`boot\neodos.his` (202 octets, à côté de `neodos.neo`), et relu
+au démarrage (il n'est pas écrit à chaque commande : sur carte, les accès
+disque perturbent l'affichage et le clavier — une coupure de courant perd
+donc les dernières commandes) ; sans dossier `boot\` ou sur un support en lecture seule, il
+reste celui de la session. Effacer le fichier vide l'historique.
+
+**Tab** complète le mot sous le curseur avec les noms du répertoire visé
+(fichiers et sous-répertoires, `\` ou `/`) : NeoDOS insère le plus long
+préfixe commun des entrées qui commencent par ce qui est tapé — `TYPE FRU`
+puis Tab donne `TYPE FRUITS.TXT` ; si `MANY\` contient `F30`…`F35`,
+`DIR MANY\F` puis Tab donne `DIR MANY\F3` et il faut préciser. Une
+correspondance unique qui est un répertoire reçoit un `\` final, pour
+enchaîner (`CD GA` → `CD GAMES\`, Tab encore pour son contenu). Sans
+correspondance, ou si le répertoire n'existe pas, rien ne change. Les noms
+sont comparés sans tenir compte de la casse ; ce qui est déjà tapé est
+conservé tel quel.
+
+**Suggestion automatique** : quand le curseur est en fin de ligne, NeoDOS
+affiche en gris, après le curseur, la suite de la commande la plus récente
+de l'historique qui commence par ce que vous avez tapé (`ec` → `echo hello`
+en gris). **→ (Flèche droite) ou Fin** l'acceptent ; continuez simplement à
+taper pour l'ignorer (elle se met à jour à chaque touche et disparaît si
+plus rien ne correspond). Elle ne concerne que l'historique de la session,
+pas les fichiers (Tab).
+
+**F8** (comme DOSKEY) rappelle la commande la plus récente de l'historique
+qui commence par le texte tapé jusqu'au curseur : `ec` puis F8 redonne le
+dernier `echo …` ; F8 à nouveau remonte à la commande précédente qui
+commence de même ; sur une ligne vide, F8 parcourt tout l'historique. Toute
+autre touche (y compris Entrée) termine la recherche.
+
+**Ctrl+Alt+Suppr** redémarre NeoDOS à chaud : fichiers fermés, son coupé,
+retour à la racine, écran effacé, `AUTOEXEC.BAT` rejoué. La combinaison est
+prise en compte à l'invite, pendant `PAUSE`, `DIR /P` et les questions `Y/N`,
+et entre deux lignes d'un script `.BAT` (un script qui boucle sur `GOTO` peut
+être interrompu). Le firmware n'est pas réinitialisé (les programmes en
+mémoire sont perdus) ; un programme `.NEO` en cours garde le clavier.
+
+Au retour d'un programme qui a tourné au moins 2 secondes (jeu, éditeur),
+NeoDOS vide la file du clavier : ce qui a été tapé dans le programme sans
+qu'il le lise n'est pas exécuté comme commande. Sous 2 secondes, ce que vous
+tapez d'avance pendant une commande courte est conservé.
+
+## Fichiers et répertoires
+
+| Commande | Exemple |
+|---|---|
+| `DIR [chemin][motif] [/P] [/W]` | `DIR`, `DIR GAMES`, `DIR \`, `DIR *.TXT`, `DIR GAMES\*.NEO /W`, `DIR /P` ; chaque entrée montre sa date et son heure (`README.TXT   31  2026-09-29 14:05`) avec Trinity ≥ 0.16.55 — rien sur un firmware plus ancien ni en `/W` |
+| `CD [chemin]` | `CD GAMES`, `CD ..`, `CD \`, `CD` (affiche le répertoire) |
+| `MD chemin` | `MD SAVES` |
+| `RD chemin` | `RD SAVES` (le répertoire doit être vide) |
+| `DEL fichier\|motif` | `DEL OLD.TXT`, `DEL *.BAK`, `DEL SAVES\*.*` (confirmation) ; refuse un répertoire : `Access denied` |
+| `REN ancien nouveau` | `REN A.TXT B.TXT`, `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD` |
+| `COPY source destination` | `COPY A.TXT B.TXT`, `COPY A.TXT GAMES` (même nom dans GAMES), `COPY *.TXT GAMES` ; `COPY A.TXT+B.TXT C.TXT` : concaténation (voir plus bas) |
+| `MOVE source destination` | `MOVE A.TXT OLD.TXT`, `MOVE *.BAK ARCHIVE` (déplacement par renommage) |
+| `TYPE fichier` | `TYPE README.TXT` |
+| `X:` | `B:` change de lecteur (`Invalid drive specification` si absent) |
+
+`DIR` affiche pour chaque entrée le nom, `<DIR>` ou la taille en octets,
+puis le nombre de fichiers, le total des octets et le nombre de répertoires.
+`/P` marque une pause toutes les 28 lignes (« Press any key to continue »),
+`/W` affiche les noms sur 4 colonnes, répertoires entre crochets. Sans
+correspondance : `File not found`.
+
+### Jokers
+
+`*` remplace une suite quelconque de caractères, `?` un seul ; la casse est
+ignorée ; `*.*` désigne tous les fichiers. Le motif porte sur la dernière
+partie du chemin (`GAMES\*.NEO`). `DEL` avec joker ne touche jamais aux
+répertoires et demande confirmation (`Y/N`) pour `*` et `*.*`. `REN` avec
+jokers applique le second motif nom et extension séparément : `*` recopie le
+reste de la partie source, `?` un caractère (`REN *.TXT *.BAK`,
+`REN A?.DAT B?.DAT`). `COPY` avec joker exige un répertoire de destination.
+
+**Concaténation** : `COPY A.TXT+B.TXT[+C.TXT…] DEST.TXT` écrit les sources
+bout à bout dans `DEST.TXT` (copie binaire, sans traitement de Ctrl+Z). Si
+la destination est la première source (`COPY LOG.TXT+NEW.TXT LOG.TXT`), les
+suivantes y sont **ajoutées**. Une destination égale à une autre source est
+refusée (`Content of destination lost before copy`), et une source absente
+arrête tout avant que la destination soit créée (`NOPE.TXT: File not
+found`) ; `ERRORLEVEL 1` dans les deux cas. Les `+` se collent aux noms,
+sans espace ni joker, et la destination est obligatoire. Le travail est fait
+par la commande externe `BIN\CONCAT.NEO` : `PATH` doit contenir `\BIN`.
+
+## Programmes
+
+Tapez le nom d'un fichier `.NEO` (avec ou sans extension) : `HELLO` ou
+`HELLO.NEO`. Le nom est cherché tel que tapé puis en majuscules. Le programme
+est chargé à l'adresse indiquée par son en-tête (en général `$0800`) et
+lancé ; s'il se termine par `RTS`, NeoDOS reprend la main.
+
+Au retour, NeoDOS remet la toolbox du firmware à zéro (Trinity ≥ 0.16.49) :
+fenêtres, menus et dialogues qu'un programme aurait laissés ouverts ne sont
+pas hérités par le suivant (sinon, par exemple, un menu laissé par un
+programme apparaissait en charabia dans la barre de menus de NeoLegacy).
+
+Un programme peut écrire entre `$B800` et `$FBFF` (zone NeoDOS — les
+programmes llvm-mos y placent leur pile C en `$F600`) à condition de rendre
+la main par `RTS` : NeoDOS détecte qu'il a été écrasé et se recharge depuis
+`/boot/neodos.neo` (ou `/neodos.neo` à la racine — garder l'un des deux sur
+la clé), avec `AUTOEXEC.BAT` rejoué ; s'il est intact, l'invite (ou le
+script en cours) reprend directement. Un
+programme trouve sa ligne de commande complète via l'en-tête de NeoDOS :
+`$B803` = `NEODOS`, `$B809` = version, `$B80C` = adresse de la ligne (octet de
+longueur puis les caractères), `$B80E` = adresse de la routine d'affichage
+d'un caractère (respecte `>`), `$B810` = code de retour (`ERRORLEVEL`) :
+c'est le contrat des **commandes externes** (adresses `$C0xx` jusqu'à la 0.13.0)
+(`BIN\ARGS.NEO` l'affiche). `PATH \BIN` dans `AUTOEXEC.BAT` rend ces commandes accessibles
+de partout.
+
+`PATH BIN;GAMES` : un nom qui n'est ni une commande interne ni un fichier du
+répertoire courant est ensuite cherché dans `BIN` puis `GAMES` (avec et sans
+extension `.NEO`/`.BAT`, tel que tapé puis en majuscules). `PATH` affiche la
+liste, `PATH ;` l'efface. `PATH` est typiquement placé dans `AUTOEXEC.BAT`.
+
+## Scripts .BAT
+
+Un fichier `.BAT` (768 octets maximum) contient une commande par ligne.
+`AUTOEXEC.BAT` est lancé au démarrage.
+
+```
+@ECHO OFF
+REM Commentaire
+ECHO Bonjour
+ECHO.
+DIR
+HELLO
+PAUSE
+```
+
+- `ECHO OFF` / `ECHO ON` : arrête / reprend l'écho des lignes ; `@` en tête
+  d'une ligne supprime son écho ; `ECHO.` affiche une ligne vide.
+- `PAUSE` attend une touche ; `REM` est un commentaire.
+- Un programme `.NEO` lancé depuis un script rend la main au script ; un
+  `.BAT` lancé depuis un script **sans** `CALL` le remplace.
+
+### Paramètres, conditions, sauts, appels
+
+```
+@ECHO OFF
+REM usage : INSTALL source destination
+IF "%1"=="" GOTO usage
+IF NOT EXIST %1 GOTO missing
+COPY %1 %2
+IF ERRORLEVEL 1 ECHO copy failed
+CALL NOTIFY %2
+GOTO end
+:usage
+ECHO INSTALL source destination
+GOTO end
+:missing
+ECHO %1 not found
+:end
+```
+
+- `%0` est le nom du script tel que tapé, `%1`…`%9` les mots qui suivent
+  (vide si absent) ; `%` suivi d'autre chose qu'un chiffre reste littéral.
+- `IF [NOT] EXIST fichier commande` ; `IF [NOT] a==b commande` (`a == b` et
+  `"a"=="b"` acceptés, comparaison exacte) ; `IF [NOT] ERRORLEVEL n commande`
+  (vrai si le niveau d'erreur est ≥ n). Les `IF` se chaînent.
+- `GOTO label` saute à la ligne `:label` (casse ignorée) ; « Label not
+  found » arrête le script.
+- `CALL script [args]` exécute un autre `.BAT` puis reprend à la ligne
+  suivante (3 niveaux d'imbrication, chaque niveau garde ses `%n`).
+
+### Boucles et décalage
+
+```
+FOR %f IN (*.TXT config.sys a) DO TYPE %f
+```
+
+- `FOR %v IN (ensemble) DO commande` répète la commande pour chaque élément
+  de l'ensemble, avec `%v` remplacé par l'élément. Dans un `.BAT`, écrire
+  `%%v` (DOS double le `%`) ; au clavier, `%v` suffit. Un élément qui
+  contient `*` ou `?` est remplacé par les fichiers correspondants (aucun :
+  l'élément est ignoré) ; les autres sont pris tels quels. Pas de `FOR`
+  imbriqué ; un programme `.NEO` dans `DO` ne rend pas la main à la boucle.
+- `SHIFT` décale les paramètres : `%0` prend la valeur de `%1`, `%1` celle de
+  `%2`, etc. — pour traiter une liste d'arguments de longueur variable :
+
+```
+:BOUCLE
+IF "%1"=="" GOTO FIN
+ECHO argument : %1
+SHIFT
+GOTO BOUCLE
+:FIN
+```
+
+### Niveau d'erreur : `ERRORLEVEL`, `%ERRORLEVEL%`, `CHOICE`
+
+Le niveau d'erreur est fixé par la dernière commande qui le renseigne :
+
+- les **programmes** et **commandes externes** (`BIN\*.NEO`) rendent le leur :
+  `FIND` 1 si le texte est absent, `CHOICE` le rang de la touche, les autres
+  1 en cas d'erreur (fichier introuvable, mauvais usage…) ;
+- les commandes internes mettent 1 après un message d'erreur, 0 sinon
+  (extension de NeoDOS : sous MS-DOS elles n'y touchent pas) ;
+- **sauf** `IF`, `ECHO`, `REM`, `GOTO`, `SHIFT` et `PAUSE`, qui le laissent
+  tel quel, comme sous MS-DOS (depuis la 0.30.0 ; avant, un `ECHO` ou un
+  premier `IF` le remettait à 0).
+
+`%ERRORLEVEL%` (casse ignorée) est remplacé par sa valeur en décimal, dans
+les scripts comme au clavier : `ECHO code %ERRORLEVEL%`. Dans un script, la
+ligne affichée (écho) montre déjà la valeur.
+
+`CHOICE [/C[:]touches] [/N] [texte]` (commande externe) affiche le texte puis
+`[Y,N]?` (liste masquée par `/N`), attend l'une des touches (`YN` par défaut,
+majuscules et minuscules confondues, les autres sont ignorées) et rend son
+rang : 1 pour la première, 2 pour la deuxième… Pas de `/S` ni de `/T`.
+
+```
+@ECHO OFF
+CHOICE /C:ABC Votre choix
+IF ERRORLEVEL 3 GOTO C
+IF ERRORLEVEL 2 GOTO B
+ECHO choix A
+GOTO FIN
+:B
+ECHO choix B
+GOTO FIN
+:C
+ECHO choix C
+:FIN
+```
+
+Les `IF ERRORLEVEL` se testent du plus grand au plus petit, puisque chacun
+est vrai pour toute valeur supérieure ou égale.
+
+## Redirection
+
+`commande > fichier` écrit la sortie de la commande dans le fichier (créé ou
+tronqué) ; `>> fichier` l'ajoute à la fin (le fichier est créé au besoin).
+Les messages d'erreur y vont aussi ; les lignes se terminent par CR/LF.
+
+```
+DIR > LISTE.TXT
+ECHO Sauvegarde du %d >> JOURNAL.TXT
+TYPE A.TXT >> TOUT.TXT
+```
+
+## Invite
+
+`PROMPT texte` change l'invite ; codes : `$p` chemin courant (`A:\GAMES`),
+`$g` `>`, `$l` `<`, `$n` lettre du lecteur, `$d` date, `$t` heure, `$_`
+retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
+`$p$g`. Exemple : `PROMPT $d $t$_$p$g`.
+
+## Mode vidéo
+
+`MODE` affiche le mode courant et ses dimensions, `MODE n` en change.
+Modes de Trinity : **0** = 320×240 en 256 couleurs (le mode de
+démarrage, console de 53 colonnes sur 30 lignes), **1** = 720×350
+monochrome, le mode **Hercules** — texte fin de 80 colonnes sur 25 lignes,
+avec les attributs souligné, gras, inverse et clignotant —, **3** (Trinity
+0.16.88 et suivants) = texte couleur de 80 colonnes sur 25 lignes, comme la
+carte CGA, sans pixels (dessin et sprites refusés) ; `MODE` y affiche la
+taille de la console au lieu des bits par pixel. Un changement de mode efface l'écran. Un numéro que le firmware
+ne connaît pas donne `Invalid video mode` et `ERRORLEVEL 1`.
+
+```
+MODE
+Current video mode is 0 (320x240, 8 bpp)
+MODE 1
+Current video mode is 1 (720x350, 1 bpp)
+MODE 3
+Current video mode is 3 (640x200, text 80x25)
+```
+
+## Commandes externes (BIN\)
+
+Livrées avec NeoDOS dans `BIN\` (`PATH \BIN` dans `AUTOEXEC.BAT`) :
+
+| Commande | Rôle |
+|---|---|
+| `HELP` | liste des commandes (externe depuis la 0.28.0 : sans `PATH \BIN`, `Bad command or file name`) |
+| `CONCAT` | concaténation, appelée par `COPY a+b dest` (voir `COPY`) |
+| `HEAD [/n] fichier` | les n premières lignes (10 par défaut ; `HEAD /20 LISTE.TXT`) |
+| `TAIL [/n] fichier` | les n dernières lignes (10 par défaut), quelle que soit la taille du fichier |
+| `WC fichier` | nombre de lignes, de mots et d'octets, puis le nom (`       6       7      41 FRUITS.TXT`) |
+| `CHOICE [/C[:]touches] [/N] [texte]` | attend une touche parmi celles proposées, rend son rang dans `ERRORLEVEL` (voir « Niveau d'erreur ») |
+| `MORE fichier` | affiche un fichier texte page par page (`-- More --` : une touche = page suivante, `Q` = fin) |
+| `TREE [chemin] [/F]` | arborescence des répertoires (8 niveaux), `/F` avec les fichiers |
+| `XCOPY source destination [/S]` | copie les fichiers d'un répertoire vers un autre (créé au besoin) ; `/S` : avec les sous-répertoires |
+| `DELTREE répertoire` | supprime un répertoire et tout son contenu (confirmation `Y/N`) |
+| `FIND [/I] [/N] [/C] [/V] "texte" fichier` | lignes contenant le texte (`/I` casse ignorée, `/N` numéros, `/C` compte, `/V` lignes sans le texte) |
+| `SORT [/R] fichier` | lignes triées (`/R` décroissant ; 37 Ko, 2 048 lignes max) |
+| `EDIT fichier` | éditeur plein écran (fichier créé s'il n'existe pas) |
+| `ATTRIB [+R -R +H -H +S -S +A -A] [fichier\|motif\|répertoire]` | affiche (`A S H R` puis le chemin) ou modifie les attributs ; `ATTRIB *.TXT`, `ATTRIB +R CONFIG.BAT`, `ATTRIB GAMES` (son contenu), `ATTRIB` seul : tout le répertoire courant (interne jusqu'à la 0.13.0) |
+| `COLOR [fe]` | couleurs de la console, syntaxe DOS : deux chiffres hexadécimaux, **fond puis encre** (`COLOR 1F` = blanc brillant sur bleu, `COLOR 07` ou `COLOR` seul = défaut) ; l'écran est effacé. Fond = encre refusé (`ERRORLEVEL 1`). Pour les garder d'un démarrage à l'autre : `COLOR 1F` dans `AUTOEXEC.BAT` (ligne `REM` d'exemple fournie). Sur un écran monochrome (Hercules), encre 8-15 = gras, fond 1-7 = inverse |
+| `REBOOT` | reset matériel complet du Neo6502 (fonction 1,7 : le firmware redémarre, tout est perdu) ; Ctrl+Alt+Suppr ne relance que NeoDOS. Sur un émulateur sans reset matériel : `Hardware reset not available.` et `ERRORLEVEL 1` |
+
+### EDIT
+
+Flèches, Début/Fin, PgUp/PgDn pour se déplacer ; les caractères tapés
+s'insèrent ; Retour arrière et Suppr effacent (en début/fin de ligne, la
+ligne est fusionnée avec la précédente/suivante) ; Entrée coupe la ligne.
+**Échap** ouvre le menu (`S)ave eX)it Q)uit F)ind N)ext K)cut C)opy P)aste`) :
+
+| Touche | Action |
+|---|---|
+| `S` / `X` / `Q` | sauver / sauver et quitter / quitter sans sauver |
+| `F` | chercher : taper le texte puis Entrée (casse ignorée, vers l'avant, reprise au début du fichier ; Entrée sur une saisie vide reprend le texte précédent ; `Not found` sinon) |
+| `N` | occurrence suivante |
+| `K` | couper la ligne du curseur ; plusieurs `K` à la suite s'accumulent dans le presse-papier |
+| `C` | copier la ligne du curseur |
+| `P` | coller le presse-papier avant la ligne du curseur (autant de fois que voulu) |
+| Échap | revenir au texte |
+
+L'éditeur prend la taille de la console : 28 lignes de texte sur 53
+colonnes en mode 0, 23 sur 80 en mode 1 ou 3 (un firmware qui ne donne pas
+cette taille garde 53×30). Les lignes plus longues que l'écran défilent horizontalement : la colonne du
+curseur reste toujours visible. La ligne d'état montre le nom (`*` si
+modifié), la ligne d'aide le numéro de ligne. Limites : ≈ 38 Ko de texte,
+presse-papier de 2 Ko (lignes entières : pas de sélection au caractère près).
+Pas de raccourcis Ctrl : sur le Neo6502 leurs codes sont ceux des touches de
+déplacement (Ctrl+F = PgDn).
+
+`HEAD`, `TAIL` et `WC` acceptent les fins de ligne CR LF, LF ou CR ; une
+dernière ligne sans fin de ligne compte. Pas de jokers ni de fichiers
+multiples ; `ERRORLEVEL 1` si le fichier est absent.
+
+La sortie de ces commandes suit la redirection : `SORT LISTE.TXT > TRIE.TXT`.
+| `ARGS …` | affiche la ligne de commande reçue (exemple pour écrire une commande externe) |
+
+Écrire la sienne : `examples/ext/NOM.asm` avec `.include "neoext.inc"`
+(`cmd_arg` lit les arguments), `make examples` produit `storage/BIN/NOM.NEO`.
+
+## Système
+
+| Commande | Rôle |
+|---|---|
+| `CLS` | efface l'écran |
+| `VER` | versions de NeoDOS et du firmware |
+| `VOL` | nom du volume courant |
+| `MEM` | mémoire disponible pour les programmes |
+| `DATE [aaaa-mm-jj]` | affiche ou règle la date. Si l'horloge n'a jamais été réglée (source 0 de 1,20 : `1970-01-01` + temps écoulé), `DATE`/`TIME` demandent d'abord l'heure SNTP au modem USB (fonction 1,23, 2 s au plus ; rien sans modem) ; à défaut la valeur est suivie de `(clock not set)` |
+| `TIME [hh:mm[:ss]]` | affiche ou règle l'heure (même synchronisation par le modem que `DATE`) |
+| `PATH [rép;rép]` | répertoires de recherche des programmes |
+| `PROMPT [texte]` | format de l'invite |
+| `EXIT` ou `BASIC` | retour à NeoBASIC |
+
+## Messages d'erreur
+
+| Message | Cause |
+|---|---|
+| `Bad command or file name` | commande inconnue, ni `.NEO` ni `.BAT` trouvé |
+| `File not found` / `Path not found` | fichier ou chemin inexistant |
+| `Invalid file name` | nom mal formé pour le système de fichiers (caractère interdit, composant vide) ; code 20 du firmware |
+| `Invalid directory` | `CD` vers un répertoire inexistant |
+| `Access denied` | `DEL` sur un répertoire, volume en lecture seule |
+| `Syntax error` | argument manquant |
+| `Too many files` | plus de 255 noms (ou 1,25 Ko) pour un joker |
+| `Destination must be a directory` | `COPY`/`MOVE` de plusieurs fichiers vers un seul nom |
+| `Invalid parameter` | `ATTRIB` avec un attribut inconnu |
+| `Duplicate file name or file not found` | `REN` impossible (cible existante…) |
+| `Label not found` | `GOTO` vers un `:label` absent (fin du script) |
+| `Too many nested CALLs` | plus de 3 niveaux de `CALL` |
+| `Invalid drive specification` | lettre de lecteur sans volume monté |
+| `Batch file too large (max 768 bytes)` | script trop long |
+| `Error nn` | autre code d'erreur de l'API fichiers |
+
+## Limites connues (v0.1)
+
+- Pas de variables `%VAR%` dans les scripts (seulement `%0`-`%9` et la
+  variable de `FOR`), pas de `<` ni `|` (voir le backlog dans
+  `docs/AGILE_PLAN.md`).
+- Sur les émulateurs, seul l'attribut `R` est réellement stocké (permissions
+  du fichier hôte) ; `H`, `S`, `A` n'ont d'effet que sur la carte (FAT).
+- Sur les émulateurs, le stockage hôte est sensible à la casse et `CD ..`
+  laisse `..` dans le chemin affiché ; la carte (FAT) n'a pas ces limites.

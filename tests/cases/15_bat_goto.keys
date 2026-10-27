@@ -1,0 +1,6 @@
+loop A
+loop B
+goto x
+if
+if a==b
+if README.TXT==README.TXT echo same

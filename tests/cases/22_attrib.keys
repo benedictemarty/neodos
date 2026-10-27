@@ -1,0 +1,9 @@
+attrib README.TXT
+attrib +r +h README.TXT
+attrib README.TXT
+attrib -r +a README.TXT
+attrib *.TXT
+attrib GAMES
+attrib +x A
+attrib NOPE
+attrib

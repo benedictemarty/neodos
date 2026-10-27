@@ -1,0 +1,10 @@
+dir
+cd GAMES
+dir
+cd
+cd \
+dir GAMES
+dir \GAMES
+cd GAMES
+dir ..
+cd NOPE

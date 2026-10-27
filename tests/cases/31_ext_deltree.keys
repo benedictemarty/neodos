@@ -1,0 +1,9 @@
+xcopy GAMES COPY2 /s
+deltree COPY2
+n\c
+tree COPY2
+deltree COPY2
+y\c
+tree COPY2
+deltree NOPE
+deltree

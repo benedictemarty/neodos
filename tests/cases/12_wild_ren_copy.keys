@@ -1,0 +1,9 @@
+ren *.TXT *.BAK
+dir *.BAK
+ren C?RL.BAK X?RL.OLD
+dir *.OLD
+copy README.BAK GAMES
+dir GAMES
+copy *.BAK X.TXT
+copy NOPE* GAMES
+ren *.OLD README.BAK

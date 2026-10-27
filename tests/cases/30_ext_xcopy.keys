@@ -1,0 +1,6 @@
+xcopy GAMES COPY1
+tree COPY1 /f
+xcopy GAMES COPY2 /s
+tree COPY2 /f
+xcopy
+xcopy NOPE X

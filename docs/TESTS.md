@@ -1,0 +1,135 @@
+# Tests — NeoDOS
+
+## Principe
+
+Les tests s'exécutent **sur cible** : `build/neodos.neo` tourne dans
+Phosphoneo en mode headless, les commandes sont frappées au clavier
+(`--type-keys`), la console texte (53×30, ou 80×25 après `MODE 1`/`MODE 3`) est capturée
+(`--screenshot-text`) et l'état du stockage est relevé après le test.
+
+```
+make test                      # tous les cas
+python3 tests/run_tests.py 03_type   # un cas
+python3 tests/run_tests.py --ref     # régénère les références (à relire !)
+```
+
+Variable `PHOSPHONEO` : chemin de l'émulateur (défaut
+`~/Phosphoneo/build/phosphoneo`, compilé contre Trinity **≥ 0.16.49** depuis
+NeoDOS 0.26.0 : `49_toolbox_reset` a besoin de 32,19), version avec les touches d'édition du
+typer (commit `ef145e3` de Phosphoneo, 2026-09-19 : `\z` = Ctrl+Alt+Suppr).
+Depuis le 2026-09-20 (commit `02da22d`), Phosphoneo est compilé contre la
+branche `trinity` du firmware : les références suivent **Trinity**. Au
+2026-09-21 (Trinity 0.7.0) : volumes 3,24-26 (« Volume in drive A is
+HOST0 ») et date/heure 1,20-21 sont de retour (0.6.0) ; 1,3 recharge
+l'image NeoDOS embarquée dans le firmware (0.14.0 en `$B800` depuis Trinity
+0.7.0), donc `EXIT` relance NeoDOS au lieu de NeoBASIC. Une Phosphoneo
+compilée contre une Trinity plus ancienne (0.5 : pas de volumes ni de
+date/heure, image 0.12.0 en `$C000`) fait échouer une douzaine de cas sur
+ces seuls points — régénérer avec `--ref` après avoir relu le diff.
+
+## Structure
+
+- `tests/cases/NOM.keys` : texte frappé, une commande par ligne ; une ligne
+  terminée par `\c` est frappée sans Entrée (réponse à `Y/N` ; sur la
+  dernière ligne : la console est capturée en cours de saisie) ; `\u \d \l
+  \r` (flèches), `\h` `\k` (Début/Fin), `\x` (Suppr), `\b` (Retour
+  arrière), `\e` (Échap), `\t` (Tab), `\1`..`\8` (F1..F8) sont les touches
+  du typer Phosphoneo (les autres antislashs sont des séparateurs DOS ;
+  éviter `\d`, `\t`… en début de nom en minuscules).
+- `tests/cases/NOM.api` (facultatif) : groupes API à journaliser ; la
+  référence contient alors une section `--- api ---` avec les fonctions
+  distinctes appelées (vérifie qu'un programme graphique a bien tourné).
+  Avec `count` après le groupe (`3 count`), chaque fonction est suivie de
+  son nombre d'appels (`3,18 x107`) : mesure des accès disque.
+- `tests/expected/NOM.txt` : console attendue (à partir de « NeoDOS version »,
+  sans lignes vides ni espaces de fin) puis `--- files ---` et la liste triée
+  des fichiers du stockage après le test.
+- `boot/neodos.neo` est ajouté à chaque stockage de test (rechargement par
+  le stub ; exclu du listing `--- files ---`).
+- **Dates des fichiers** (`DIR`, depuis 0.32.0) : tous les fichiers du
+  stockage de test reçoivent la date fixe `2026-01-02 03:04` (heure locale),
+  `GAMES/A.TXT` la date extrême `2031-12-31 23:59` (mois 12, jour 31, 23 h 59 :
+  tous les champs FAT). Une date différente dans une ligne de `DIR` — fichier
+  créé pendant le test — est remplacée par `YYYY-MM-DD hh:mm`. Phosphoneo doit
+  gérer 3,29 (commit `c76a605`, Trinity ≥ 0.16.55).
+- `tests/fixtures/` : fichiers présents au démarrage (`README.TXT`,
+  `CTRL.TXT`, `GAMES/A.TXT`, `CHAIN.BAT`, `MANY/F01..F35.DAT`, scripts
+  `ARGS.BAT`, `LOOP.BAT`, `SUB.BAT`, `SUB2.BAT`, `CALLER.BAT`, `BIN/HI.NEO`,
+  `BIN/TOOL.BAT`) ; `storage/` (exemples) est ajouté.
+
+Le budget de cycles est calculé d'après le nombre de touches (≈ 700 000
+cycles par touche, 6 trames) ; un test dure environ 0,5 s.
+
+## Cas
+
+| Cas | Couvre |
+|---|---|
+| `01_info` | `VER`, `HELP`, `MEM`, `VOL` |
+| `02_dir_cd` | `DIR` (courant, relatif, absolu, `..`), `CD` (relatif, `\`, affichage, erreur) |
+| `03_type` | `TYPE` : CR/LF, tabulation, caractères de contrôle, fichier absent, syntaxe |
+| `04_copy_ren_del` | `COPY`, `REN`, `DEL` (fichier, absent, répertoire refusé), erreurs |
+| `05_md_rd` | `MD`, `RD` (vide, absent, fichier), syntaxe |
+| `06_run` | `.NEO` (avec/sans extension, minuscules), `.BAT` (écho, `@`), reprise après programme, commande inconnue |
+| `07_echo_misc` | `ECHO` (état, ON/OFF, texte, `.`), `REM`, `X:` invalide, `CLS` |
+| `08_date_time` | `DATE`/`TIME` affichage, réglage, valeurs invalides |
+| `09_exit` | `EXIT` : 1,3 → sur Trinity, l'image NeoDOS **embarquée dans le firmware** est relancée (bannière 0.14.0 depuis Trinity 0.7.0 ; la référence dépend de la Trinity avec laquelle Phosphoneo est compilé) ; sur le firmware d'origine ce serait NeoBASIC (`42`) |
+| `10_wild_dir` | `DIR *.TXT`, `DIR GAMES\*.TXT`, `DIR R*`, `DIR ?TRL.TXT`, motif sans correspondance |
+| `10b_dir_w` | `DIR /W` (racine, sous-répertoire, motif), commutateur inconnu ignoré |
+| `11_wild_del` | `COPY *.TXT GAMES`, `DEL GAMES\*.*` refusé (N) puis accepté (Y), motif sans correspondance |
+| `12_wild_ren_copy` | `REN *.TXT *.BAK`, `REN C?RL.BAK X?RL.OLD`, `COPY fichier répertoire`, `COPY motif fichier` refusé, `REN` vers un nom existant |
+| `13_dir_p` | `DIR MANY /P` : pause après 28 lignes, reprise sur une touche |
+| `14_bat_args_if` | `%0`-`%3`, `%` littéral, `IF "%1"=="A"`, `IF NOT`, `IF EXIST`, `IF a == b` |
+| `15_bat_goto` | `GOTO label`, `GOTO :label`, `Label not found`, `GOTO` hors script, `IF` sans argument / faux / vrai |
+| `17_path` | `PATH` vide / fixé / effacé, programme et script trouvés via `PATH`, avec extension, absent |
+| `18_prompt` | `PROMPT $n$g`, `[$p] $$`, `$d$_$p$g` (invite sur deux lignes), retour au défaut |
+| `19_redirect` | `ECHO > f`, `>> f` (existant et absent), message d'erreur redirigé, `>` sans nom |
+| `19b_redirect_dir` | `DIR > f` (résultats API préservés pendant l'écriture), `DIR` vide, `COPY > f` |
+| `20_move` | `MOVE` vers un répertoire, vers un nom, motif vers répertoire, motif vers un nom refusé, source absente |
+| `21_xcopy` | `XCOPY` d'un répertoire vers un nouveau, d'un motif vers un existant, source absente, syntaxe |
+| `22_attrib` | `BIN/ATTRIB.NEO` (externe depuis 0.14.0, sortie identique à l'ancienne interne) : affichage, `+R`, `-R +A`, motif, répertoire, attribut inconnu, absent, sans argument |
+| `23_lineedit` | historique (Haut/Bas, fin de liste), Échap, insertion au curseur, Suppr, Début/Fin, Retour arrière |
+| `24_ctrl_alt_del` | Ctrl+Alt+Suppr : redémarrage à chaud (bannière, racine, `AUTOEXEC.BAT`) |
+| `41_ext_reboot` | `BIN/REBOOT.NEO` : `REBOOT /?` (usage), `REBOOT` (1,7 revient sur Phosphoneo → `Hardware reset not available.`), `IF ERRORLEVEL 1` |
+| `47_bat_redirect_prog` | programmes lancés depuis un `.BAT` (`POKER/REDIR.BAT`) : `FIND … > F.TXT` puis `echo` (la ligne suivante n'entre plus dans le fichier), `SORT … > S.TXT` (page zéro `$94-$97` écrasée : le batch reprend), `IF ERRORLEVEL`, contenus vérifiés par `TYPE` |
+| `45_hist_flush_prog` | historique écrit avant le lancement d'un programme : `echo one`, `SMASH` (écrase NeoDOS → rechargement depuis le disque), Haut×2 redonne `echo one` |
+| `44_kbd_flush` | `WAITKEY.NEO` (attend Entrée par 1,2) : la phrase tapée pendant le programme (≥ 2 s) n'est pas exécutée au retour ; `echo after game` passe |
+| `43_color_history` | historique persistant : `echo one`, Ctrl+Alt+Suppr, Haut×3 + Entrée rejoue `echo one` (RAM remise à zéro, relu de `boot/neodos.his`) ; `COLOR 1F`, `COLOR` (codes `$91`/`$8F` puis CLS, vérifiés au journal API), `COLOR zz` et `COLOR 7` (usage, `ERRORLEVEL 1`), `COLOR 33` (fond = encre refusé) |
+| `42_big_load_over` | `BIG.NEO` (`$B000-$C100`) recouvre NeoDOS pendant le chargement : message du programme, puis NeoDOS rechargé (`stub_run`) ; avec la 0.19.0 le programme ne démarrait pas |
+| `40_cad_batch_pause` | Ctrl+Alt+Suppr pendant un script en boucle (`FOREVER.BAT`) puis pendant `PAUSE` : deux redémarrages à chaud |
+| `25_external_args` | commande externe via `PATH` depuis un sous-répertoire, chemin absolu comme commande, ligne de commande en `$0200`, `PATH ;` |
+| `26_run_at_0200` | programme llvm-mos réel chargé en `$0200` (`POKER.NEO`) lancé depuis NeoDOS : appels graphiques (groupe 5) observés (régression du gel 0.8.0) |
+| `27_smash_reload` | `SMASH.NEO` écrase `$B800-$FBFF` puis `RTS` : NeoDOS rechargé depuis `boot/neodos.neo`, `AUTOEXEC.BAT` rejoué, invite fonctionnelle |
+| `28_ext_tree` | `TREE GAMES /F` (fichiers puis sous-répertoires, 3 niveaux), chemin invalide, `MORE` sans argument / fichier absent |
+| `29_ext_more` | `MORE LONG.TXT` (70 lignes) : pause à 28 lignes, espace = suite, `Q` = fin, retour à l'invite |
+| `30_ext_xcopy` | `XCOPY` un niveau, `/S` (3 fichiers, 2 niveaux vérifiés par `TREE /F`), sans argument, source invalide |
+| `31_ext_deltree` | `DELTREE` refusé (N) puis accepté (Y), répertoire disparu, chemin invalide, sans argument |
+| `32_ext_sort` | `SORT` croissant / `/R`, sans argument, fichier absent |
+| `33_ext_find` | `FIND` sensible à la casse, `/I /N`, `/C`, `/V`, usage, fichier absent |
+| `34_ext_redirect` | sortie de `FIND`, `SORT`, `TREE` redirigée par `>` et `>>` (vecteur `$C00E`) |
+| `35_ext_edit` | `EDIT` : déplacements, insertion, fusion et scission de lignes, sauvegarde `X`, relecture par `TYPE` (CR/LF) |
+| `35b_ext_edit_new` | `EDIT` d'un fichier absent : création, `S` puis `Q`, usage sans argument |
+| `38_for_shift` | `FOR` (jokers, littéraux, `%%v`, `IF` dans `DO`, `x` sans `%`, `DO` vide, sans `DO` = erreurs), `SHIFT` (hors script, décalage) |
+| `39_ext_errorlevel` | `IF ERRORLEVEL` après les commandes externes (`FIND` sans/avec correspondance, `ATTRIB` fichier absent, `MORE` sans argument) |
+| `37_suggest` | suggestion automatique : `ech` + → accepte `echo help` (la plus récente), `echo hell` + → `echo hello`, `echo he` + Fin, frappe/retours arrière sans artefact, fantôme `echo hello` visible derrière `ech` (dernière ligne sans Entrée, `\c`) |
+| `56_mode3_edit` | `MODE 3` (Trinity 0.16.88, texte 80×25) puis `EDIT LONG.TXT` : 23 lignes de texte entre la ligne d'état et la ligne d'aide, défilement vertical jusqu'à la ligne 26, défilement horizontal à 80 colonnes (85 caractères insérés) ; capture 80×25 |
+| `56b_mode3` | `MODE 3` affiche `Current video mode is 3 (640x200, text 80x25)` (0 bpp), puis `DIR GAMES` en 80 colonnes |
+| `55_page_realign` | `PAGES` (fixture `POKER/PAGES.NEO`) rend la main en mode 1 avec la page de dessin 1 et la page affichée 0 ; journal `5 count` : 5,11 et 5,12 appelés au démarrage, par le programme et au retour (×3). Phosphoneo lit la console quelle que soit la page : l'écran noir de la carte n'est pas reproduit, seul l'appel est vérifié |
+| `54_dir_dates` | `DIR GAMES` (date extrême et répertoire), fichier créé par `COPY` (date neutralisée), `DIR *.TXT`, `DIR /W` sans date |
+| `53_head_tail` | `HEAD /2`, `TAIL /2`, `TAIL /3` (fichier de 70 lignes), `HEAD /0`, `TAIL` d'un fichier sans fin de ligne, `HEAD` par défaut, fichier absent (`ERRORLEVEL 1`), option invalide |
+| `53b_wc` | `WC` : 6/7/41, 70/420/1 820, 1/1/3 (valeurs calculées à part), option refusée, usage redirigé `>`, ajout `>>` relu par `TAIL /1` (fichier CR LF) |
+| `52_choice_errorlevel` | `CHOICE /C:ABC` dans `POKER/CH.BAT` + `%ERRORLEVEL%` + `IF ERRORLEVEL` en cascade → `was B` ; `CHOICE` seul (touche invalide ignorée), `%errorlevel%` en minuscules, conservé par `ECHO`, `/N`, option inconnue (usage, 1), `100%` et `%errorlevelx` littéraux |
+| `51_edit_find_clip` | `EDIT` : `F` `APPLE` (casse ignorée) puis `X`, `N` puis `Y`, `K` (couper), 3×Haut, `P`, `C`, 3×Bas, `P`, `F` texte absent (`Not found`), `X` ; fichier vérifié par `TYPE` |
+| `51b_edit_hscroll` | `EDIT` : ligne de 60 caractères, éditeur laissé ouvert : l'affichage commence au 10ᵉ caractère |
+| `50_copy_concat` | `COPY a+b c` (via `BIN/CONCAT.NEO`), ajout à la première source (taille 91 = 50 + 41) sous redirection `> LOG.TXT`, destination = seconde source refusée, source absente (rien de créé), chemin `GAMES\A.TXT` ; `IF ERRORLEVEL` |
+| `49_toolbox_reset` | Toolbox Reset au retour d'un programme (Trinity T-88) : `TBWIN` ouvre une fenêtre (34,1) et rend la main, `TBFRONT` lit la fenêtre au premier plan (34,10) → `0` ; idem depuis `TB.BAT`, et après `TBWINX` qui écrase aussi NeoDOS (rechargement, `start`). Sans 32,19 : 1, 2, 3 |
+| `48_tab_repeat` | Tab répété (`3 count`) : `echo REA` + 6 Tab, `echo GA` + 3 Tab (`GAMES\` puis contenu), `echo F` Tab `R` Tab Tab — 5 ouvertures de répertoire (3,17) pour 12 Tab ; la 0.24.1 en faisait 12 (276 lectures 3,18 → 111) |
+| `36_completion` | Tab : nom unique, chemin en deux Tab (`\` ajouté après un répertoire), préfixe commun (`F3`), aucune correspondance ; F8 : préfixe `ec`, F8 répété, ligne vide puis Échap |
+| `16_bat_call` | `CALL` imbriqué sur 2 niveaux avec `%1`, reprise de l'appelant, `IF ERRORLEVEL` après `DEL` raté, `CALL` d'un script absent, `CALL` depuis l'invite ; `ERRORLEVEL` conservé par `ECHO` (`still 1 after ECHO`) puis remis à 0 par une commande interne réussie (`PROMPT $p$g`) |
+
+`AUTOEXEC.BAT` est exercé par tous les cas (bannière « Welcome to NeoDOS »).
+L'ordre des entrées de `DIR` est celui du système de fichiers hôte (stable
+sur ext4 pour un même jeu de noms).
+
+## Non couvert (à faire sur carte)
+
+Volumes multiples (`B:`), clé USB / carte SD réelles, `PAUSE` interactif.

@@ -1,0 +1,10 @@
+copy *.TXT GAMES
+dir GAMES
+del GAMES\*.*
+n\c
+dir GAMES /w
+del GAMES\*.*
+y\c
+dir GAMES
+del *.NOPE
+del GAMES\*.TXT

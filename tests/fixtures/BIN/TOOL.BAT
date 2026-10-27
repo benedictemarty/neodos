@@ -1,0 +1,2 @@
+@ECHO OFF
+ECHO tool %1

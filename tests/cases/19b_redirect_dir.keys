@@ -1,0 +1,6 @@
+dir GAMES > D.TXT
+type D.TXT
+dir *.NOPE > F.TXT
+type F.TXT
+copy README.TXT GAMES > G.TXT
+type G.TXT

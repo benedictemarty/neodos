@@ -1,0 +1,6 @@
+pear
+Apple
+banana
+cherry
+apple pie
+Zebra

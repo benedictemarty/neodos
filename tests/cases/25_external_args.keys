@@ -1,0 +1,5 @@
+cd GAMES
+args one two
+\BIN\ARGS.NEO x
+path ;
+args

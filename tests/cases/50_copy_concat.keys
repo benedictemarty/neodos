@@ -1,0 +1,10 @@
+copy FRUITS.TXT+CTRL.TXT C.TXT
+copy C.TXT+FRUITS.TXT C.TXT > LOG.TXT
+type LOG.TXT
+dir C.TXT
+copy FRUITS.TXT+C.TXT C.TXT
+if errorlevel 1 echo refused
+copy FRUITS.TXT+NOPE.TXT D.TXT
+if errorlevel 1 echo failed
+copy GAMES\A.TXT+FRUITS.TXT E.TXT
+type E.TXT

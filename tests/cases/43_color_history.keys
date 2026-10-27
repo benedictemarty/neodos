@@ -1,0 +1,10 @@
+echo one
+color 1F
+color
+\z
+\u\u\u
+color zz
+if errorlevel 1 echo bad
+color 33
+if errorlevel 1 echo same
+color 7

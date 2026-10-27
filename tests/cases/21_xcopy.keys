@@ -1,0 +1,6 @@
+xcopy GAMES NEWDIR
+dir NEWDIR
+xcopy GAMES\A.* BIN
+dir BIN /w
+xcopy NOPE X
+xcopy GAMES

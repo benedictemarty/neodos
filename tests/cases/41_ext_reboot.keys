@@ -1,0 +1,4 @@
+reboot /?
+reboot
+if errorlevel 1 echo returned
+echo after

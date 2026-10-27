@@ -1,0 +1,10 @@
+for %f in (*.TXT) do echo [%f]
+for %f in (GAMES\*.TXT CTRL.TXT nope) do echo %f
+for %F in (A B C) do echo %f%f
+for %f in (CTRL.TXT NOPE.TXT) do if exist %f echo ok %f
+for x in (a) do echo bad
+for %f in (a b) do
+for %f in (a b) echo x
+SHIFT UN DEUX TROIS
+shift
+echo fin

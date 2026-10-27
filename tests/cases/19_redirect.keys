@@ -1,0 +1,9 @@
+echo hello > OUT.TXT
+type OUT.TXT
+echo again >> OUT.TXT
+type OUT.TXT
+echo x >> NEW.TXT
+type NEW.TXT
+type NOPE > E.TXT
+type E.TXT
+echo >

@@ -1,0 +1,4 @@
+sort FRUITS.TXT
+sort /r FRUITS.TXT
+sort
+sort NOPE

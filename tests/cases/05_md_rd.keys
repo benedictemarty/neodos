@@ -1,0 +1,6 @@
+md SUB
+dir
+rd SUB
+rd NOPE
+rd README.TXT
+md
