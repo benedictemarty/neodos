@@ -28,7 +28,12 @@ start           cld
                 sta     canary_lo
                 sta     canary_hi
                 jsr     detect_caps
-                lda     #8                      ; F8 -> code KEY_F8 dans la file
+                lda     caps                    ; avec deux clés le firmware
+                and     #CAP_VOLUMES            ; laisse B: courant : on
+                beq     +                       ; démarre toujours sur A:
+                stz     DParams
+                #api    3,25
++               lda     #8                      ; F8 -> code KEY_F8 dans la file
                 sta     DParams                 ; clavier (texte de raccourci 2,4 :
                 #setparam 2, f8text             ; le firmware n'a pas d'ASCII pour
                 #api    2,4                     ; les touches de fonction)

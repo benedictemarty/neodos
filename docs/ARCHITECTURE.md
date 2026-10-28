@@ -257,7 +257,8 @@ bit 2 date des fichiers `CAP_FILEDATE`) est consulté par `dir_date` (DIR : 3,29
 après chaque 3,18, date/heure FAT copiées dans `fdt` avant l'affichage — 2,6
 écrit le caractère dans Parameter:0), par `print_volname`, `cmd_drive`, `DATE`/`TIME`
 (`need_datetime`) et `$d`/`$t` de l'invite ; `build_cwdpath` précharge P0 = 0
-avant 3,26 (lettre `A` par défaut).
+avant 3,26 (lettre `A` par défaut). Au démarrage, si `CAP_VOLUMES`, `start`
+sélectionne le volume 0 (3,25) : avec deux clés le firmware laisse sinon `B:` courant.
 
 ## Redirection
 
