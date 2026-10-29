@@ -1,9 +1,9 @@
-NeoDOS version 0.33.0
+NeoDOS version 0.34.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands
 A:\>exit
-NeoDOS version 0.32.1
+NeoDOS version 0.33.0
 (C) 2026 bmarty - Neo6502 disk operating system
 Welcome to NeoDOS on the Neo6502
 Type HELP for the list of commands

@@ -22,7 +22,8 @@ main            lda     #CR
                 .text   "TYPE file         Display a text file", CR
                 .text   "X:                Change drive", CR
                 .text   "CLS VER VOL MEM   Screen, versions, volume, memory", CR
-                .text   "PATH PROMPT MODE  Path, prompt ($p$g), video mode", CR
+                .text   "PATH PROMPT       Path, prompt ($p$g)", CR
+                .text   "MODE LOCALE       Video mode, keyboard (LOCALE de)", CR
                 .text   "cmd > file        Redirect output (>> appends)", CR
                 .text   "DATE TIME         Show/set date and time", CR
                 .text   "ECHO PAUSE REM    Batch commands (.BAT, %1-%9)", CR

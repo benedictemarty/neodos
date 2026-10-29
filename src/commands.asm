@@ -65,6 +65,8 @@ cmdtable        .ptext  "DIR"
                 .word   cmd_prompt
                 .ptext  "MODE"
                 .word   cmd_mode
+                .ptext  "LOCALE"
+                .word   cmd_locale
                 .ptext  "EXIT"
                 .word   cmd_exit
                 .ptext  "BASIC"
@@ -1486,6 +1488,25 @@ _text           #print  "text "
                 lda     DParams+7
                 jsr     print8
                 #println ")"
+                rts
+
+
+; ---------------------------------------------------------------------------
+; LOCALE xx : choisit la disposition du clavier (1,6 Set Locale : fr, de, us,
+; gb, it, sw, fi, ch, fm). Le firmware affiche lui-meme « Locale is now 'xx' »
+; ou « Setting the locale failed. » ; il n'a pas d'appel de lecture.
+; ---------------------------------------------------------------------------
+cmd_locale      lda     arg1
+                cmp     #2                      ; exactement deux lettres
+                beq     +
+                jsr     errlvl1
+                #println "Usage: LOCALE xx (fr, de, us, gb, it, sw, fi, ch, fm)"
+                rts
++               lda     arg1+1
+                sta     DParams
+                lda     arg1+2
+                sta     DParams+1
+                #api    1,6
                 rts
 
 

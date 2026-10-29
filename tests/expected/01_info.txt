@@ -7,7 +7,8 @@ COPY MOVE src dst Copy/move files (COPY *.TXT DIR)
 TYPE file         Display a text file
 X:                Change drive
 CLS VER VOL MEM   Screen, versions, volume, memory
-PATH PROMPT MODE  Path, prompt ($p$g), video mode
+PATH PROMPT       Path, prompt ($p$g)
+MODE LOCALE       Video mode, keyboard (LOCALE de)
 cmd > file        Redirect output (>> appends)
 DATE TIME         Show/set date and time
 ECHO PAUSE REM    Batch commands (.BAT, %1-%9)
