@@ -284,7 +284,7 @@ retour à la ligne, `$$` `$`, `$b` `|`, `$q` `=`. `PROMPT` seul rétablit
 `LOCALE xx` choisit la disposition du clavier par son code à deux lettres :
 `fr` (AZERTY), `de`, `us`, `gb`, `it`, `sw`, `fi`, `ch`, `fm`. Le firmware
 confirme (`Locale is now 'de'`) ou signale l'échec (`Setting the locale
-failed.`, code inconnu). Sans argument ou avec autre chose que deux lettres :
+failed.`, code inconnu, avec `ERRORLEVEL 1` ; la casse est ignorée). Sans argument ou avec autre chose que deux lettres :
 message d'usage et `ERRORLEVEL 1`. Le choix vaut jusqu'à l'extinction : il n'est
 pas mémorisé (à placer dans `AUTOEXEC.BAT`). Le firmware n'a pas d'appel pour
 relire la locale courante. Équivalent NeoBASIC : `LOCALE "de"`.

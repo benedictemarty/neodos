@@ -6,8 +6,14 @@ A:\>locale
 Usage: LOCALE xx (fr, de, us, gb, it, sw, fi, ch, fm)
 A:\>locale de
 Locale is now 'de'
+A:\>if errorlevel 1 echo bad
 A:\>locale xx
 Setting the locale failed.
+A:\>if errorlevel 1 echo failed
+failed
+A:\>locale US
+Locale is now 'us'
+A:\>if errorlevel 1 echo oops
 A:\>locale fr
 Locale is now 'fr'
 A:\>locqle frq

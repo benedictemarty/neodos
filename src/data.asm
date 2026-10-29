@@ -8,6 +8,7 @@ promptbuf       .fill   92              ; invite « A:\chemin> » (pstring)
 cwdbuf          .fill   82              ; répertoire courant (pstring)
 linebuf         .fill   201             ; ligne de commande sans l'invite (200 max)
 cmdbuf          .fill   17              ; mot de commande en majuscules
+locbuf          .fill   2               ; LOCALE : code en minuscules
 arg1            .fill   129             ; premier argument
 arg2            .fill   129             ; second argument
 argrest         .fill   201             ; reste de la ligne après la commande (200 max)

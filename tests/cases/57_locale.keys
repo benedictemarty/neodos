@@ -1,5 +1,9 @@
 locale
 locale de
+if errorlevel 1 echo bad
 locale xx
+if errorlevel 1 echo failed
+locale US
+if errorlevel 1 echo oops
 locale fr
 locale fra

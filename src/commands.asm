@@ -1494,7 +1494,9 @@ _text           #print  "text "
 ; ---------------------------------------------------------------------------
 ; LOCALE xx : choisit la disposition du clavier (1,6 Set Locale : fr, de, us,
 ; gb, it, sw, fi, ch, fm). Le firmware affiche lui-meme « Locale is now 'xx' »
-; ou « Setting the locale failed. » ; il n'a pas d'appel de lecture.
+; ou « Setting the locale failed. » ; il n'a pas d'appel de lecture, et ne
+; renseigne pas DError : le code est donc validé ici (casse ignorée, comme le
+; firmware) pour mettre ERRORLEVEL 1 quand il est inconnu.
 ; ---------------------------------------------------------------------------
 cmd_locale      lda     arg1
                 cmp     #2                      ; exactement deux lettres
@@ -1506,8 +1508,28 @@ cmd_locale      lda     arg1
                 sta     DParams
                 lda     arg1+2
                 sta     DParams+1
-                #api    1,6
-                rts
+                #api    1,6                     ; affiche le résultat
+                lda     arg1+1
+                ora     #$20                    ; minuscule
+                sta     locbuf
+                lda     arg1+2
+                ora     #$20                    ; minuscule
+                sta     locbuf+1
+                ldx     #0
+_loc            lda     loclist,x
+                cmp     locbuf
+                bne     +
+                lda     loclist+1,x
+                cmp     locbuf+1
+                beq     _locok
++               inx
+                inx
+                cpx     #18
+                bne     _loc
+                jmp     errlvl1                 ; code inconnu
+_locok          rts
+
+loclist         .text   "frdeusgbitswfichfm"
 
 
 ; ---------------------------------------------------------------------------
